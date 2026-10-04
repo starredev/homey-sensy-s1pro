@@ -1,15 +1,14 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { findDrift } from '../../scripts/sync-web.js';
 import {
   ApiClient,
   SettingsApiClient,
   WidgetApiClient,
   messageOf,
-} from '../../web/shared/ApiClient.js';
-import { RadarGeometry } from '../../web/shared/RadarGeometry.js';
-import { Translator } from '../../web/shared/Translator.js';
-import { ZoneDraft } from '../../web/shared/ZoneDraft.js';
+} from '../widgets/radar/public/lib/ApiClient.js';
+import { RadarGeometry } from '../widgets/radar/public/lib/RadarGeometry.js';
+import { Translator } from '../widgets/radar/public/lib/Translator.js';
+import { ZoneDraft } from '../widgets/radar/public/lib/ZoneDraft.js';
 
 describe('RadarGeometry', () => {
   it('fits the range into the canvas with the sensor at the bottom centre', () => {
@@ -188,11 +187,5 @@ describe('ApiClient', () => {
   it('turns errors into messages', () => {
     assert.equal(messageOf(new Error('boom')), 'boom');
     assert.equal(messageOf('plain'), 'plain');
-  });
-});
-
-describe('shared web modules', () => {
-  it('are in sync with their copies in the web views', async () => {
-    assert.deepEqual(await findDrift(), []);
   });
 });

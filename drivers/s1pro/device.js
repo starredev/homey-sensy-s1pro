@@ -1,6 +1,6 @@
 import Homey from 'homey';
-import { NotConnectedError } from '../../lib/core/errors.js';
-import { loggerFrom } from '../../lib/core/logger.js';
+import { NotConnectedError } from '../../lib/errors.js';
+import { loggerFrom } from '../../lib/utils.js';
 import { Endpoint } from '../../lib/esphome/Endpoint.js';
 import { EsphomeConnection } from '../../lib/esphome/EsphomeConnection.js';
 import { CapabilityStore } from '../../lib/homey/CapabilityStore.js';
@@ -10,7 +10,7 @@ import { S1ProSensor } from '../../lib/sensor/S1ProSensor.js';
 
 /** @typedef {import('../../app.js').default} SensyApp */
 /** @typedef {import('./driver.js').default} S1ProDriver */
-/** @typedef {import('../../lib/presentation/SensorPresenter.js').SensorView} SensorView */
+/** @typedef {import('../../lib/homey/SensorPresenter.js').SensorView} SensorView */
 
 /**
  * @typedef {object} DiscoveryResult

@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { ValidationError } from '../../lib/core/errors.js';
-import { PresenceChanged, SensorEvent } from '../../lib/domain/events.js';
-import { Polygon } from '../../lib/domain/Polygon.js';
-import { TargetTracker } from '../../lib/domain/TargetTracker.js';
-import { ValueTracker } from '../../lib/domain/ValueTracker.js';
-import { Zone } from '../../lib/domain/Zone.js';
+import { ValidationError } from '../lib/errors.js';
+import { PresenceChanged, SensorEvent } from '../lib/sensor/events.js';
+import { Polygon } from '../lib/sensor/Polygon.js';
+import { TargetTracker } from '../lib/sensor/TargetTracker.js';
+import { ValueTracker } from '../lib/sensor/ValueTracker.js';
+import { Zone } from '../lib/sensor/Zone.js';
 
 describe('Zone', () => {
   it('resolves keys to shared instances', () => {

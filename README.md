@@ -71,15 +71,14 @@ Then add the sensor: **Devices → + → Sensy S1 Pro → S1 Pro Multi Sense**.
 
 ```bash
 npm install
-npm run check      # lint, type-check, sync check, tests with coverage, manifest validation
+npm run check      # lint, type-check, tests with coverage, manifest validation
 npm test           # tests only
-npm run sync:web   # after changing web/shared/
 homey app run      # run on your Homey (needs Docker)
 ```
 
-The code is organised in layers (ESPHome transport → sensor model → Homey adapters), with all domain
-logic free of Homey so it runs under plain `node --test`. Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-for the details and [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+The code is organised in layers (ESPHome connection → sensor model → Homey adapters), with the sensor
+logic free of Homey so it runs under plain `node --test`. [CONTRIBUTING.md](CONTRIBUTING.md) explains the
+structure and the code style.
 
 ## Credits
 

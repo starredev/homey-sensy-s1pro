@@ -5,11 +5,16 @@ import {
   NotFoundError,
   SensyError,
   ValidationError,
-} from '../../lib/core/errors.js';
-import { loggerFrom, silentLogger } from '../../lib/core/logger.js';
-import { clamp, roundTo, toFiniteNumber } from '../../lib/core/math.js';
-import { Debouncer, KeyedThrottle, delay } from '../../lib/core/timers.js';
-import { FakeTimers } from '../support/FakeTimers.js';
+} from '../lib/errors.js';
+import {
+  clamp,
+  loggerFrom,
+  roundTo,
+  silentLogger,
+  toFiniteNumber,
+} from '../lib/utils.js';
+import { Debouncer, KeyedThrottle, delay } from '../lib/timers.js';
+import { FakeTimers } from './fakes.js';
 
 describe('errors', () => {
   it('carries a stable code and the subclass name', () => {

@@ -1,10 +1,10 @@
 import Homey from 'homey';
-import { loggerFrom } from './lib/core/logger.js';
+import { loggerFrom } from './lib/utils.js';
 import { RealtimeHub } from './lib/homey/RealtimeHub.js';
 import { SensyApi } from './lib/homey/SensyApi.js';
 
 /** @typedef {import('./drivers/s1pro/driver.js').default} S1ProDriver */
-/** @typedef {import('./lib/presentation/SensorPresenter.js').SensorView} SensorView */
+/** @typedef {import('./lib/homey/SensorPresenter.js').SensorView} SensorView */
 
 /**
  * Composition root. Creates the app-wide services and exposes them to the

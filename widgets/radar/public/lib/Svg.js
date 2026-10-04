@@ -1,4 +1,3 @@
-// Generated from web/shared by scripts/sync-web.js. Do not edit.
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 /**

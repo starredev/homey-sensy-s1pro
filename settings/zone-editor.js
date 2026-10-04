@@ -1,9 +1,10 @@
-import { SettingsApiClient, messageOf } from './lib/ApiClient.js';
-import { RadarView } from './lib/RadarView.js';
-import { Translator } from './lib/Translator.js';
-import { ZoneEditorController } from './lib/ZoneEditorController.js';
+// Homey serves widgets/radar/public/ at ../widgets/radar/, so the editor reuses the widget's modules.
+import { SettingsApiClient, messageOf } from '../widgets/radar/lib/ApiClient.js';
+import { RadarView } from '../widgets/radar/lib/RadarView.js';
+import { Translator } from '../widgets/radar/lib/Translator.js';
+import { ZoneEditorController } from '../widgets/radar/lib/ZoneEditorController.js';
 
-/** @typedef {import('./lib/ZoneDraft.js').ZoneDraft} ZoneDraft */
+/** @typedef {import('../widgets/radar/lib/ZoneDraft.js').ZoneDraft} ZoneDraft */
 
 const PHRASES = {
   en: {

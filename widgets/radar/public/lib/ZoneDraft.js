@@ -1,4 +1,3 @@
-// Generated from web/shared by scripts/sync-web.js. Do not edit.
 /**
  * The outline being drawn in the zone editor. Emits `change` whenever the
  * user adds, moves or removes a point.

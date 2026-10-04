@@ -21,4 +21,4 @@ All notable changes to this app are documented here. The format follows
 ### Changed
 
 - App id is `io.github.starredev.sensys1pro` (was `nl.bryan.sensys1pro` during development).
-- Rewritten as layered, test-covered ES modules; see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+- Rewritten as layered, test-covered ES modules; see [CONTRIBUTING.md](CONTRIBUTING.md).

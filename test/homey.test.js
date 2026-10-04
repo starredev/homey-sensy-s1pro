@@ -1,25 +1,25 @@
 import assert from 'node:assert/strict';
 import { beforeEach, describe, it } from 'node:test';
-import { NotConnectedError, NotFoundError, ValidationError } from '../../lib/core/errors.js';
+import { NotConnectedError, NotFoundError, ValidationError } from '../lib/errors.js';
 import {
   PeopleCountChanged,
   PresenceChanged,
   SensorEvent,
   ZoneMovementChanged,
   ZonePresenceChanged,
-} from '../../lib/domain/events.js';
-import { Zone } from '../../lib/domain/Zone.js';
-import { CapabilityStore } from '../../lib/homey/CapabilityStore.js';
-import { Cards, FlowCards } from '../../lib/homey/FlowCards.js';
-import { Channels, RealtimeHub } from '../../lib/homey/RealtimeHub.js';
-import { SensyApi } from '../../lib/homey/SensyApi.js';
-import { SettingsMirror } from '../../lib/homey/SettingsMirror.js';
-import { ZoneCapabilities } from '../../lib/homey/ZoneCapabilities.js';
-import { SensorPresenter } from '../../lib/presentation/SensorPresenter.js';
-import { S1ProSensor } from '../../lib/sensor/S1ProSensor.js';
-import { FakeConnection, ZONE_ONE_TRIANGLE } from '../support/FakeConnection.js';
-import { FakeHomeyDevice } from '../support/FakeHomeyDevice.js';
-import { FakeTimers } from '../support/FakeTimers.js';
+} from '../lib/sensor/events.js';
+import { Zone } from '../lib/sensor/Zone.js';
+import { CapabilityStore } from '../lib/homey/CapabilityStore.js';
+import { Cards, FlowCards } from '../lib/homey/FlowCards.js';
+import { Channels, RealtimeHub } from '../lib/homey/RealtimeHub.js';
+import { SensyApi } from '../lib/homey/SensyApi.js';
+import { SettingsMirror } from '../lib/homey/SettingsMirror.js';
+import { ZoneCapabilities } from '../lib/homey/ZoneCapabilities.js';
+import { SensorPresenter } from '../lib/homey/SensorPresenter.js';
+import { S1ProSensor } from '../lib/sensor/S1ProSensor.js';
+import { FakeConnection, ZONE_ONE_TRIANGLE } from './fakes.js';
+import { FakeHomeyDevice } from './fakes.js';
+import { FakeTimers } from './fakes.js';
 
 const silent = {
   log() {},
@@ -42,7 +42,7 @@ function connectedSensor() {
 /**
  * @param {S1ProSensor} sensor
  * @param {string} [id]
- * @returns {import('../../lib/presentation/SensorPresenter.js').SensorView}
+ * @returns {import('../lib/homey/SensorPresenter.js').SensorView}
  */
 function viewOf(sensor, id = 'aa:bb') {
   return {

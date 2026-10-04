@@ -1,4 +1,3 @@
-// Generated from web/shared by scripts/sync-web.js. Do not edit.
 import { DraftLayer } from './layers.js';
 import { ZoneDraft } from './ZoneDraft.js';
 

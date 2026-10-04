@@ -70,9 +70,6 @@ export default [
       'node_modules/',
       '.homeybuild/',
       'coverage/',
-      // Generated copies of web/shared (see scripts/sync-web.js).
-      'widgets/*/public/lib/',
-      'settings/lib/',
     ],
   },
   js.configs.recommended,
@@ -101,7 +98,7 @@ export default [
   },
   {
     // Code that runs in the Homey web views (widget, settings page).
-    files: ['web/**/*.js', 'widgets/*/public/**/*.js', 'settings/**/*.js'],
+    files: ['widgets/*/public/**/*.js', 'settings/**/*.js'],
     languageOptions: {
       globals: { ...globals.browser },
     },

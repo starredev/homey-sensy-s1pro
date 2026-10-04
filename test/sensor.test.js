@@ -5,16 +5,16 @@ import {
   PresenceChanged,
   ZoneMovementChanged,
   ZonePresenceChanged,
-} from '../../lib/domain/events.js';
-import { Polygon } from '../../lib/domain/Polygon.js';
-import { Zone } from '../../lib/domain/Zone.js';
-import { Endpoint } from '../../lib/esphome/Endpoint.js';
-import { NumberSettingBinding, SettingBinding, SwitchSettingBinding } from '../../lib/sensor/bindings.js';
-import { S1ProSensor } from '../../lib/sensor/S1ProSensor.js';
-import { StateRouter } from '../../lib/sensor/StateRouter.js';
-import { ZoneRepository } from '../../lib/sensor/ZoneRepository.js';
-import { FakeConnection, ZONE_ONE_TRIANGLE } from '../support/FakeConnection.js';
-import { FakeTimers } from '../support/FakeTimers.js';
+} from '../lib/sensor/events.js';
+import { Polygon } from '../lib/sensor/Polygon.js';
+import { Zone } from '../lib/sensor/Zone.js';
+import { Endpoint } from '../lib/esphome/Endpoint.js';
+import { NumberSettingBinding, SettingBinding, SwitchSettingBinding } from '../lib/sensor/bindings.js';
+import { S1ProSensor } from '../lib/sensor/S1ProSensor.js';
+import { StateRouter } from '../lib/sensor/StateRouter.js';
+import { ZoneRepository } from '../lib/sensor/ZoneRepository.js';
+import { FakeConnection, ZONE_ONE_TRIANGLE } from './fakes.js';
+import { FakeTimers } from './fakes.js';
 
 describe('StateRouter', () => {
   it('prefers exact routes, then patterns in order', () => {
@@ -151,7 +151,7 @@ describe('S1ProSensor', () => {
   /** @type {S1ProSensor} */
   let sensor;
 
-  /** @type {import('../../lib/domain/events.js').SensorEvent[]} */
+  /** @type {import('../lib/sensor/events.js').SensorEvent[]} */
   let events;
 
   beforeEach(() => {

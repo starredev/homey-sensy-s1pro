@@ -1,6 +1,6 @@
 import Homey from 'homey';
-import { SensyError } from '../../lib/core/errors.js';
-import { loggerFrom } from '../../lib/core/logger.js';
+import { SensyError } from '../../lib/errors.js';
+import { loggerFrom } from '../../lib/utils.js';
 import { DeviceProbe } from '../../lib/esphome/DeviceProbe.js';
 import { FlowCards } from '../../lib/homey/FlowCards.js';
 import { S1ProPairing } from '../../lib/homey/S1ProPairing.js';

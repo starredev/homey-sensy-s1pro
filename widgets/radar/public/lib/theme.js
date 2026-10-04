@@ -1,4 +1,3 @@
-// Generated from web/shared by scripts/sync-web.js. Do not edit.
 /** Colours shared by the widget and the zone editor. */
 export const Theme = Object.freeze({
   zone: Object.freeze({

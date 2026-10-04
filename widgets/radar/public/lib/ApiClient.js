@@ -1,4 +1,3 @@
-// Generated from web/shared by scripts/sync-web.js. Do not edit.
 /** @typedef {(error: unknown, result?: unknown) => void} ApiCallback */
 
 /**

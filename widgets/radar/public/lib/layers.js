@@ -1,4 +1,3 @@
-// Generated from web/shared by scripts/sync-web.js. Do not edit.
 import { RadarGeometry } from './RadarGeometry.js';
 import { Svg } from './Svg.js';
 import { Theme, ZONE_DRAW_ORDER } from './theme.js';

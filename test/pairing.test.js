@@ -6,11 +6,11 @@ import {
   NotReachableError,
   UnsupportedDeviceError,
   ValidationError,
-} from '../../lib/core/errors.js';
-import { DeviceIdentity, DeviceProbe } from '../../lib/esphome/DeviceProbe.js';
-import { Endpoint } from '../../lib/esphome/Endpoint.js';
-import { S1ProPairing } from '../../lib/homey/S1ProPairing.js';
-import { FakeTimers } from '../support/FakeTimers.js';
+} from '../lib/errors.js';
+import { DeviceIdentity, DeviceProbe } from '../lib/esphome/DeviceProbe.js';
+import { Endpoint } from '../lib/esphome/Endpoint.js';
+import { S1ProPairing } from '../lib/homey/S1ProPairing.js';
+import { FakeTimers } from './fakes.js';
 
 const S1_PRO_INFO = Object.freeze({
   macAddress: '48:F6:EE:2C:D9:F0',

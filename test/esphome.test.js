@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { beforeEach, describe, it } from 'node:test';
-import { NotConnectedError, ValidationError } from '../../lib/core/errors.js';
-import { Endpoint } from '../../lib/esphome/Endpoint.js';
-import { EsphomeConnection } from '../../lib/esphome/EsphomeConnection.js';
-import { FakeEntity, FakeEsphomeClient } from '../support/FakeEsphomeClient.js';
+import { NotConnectedError, ValidationError } from '../lib/errors.js';
+import { Endpoint } from '../lib/esphome/Endpoint.js';
+import { EsphomeConnection } from '../lib/esphome/EsphomeConnection.js';
+import { FakeEntity, FakeEsphomeClient } from './fakes.js';
 
 describe('Endpoint', () => {
   it('defaults to the native API port', () => {

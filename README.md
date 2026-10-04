@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.png" alt="Sensy S1 Pro for Homey" width="160"></p>
+
 # Sensy S1 Pro for Homey
 
 [![CI](https://github.com/starredev/homey-sensy-s1pro/actions/workflows/ci.yml/badge.svg)](https://github.com/starredev/homey-sensy-s1pro/actions/workflows/ci.yml)

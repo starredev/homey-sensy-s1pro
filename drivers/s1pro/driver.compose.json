@@ -1,0 +1,55 @@
+{
+  "name": {
+    "en": "S1 Pro Multi Sense",
+    "nl": "S1 Pro Multi Sense"
+  },
+  "class": "sensor",
+  "capabilities": [
+    "alarm_motion",
+    "sensy_moving",
+    "sensy_people",
+    "measure_temperature",
+    "measure_humidity",
+    "measure_co2",
+    "sensy_iaq",
+    "measure_pressure",
+    "measure_luminance",
+    "measure_ultraviolet"
+  ],
+  "capabilitiesOptions": {
+    "alarm_motion": {
+      "title": {
+        "en": "Presence",
+        "nl": "Aanwezigheid"
+      }
+    }
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
+  "discovery": "sensy-s1pro",
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "manual"
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

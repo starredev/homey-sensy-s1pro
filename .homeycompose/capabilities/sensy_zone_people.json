@@ -1,0 +1,15 @@
+{
+  "type": "number",
+  "title": {
+    "en": "People in zone",
+    "nl": "Personen in zone"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/people.svg",
+  "decimals": 0,
+  "min": 0,
+  "max": 3,
+  "insights": true
+}

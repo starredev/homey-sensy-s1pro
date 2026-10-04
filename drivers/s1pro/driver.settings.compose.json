@@ -1,0 +1,83 @@
+[
+  {
+    "type": "group",
+    "label": { "en": "Detection", "nl": "Detectie" },
+    "children": [
+      {
+        "id": "detection_range",
+        "type": "number",
+        "label": { "en": "Detection range", "nl": "Detectiebereik" },
+        "value": 600,
+        "min": 0,
+        "max": 1800,
+        "units": { "en": "cm" }
+      },
+      {
+        "id": "any_presence_delay",
+        "type": "number",
+        "label": { "en": "Presence hold time", "nl": "Aanwezigheid vasthouden" },
+        "hint": { "en": "How long presence stays on after the last detection.", "nl": "Hoe lang aanwezigheid aan blijft na de laatste detectie." },
+        "value": 0,
+        "min": 0,
+        "max": 3600,
+        "units": { "en": "s" }
+      },
+      {
+        "id": "any_movement_threshold",
+        "type": "number",
+        "label": { "en": "Movement threshold", "nl": "Bewegingsdrempel" },
+        "hint": { "en": "Minimum speed that counts as movement.", "nl": "Minimale snelheid die als beweging telt." },
+        "value": 0,
+        "min": 0,
+        "max": 5000,
+        "units": { "en": "cm/s" }
+      },
+      {
+        "id": "single_target",
+        "type": "checkbox",
+        "label": { "en": "Track a single person", "nl": "Eén persoon volgen" },
+        "value": false
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": { "en": "Zone 1", "nl": "Zone 1" },
+    "children": [
+      { "id": "zone1_presence_delay", "type": "number", "label": { "en": "Presence hold time", "nl": "Aanwezigheid vasthouden" }, "value": 0, "min": 0, "max": 3600, "units": { "en": "s" } },
+      { "id": "zone1_movement_threshold", "type": "number", "label": { "en": "Movement threshold", "nl": "Bewegingsdrempel" }, "value": 0, "min": 0, "max": 5000, "units": { "en": "cm/s" } }
+    ]
+  },
+  {
+    "type": "group",
+    "label": { "en": "Zone 2", "nl": "Zone 2" },
+    "children": [
+      { "id": "zone2_presence_delay", "type": "number", "label": { "en": "Presence hold time", "nl": "Aanwezigheid vasthouden" }, "value": 0, "min": 0, "max": 3600, "units": { "en": "s" } },
+      { "id": "zone2_movement_threshold", "type": "number", "label": { "en": "Movement threshold", "nl": "Bewegingsdrempel" }, "value": 0, "min": 0, "max": 5000, "units": { "en": "cm/s" } }
+    ]
+  },
+  {
+    "type": "group",
+    "label": { "en": "Zone 3", "nl": "Zone 3" },
+    "children": [
+      { "id": "zone3_presence_delay", "type": "number", "label": { "en": "Presence hold time", "nl": "Aanwezigheid vasthouden" }, "value": 0, "min": 0, "max": 3600, "units": { "en": "s" } },
+      { "id": "zone3_movement_threshold", "type": "number", "label": { "en": "Movement threshold", "nl": "Bewegingsdrempel" }, "value": 0, "min": 0, "max": 5000, "units": { "en": "cm/s" } }
+    ]
+  },
+  {
+    "type": "group",
+    "label": { "en": "Calibration", "nl": "Kalibratie" },
+    "children": [
+      { "id": "bme688_temp_offset", "type": "number", "label": { "en": "Temperature offset", "nl": "Temperatuurcorrectie" }, "value": 0, "min": -50, "max": 50, "step": 0.1, "units": { "en": "°C" } },
+      { "id": "scd40_temp_offset", "type": "number", "label": { "en": "CO₂ sensor temperature offset", "nl": "Temperatuurcorrectie CO₂-sensor" }, "value": 0, "min": -50, "max": 50, "step": 0.1, "units": { "en": "°C" } }
+    ]
+  },
+  {
+    "type": "group",
+    "label": { "en": "Connection", "nl": "Verbinding" },
+    "children": [
+      { "id": "address", "type": "label", "label": { "en": "IP address", "nl": "IP-adres" }, "value": "-" },
+      { "id": "firmware", "type": "label", "label": { "en": "Firmware", "nl": "Firmware" }, "value": "-" }
+    ]
+  }
+]

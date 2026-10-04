@@ -1,0 +1,23 @@
+{
+  "name": {
+    "en": "Sensy radar",
+    "nl": "Sensy radar"
+  },
+  "height": 280,
+  "settings": [
+    {
+      "id": "device",
+      "type": "autocomplete",
+      "title": {
+        "en": "Sensor",
+        "nl": "Sensor"
+      }
+    }
+  ],
+  "api": {
+    "getState": {
+      "method": "GET",
+      "path": "/"
+    }
+  }
+}

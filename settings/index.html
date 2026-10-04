@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script>
+      // Homey calls onHomeyReady once the bridge is available; expose it as a promise for the module.
+      window.homeyReady = new Promise((resolve) => {
+        window.onHomeyReady = resolve;
+      });
+    </script>
+    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+    <script type="module" src="zone-editor.js"></script>
+    <style>
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        margin: 8px 0;
+      }
+
+      .tab {
+        border: 1px solid rgba(127, 127, 127, 0.35);
+        background: transparent;
+        color: inherit;
+        border-radius: 999px;
+        padding: 6px 12px;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .tab.on {
+        color: #fff;
+        border-color: transparent;
+      }
+
+      .tab[data-zone="1"].on {
+        background: #3B82F6;
+      }
+
+      .tab[data-zone="2"].on {
+        background: #A855F7;
+      }
+
+      .tab[data-zone="3"].on {
+        background: #14B8A6;
+      }
+
+      .tab[data-zone="exclusion"].on {
+        background: #EF4444;
+      }
+
+      .map {
+        border: 1px solid rgba(127, 127, 127, 0.25);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin: 10px 0;
+      }
+
+      .actions button {
+        flex: 1;
+      }
+
+      .status {
+        min-height: 20px;
+        font-size: 13px;
+        opacity: 0.75;
+      }
+
+      .status.err {
+        color: #DC2626;
+        opacity: 1;
+      }
+
+      .live {
+        font-size: 13px;
+        opacity: 0.75;
+        margin-left: auto;
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+
+      .row > div {
+        flex: 1;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="homey-title" data-t="title"></h1>
+    <p class="homey-subtitle" data-t="intro"></p>
+
+    <fieldset class="homey-form-fieldset" id="deviceRow">
+      <label class="homey-form-label" for="device" data-t="sensor"></label>
+      <select class="homey-form-select" id="device"></select>
+    </fieldset>
+
+    <div class="bar" id="tabs">
+      <button class="tab on" data-zone="1">Zone 1</button>
+      <button class="tab" data-zone="2">Zone 2</button>
+      <button class="tab" data-zone="3">Zone 3</button>
+      <button class="tab" data-zone="exclusion" data-t="exclusion"></button>
+      <span class="live" id="live">–</span>
+    </div>
+
+    <div class="map">
+      <svg id="radar" aria-label="Zone editor"></svg>
+    </div>
+
+    <div class="actions">
+      <button class="homey-button-secondary-small" id="undo" data-t="undo"></button>
+      <button class="homey-button-secondary-small" id="clear" data-t="clear"></button>
+      <button class="homey-button-primary-small" id="save" data-t="save"></button>
+    </div>
+    <div class="status" id="status"></div>
+
+    <fieldset class="homey-form-fieldset" id="options">
+      <legend class="homey-form-legend" data-t="zoneSettings"></legend>
+      <div class="row">
+        <div>
+          <label class="homey-form-label" for="delay" data-t="delay"></label>
+          <input class="homey-form-input" id="delay" type="number" min="0" max="3600" step="1">
+        </div>
+        <div>
+          <label class="homey-form-label" for="threshold" data-t="threshold"></label>
+          <input class="homey-form-input" id="threshold" type="number" min="0" max="5000" step="1">
+        </div>
+      </div>
+      <button class="homey-button-secondary-small" id="saveOptions" style="margin-top: 10px;" data-t="saveOptions"></button>
+    </fieldset>
+  </body>
+</html>

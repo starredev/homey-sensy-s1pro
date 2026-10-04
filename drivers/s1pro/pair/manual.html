@@ -1,0 +1,86 @@
+<style>
+  .manual {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .manual .error {
+    color: #DC2626;
+    min-height: 20px;
+  }
+
+  .manual .hint {
+    opacity: 0.7;
+  }
+</style>
+
+<form class="manual" id="manual-form">
+  <p class="homey-subtitle" data-i18n="pair.manual.intro"></p>
+
+  <fieldset class="homey-form-fieldset">
+    <label class="homey-form-label" for="manual-address" data-i18n="pair.manual.address"></label>
+    <input class="homey-form-input" id="manual-address" type="text" placeholder="192.168.1.20"
+      autocomplete="off" autocapitalize="off" spellcheck="false" required>
+  </fieldset>
+
+  <p class="homey-text-small hint" data-i18n="pair.manual.hint"></p>
+  <p class="homey-text-small error" id="manual-error" role="alert"></p>
+
+  <button class="homey-button-primary-full" id="manual-submit" type="submit" data-i18n="pair.manual.connect"></button>
+</form>
+
+<script type="text/javascript">
+  /**
+   * Pairing view: add a sensor by IP address or host name when mDNS finds nothing.
+   */
+  class ManualPairingView {
+    #form = document.getElementById('manual-form');
+
+    #address = document.getElementById('manual-address');
+
+    #error = document.getElementById('manual-error');
+
+    #submit = document.getElementById('manual-submit');
+
+    start() {
+      Homey.setTitle(Homey.__('pair.manual.title'));
+
+      for (const node of this.#form.querySelectorAll('[data-i18n]')) {
+        node.textContent = Homey.__(node.dataset.i18n);
+      }
+
+      this.#form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        this.#addDevice();
+      });
+
+      this.#address.focus();
+    }
+
+    async #addDevice() {
+      this.#setBusy(true);
+      this.#error.textContent = '';
+
+      try {
+        const device = await Homey.emit('add_by_address', { address: this.#address.value });
+
+        await Homey.createDevice(device);
+        Homey.done();
+      } catch (error) {
+        this.#error.textContent = error?.message ?? String(error);
+        this.#setBusy(false);
+      }
+    }
+
+    /**
+     * @param {boolean} busy
+     */
+    #setBusy(busy) {
+      this.#submit.disabled = busy;
+      this.#submit.classList.toggle('is-loading', busy);
+    }
+  }
+
+  new ManualPairingView().start();
+</script>

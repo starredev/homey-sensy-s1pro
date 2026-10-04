@@ -1,0 +1,38 @@
+diff --git a/node_modules/@2colors/esphome-native-api/lib/connection.js b/node_modules/@2colors/esphome-native-api/lib/connection.js
+index c6830b1..13a41b1 100644
+--- a/node_modules/@2colors/esphome-native-api/lib/connection.js
++++ b/node_modules/@2colors/esphome-native-api/lib/connection.js
+@@ -29,6 +29,7 @@ class EsphomeNativeApiConnection extends EventEmitter {
+         this.frameHelper = !encryptionKey ? new PlaintextFrameHelper(host, port) : new NoiseFrameHelper(host, port, encryptionKey, expectedServerName);
+ 
+         this.frameHelper.on('message', (message) => {
++            if (!message || message.unknown) return;
+             const type = message.constructor.type;
+             const mapped = mapMessageByType(type, message.toObject());
+ 
+diff --git a/node_modules/@2colors/esphome-native-api/lib/utils/frameHelper.js b/node_modules/@2colors/esphome-native-api/lib/utils/frameHelper.js
+index f0ff260..d9b5ed2 100644
+--- a/node_modules/@2colors/esphome-native-api/lib/utils/frameHelper.js
++++ b/node_modules/@2colors/esphome-native-api/lib/utils/frameHelper.js
+@@ -42,14 +42,17 @@ class FrameHelper extends EventEmitter {
+     }
+ 
+     buildMessage(messageId, bytes) {
++        // Newer ESPHome versions send message types this client does not know yet
++        // (e.g. 116, ListEntitiesUpdateResponse). Skip them instead of dropping the connection.
++        if (id_to_type[messageId] === undefined) {
++            return { unknown: true, messageId };
++        }
+         try {
+             return pb[id_to_type[messageId]].deserializeBinary(bytes);
+         } catch(e) {
+             this.emit('error', new Error(`Failed find or parsed message type for Id: ${messageId}`));
+-            if (typeof id_to_type[messageId] !== undefined) {
+-                // we know this type and close connect mb error or freeze connect
+-                this.end();
+-            }
++            // we know this type and close connect mb error or freeze connect
++            this.end();
+         }
+     }
+ 

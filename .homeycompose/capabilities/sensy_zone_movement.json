@@ -1,0 +1,20 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Zone movement",
+    "nl": "Beweging zone"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/movement.svg",
+  "insights": true,
+  "insightsTitleTrue": {
+    "en": "Movement in zone",
+    "nl": "Beweging in zone"
+  },
+  "insightsTitleFalse": {
+    "en": "No movement in zone",
+    "nl": "Geen beweging in zone"
+  }
+}

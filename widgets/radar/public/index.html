@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <style>
+      .wrap {
+        padding: 4px 6px 2px;
+      }
+
+      .head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #9CA3AF;
+        flex: none;
+      }
+
+      .dot.on {
+        background: #10B981;
+      }
+
+      .name {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .pill {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 9px;
+        border-radius: 999px;
+        background: rgba(127, 127, 127, 0.15);
+        white-space: nowrap;
+      }
+
+      .pill.present {
+        background: rgba(16, 185, 129, 0.18);
+        color: #059669;
+      }
+
+      .pill.moving {
+        background: rgba(249, 115, 22, 0.18);
+        color: #EA580C;
+      }
+
+      svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .empty {
+        padding: 24px 8px;
+        text-align: center;
+        opacity: 0.6;
+      }
+    </style>
+
+    <script>
+      // Homey calls onHomeyReady once the bridge is available; expose it as a promise for the module.
+      window.homeyReady = new Promise((resolve) => {
+        window.onHomeyReady = resolve;
+      });
+    </script>
+    <script type="module" src="widget.js"></script>
+  </head>
+
+  <body class="homey-widget">
+    <div class="wrap">
+      <div class="head">
+        <span class="dot" id="dot"></span>
+        <span class="name homey-text-medium" id="name"></span>
+        <span class="pill" id="pill">–</span>
+      </div>
+      <svg id="radar" aria-label="Sensy radar"></svg>
+      <div class="empty homey-text-small" id="empty" hidden></div>
+    </div>
+  </body>
+</html>

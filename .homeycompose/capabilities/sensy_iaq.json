@@ -1,0 +1,15 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Air quality (IAQ)",
+    "nl": "Luchtkwaliteit (IAQ)"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/iaq.svg",
+  "decimals": 0,
+  "min": 0,
+  "max": 500,
+  "insights": true
+}

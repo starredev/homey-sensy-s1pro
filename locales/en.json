@@ -1,0 +1,24 @@
+{
+  "device": {
+    "connecting": "Connecting to the sensor…",
+    "disconnected": "Sensor not reachable",
+    "not_connected": "The sensor is not connected. Try again in a moment.",
+    "bluetooth_proxy_on": "The BLE proxy is on. Homey does not use it and it makes the connection unstable. Turn off “BLE | Proxy” on the sensor's web page."
+  },
+  "zone": {
+    "point_count": "A zone needs 3 to 8 points."
+  },
+  "pair": {
+    "manual": {
+      "title": "Add by IP address",
+      "intro": "No Sensy S1 Pro was found automatically. This happens when the sensor is on another network or your router blocks discovery. Enter its address to add it anyway.",
+      "address": "IP address or host name",
+      "hint": "You find the address in your router, or on the sensor as “ESP32 | IP”. A fixed IP address (DHCP reservation) is recommended.",
+      "connect": "Connect",
+      "invalid_address": "That is not a valid IP address or host name.",
+      "not_reachable": "No sensor answered at this address. Check the address and that the sensor is powered on.",
+      "unsupported": "This device is not a Sensy-One S1 Pro Multi Sense.",
+      "already_added": "This sensor is already added to Homey."
+    }
+  }
+}

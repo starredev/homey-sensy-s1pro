@@ -1,0 +1,20 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Zone presence",
+    "nl": "Aanwezigheid zone"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/zone.svg",
+  "insights": true,
+  "insightsTitleTrue": {
+    "en": "Zone occupied",
+    "nl": "Zone bezet"
+  },
+  "insightsTitleFalse": {
+    "en": "Zone empty",
+    "nl": "Zone leeg"
+  }
+}

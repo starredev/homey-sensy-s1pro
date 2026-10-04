@@ -1,0 +1,20 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Movement",
+    "nl": "Beweging"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/movement.svg",
+  "insights": true,
+  "insightsTitleTrue": {
+    "en": "Movement started",
+    "nl": "Beweging gestart"
+  },
+  "insightsTitleFalse": {
+    "en": "Movement stopped",
+    "nl": "Beweging gestopt"
+  }
+}

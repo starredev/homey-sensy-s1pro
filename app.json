@@ -1,0 +1,988 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "io.github.starredev.sensys1pro",
+  "version": "1.0.0",
+  "compatibility": ">=12.4.0",
+  "sdk": 3,
+  "runtime": "nodejs",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Sensy S1 Pro",
+    "nl": "Sensy S1 Pro"
+  },
+  "description": {
+    "en": "mmWave presence, zones and air quality from the Sensy-One S1 Pro Multi Sense.",
+    "nl": "mmWave-aanwezigheid, zones en luchtkwaliteit van de Sensy-One S1 Pro Multi Sense."
+  },
+  "category": [
+    "security"
+  ],
+  "brandColor": "#1D6FD8",
+  "permissions": [],
+  "author": {
+    "name": "Bryan"
+  },
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "api": {
+    "getDevices": {
+      "method": "GET",
+      "path": "/devices"
+    },
+    "getDevice": {
+      "method": "GET",
+      "path": "/devices/:id"
+    },
+    "setZone": {
+      "method": "PUT",
+      "path": "/devices/:id/zones/:zone"
+    },
+    "setZoneOptions": {
+      "method": "PUT",
+      "path": "/devices/:id/zones/:zone/options"
+    }
+  },
+  "esm": true,
+  "flow": {
+    "triggers": [
+      {
+        "id": "room_occupied",
+        "title": {
+          "en": "Someone became present",
+          "nl": "Iemand werd aanwezig"
+        },
+        "tokens": [
+          {
+            "name": "people",
+            "type": "number",
+            "title": {
+              "en": "People",
+              "nl": "Personen"
+            },
+            "example": 1
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          }
+        ]
+      },
+      {
+        "id": "room_empty",
+        "title": {
+          "en": "The room became empty",
+          "nl": "De ruimte werd leeg"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          }
+        ]
+      },
+      {
+        "id": "people_changed",
+        "title": {
+          "en": "Number of people changed",
+          "nl": "Aantal personen veranderde"
+        },
+        "tokens": [
+          {
+            "name": "people",
+            "type": "number",
+            "title": {
+              "en": "People",
+              "nl": "Personen"
+            },
+            "example": 2
+          },
+          {
+            "name": "previous",
+            "type": "number",
+            "title": {
+              "en": "Previous",
+              "nl": "Vorige"
+            },
+            "example": 1
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          }
+        ]
+      },
+      {
+        "id": "zone_entered",
+        "title": {
+          "en": "Someone entered a zone",
+          "nl": "Iemand kwam een zone binnen"
+        },
+        "titleFormatted": {
+          "en": "Someone entered [[zone]]",
+          "nl": "Iemand kwam [[zone]] binnen"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "zone",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Zone 1",
+                  "nl": "Zone 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Zone 2",
+                  "nl": "Zone 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Zone 3",
+                  "nl": "Zone 3"
+                }
+              }
+            ]
+          }
+        ],
+        "tokens": [
+          {
+            "name": "people",
+            "type": "number",
+            "title": {
+              "en": "People in zone",
+              "nl": "Personen in zone"
+            },
+            "example": 1
+          }
+        ]
+      },
+      {
+        "id": "zone_left",
+        "title": {
+          "en": "A zone became empty",
+          "nl": "Een zone werd leeg"
+        },
+        "titleFormatted": {
+          "en": "[[zone]] became empty",
+          "nl": "[[zone]] werd leeg"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "zone",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Zone 1",
+                  "nl": "Zone 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Zone 2",
+                  "nl": "Zone 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Zone 3",
+                  "nl": "Zone 3"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "zone_movement_started",
+        "title": {
+          "en": "Movement started in a zone",
+          "nl": "Beweging gestart in een zone"
+        },
+        "titleFormatted": {
+          "en": "Movement started in [[zone]]",
+          "nl": "Beweging gestart in [[zone]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "zone",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Zone 1",
+                  "nl": "Zone 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Zone 2",
+                  "nl": "Zone 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Zone 3",
+                  "nl": "Zone 3"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "zone_movement_stopped",
+        "title": {
+          "en": "Movement stopped in a zone",
+          "nl": "Beweging gestopt in een zone"
+        },
+        "titleFormatted": {
+          "en": "Movement stopped in [[zone]]",
+          "nl": "Beweging gestopt in [[zone]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "zone",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Zone 1",
+                  "nl": "Zone 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Zone 2",
+                  "nl": "Zone 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Zone 3",
+                  "nl": "Zone 3"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "is_present",
+        "title": {
+          "en": "Someone !{{is|isn't}} present",
+          "nl": "Er !{{is|is niet}} iemand aanwezig"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          }
+        ]
+      },
+      {
+        "id": "zone_occupied",
+        "title": {
+          "en": "Zone !{{is|isn't}} occupied",
+          "nl": "Zone !{{is|is niet}} bezet"
+        },
+        "titleFormatted": {
+          "en": "[[zone]] !{{is|isn't}} occupied",
+          "nl": "[[zone]] !{{is|is niet}} bezet"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "zone",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Zone 1",
+                  "nl": "Zone 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Zone 2",
+                  "nl": "Zone 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Zone 3",
+                  "nl": "Zone 3"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "zone_moving",
+        "title": {
+          "en": "There !{{is|is no}} movement in a zone",
+          "nl": "Er !{{is|is geen}} beweging in een zone"
+        },
+        "titleFormatted": {
+          "en": "There !{{is|is no}} movement in [[zone]]",
+          "nl": "Er !{{is|is geen}} beweging in [[zone]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "zone",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Zone 1",
+                  "nl": "Zone 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Zone 2",
+                  "nl": "Zone 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Zone 3",
+                  "nl": "Zone 3"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "people_above",
+        "title": {
+          "en": "Number of people !{{is|isn't}} above…",
+          "nl": "Aantal personen !{{is|is niet}} hoger dan…"
+        },
+        "titleFormatted": {
+          "en": "Number of people !{{is|isn't}} above [[count]]",
+          "nl": "Aantal personen !{{is|is niet}} hoger dan [[count]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "count",
+            "type": "number",
+            "min": 0,
+            "max": 3,
+            "step": 1
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "set_zone_delay",
+        "title": {
+          "en": "Set zone presence hold time",
+          "nl": "Zet vasthoudtijd van zone"
+        },
+        "titleFormatted": {
+          "en": "Set presence hold time of [[zone]] to [[seconds]] seconds",
+          "nl": "Zet vasthoudtijd van [[zone]] op [[seconds]] seconden"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "zone",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Zone 1",
+                  "nl": "Zone 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Zone 2",
+                  "nl": "Zone 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Zone 3",
+                  "nl": "Zone 3"
+                }
+              }
+            ]
+          },
+          {
+            "name": "seconds",
+            "type": "number",
+            "min": 0,
+            "max": 3600,
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "beep",
+        "title": {
+          "en": "Beep",
+          "nl": "Piep"
+        },
+        "titleFormatted": {
+          "en": "Beep for [[duration]] seconds",
+          "nl": "Piep [[duration]] seconden"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "duration",
+            "type": "number",
+            "min": 0.1,
+            "max": 5,
+            "step": 0.1
+          }
+        ]
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "S1 Pro Multi Sense",
+        "nl": "S1 Pro Multi Sense"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "alarm_motion",
+        "sensy_moving",
+        "sensy_people",
+        "measure_temperature",
+        "measure_humidity",
+        "measure_co2",
+        "sensy_iaq",
+        "measure_pressure",
+        "measure_luminance",
+        "measure_ultraviolet"
+      ],
+      "capabilitiesOptions": {
+        "alarm_motion": {
+          "title": {
+            "en": "Presence",
+            "nl": "Aanwezigheid"
+          }
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "discovery": "sensy-s1pro",
+      "images": {
+        "small": "/drivers/s1pro/assets/images/small.png",
+        "large": "/drivers/s1pro/assets/images/large.png",
+        "xlarge": "/drivers/s1pro/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "manual"
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "s1pro",
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Detection",
+            "nl": "Detectie"
+          },
+          "children": [
+            {
+              "id": "detection_range",
+              "type": "number",
+              "label": {
+                "en": "Detection range",
+                "nl": "Detectiebereik"
+              },
+              "value": 600,
+              "min": 0,
+              "max": 1800,
+              "units": {
+                "en": "cm"
+              }
+            },
+            {
+              "id": "any_presence_delay",
+              "type": "number",
+              "label": {
+                "en": "Presence hold time",
+                "nl": "Aanwezigheid vasthouden"
+              },
+              "hint": {
+                "en": "How long presence stays on after the last detection.",
+                "nl": "Hoe lang aanwezigheid aan blijft na de laatste detectie."
+              },
+              "value": 0,
+              "min": 0,
+              "max": 3600,
+              "units": {
+                "en": "s"
+              }
+            },
+            {
+              "id": "any_movement_threshold",
+              "type": "number",
+              "label": {
+                "en": "Movement threshold",
+                "nl": "Bewegingsdrempel"
+              },
+              "hint": {
+                "en": "Minimum speed that counts as movement.",
+                "nl": "Minimale snelheid die als beweging telt."
+              },
+              "value": 0,
+              "min": 0,
+              "max": 5000,
+              "units": {
+                "en": "cm/s"
+              }
+            },
+            {
+              "id": "single_target",
+              "type": "checkbox",
+              "label": {
+                "en": "Track a single person",
+                "nl": "Eén persoon volgen"
+              },
+              "value": false
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Zone 1",
+            "nl": "Zone 1"
+          },
+          "children": [
+            {
+              "id": "zone1_presence_delay",
+              "type": "number",
+              "label": {
+                "en": "Presence hold time",
+                "nl": "Aanwezigheid vasthouden"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 3600,
+              "units": {
+                "en": "s"
+              }
+            },
+            {
+              "id": "zone1_movement_threshold",
+              "type": "number",
+              "label": {
+                "en": "Movement threshold",
+                "nl": "Bewegingsdrempel"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 5000,
+              "units": {
+                "en": "cm/s"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Zone 2",
+            "nl": "Zone 2"
+          },
+          "children": [
+            {
+              "id": "zone2_presence_delay",
+              "type": "number",
+              "label": {
+                "en": "Presence hold time",
+                "nl": "Aanwezigheid vasthouden"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 3600,
+              "units": {
+                "en": "s"
+              }
+            },
+            {
+              "id": "zone2_movement_threshold",
+              "type": "number",
+              "label": {
+                "en": "Movement threshold",
+                "nl": "Bewegingsdrempel"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 5000,
+              "units": {
+                "en": "cm/s"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Zone 3",
+            "nl": "Zone 3"
+          },
+          "children": [
+            {
+              "id": "zone3_presence_delay",
+              "type": "number",
+              "label": {
+                "en": "Presence hold time",
+                "nl": "Aanwezigheid vasthouden"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 3600,
+              "units": {
+                "en": "s"
+              }
+            },
+            {
+              "id": "zone3_movement_threshold",
+              "type": "number",
+              "label": {
+                "en": "Movement threshold",
+                "nl": "Bewegingsdrempel"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 5000,
+              "units": {
+                "en": "cm/s"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Calibration",
+            "nl": "Kalibratie"
+          },
+          "children": [
+            {
+              "id": "bme688_temp_offset",
+              "type": "number",
+              "label": {
+                "en": "Temperature offset",
+                "nl": "Temperatuurcorrectie"
+              },
+              "value": 0,
+              "min": -50,
+              "max": 50,
+              "step": 0.1,
+              "units": {
+                "en": "°C"
+              }
+            },
+            {
+              "id": "scd40_temp_offset",
+              "type": "number",
+              "label": {
+                "en": "CO₂ sensor temperature offset",
+                "nl": "Temperatuurcorrectie CO₂-sensor"
+              },
+              "value": 0,
+              "min": -50,
+              "max": 50,
+              "step": 0.1,
+              "units": {
+                "en": "°C"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Connection",
+            "nl": "Verbinding"
+          },
+          "children": [
+            {
+              "id": "address",
+              "type": "label",
+              "label": {
+                "en": "IP address",
+                "nl": "IP-adres"
+              },
+              "value": "-"
+            },
+            {
+              "id": "firmware",
+              "type": "label",
+              "label": {
+                "en": "Firmware",
+                "nl": "Firmware"
+              },
+              "value": "-"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "widgets": {
+    "radar": {
+      "name": {
+        "en": "Sensy radar",
+        "nl": "Sensy radar"
+      },
+      "height": 280,
+      "settings": [
+        {
+          "id": "device",
+          "type": "autocomplete",
+          "title": {
+            "en": "Sensor",
+            "nl": "Sensor"
+          }
+        }
+      ],
+      "api": {
+        "getState": {
+          "method": "GET",
+          "path": "/"
+        }
+      },
+      "id": "radar"
+    }
+  },
+  "capabilities": {
+    "sensy_iaq": {
+      "type": "number",
+      "title": {
+        "en": "Air quality (IAQ)",
+        "nl": "Luchtkwaliteit (IAQ)"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/iaq.svg",
+      "decimals": 0,
+      "min": 0,
+      "max": 500,
+      "insights": true
+    },
+    "sensy_moving": {
+      "type": "boolean",
+      "title": {
+        "en": "Movement",
+        "nl": "Beweging"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/movement.svg",
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Movement started",
+        "nl": "Beweging gestart"
+      },
+      "insightsTitleFalse": {
+        "en": "Movement stopped",
+        "nl": "Beweging gestopt"
+      }
+    },
+    "sensy_people": {
+      "type": "number",
+      "title": {
+        "en": "People",
+        "nl": "Personen"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/people.svg",
+      "decimals": 0,
+      "min": 0,
+      "max": 3,
+      "insights": true
+    },
+    "sensy_zone_movement": {
+      "type": "boolean",
+      "title": {
+        "en": "Zone movement",
+        "nl": "Beweging zone"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/movement.svg",
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Movement in zone",
+        "nl": "Beweging in zone"
+      },
+      "insightsTitleFalse": {
+        "en": "No movement in zone",
+        "nl": "Geen beweging in zone"
+      }
+    },
+    "sensy_zone_people": {
+      "type": "number",
+      "title": {
+        "en": "People in zone",
+        "nl": "Personen in zone"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/people.svg",
+      "decimals": 0,
+      "min": 0,
+      "max": 3,
+      "insights": true
+    },
+    "sensy_zone_presence": {
+      "type": "boolean",
+      "title": {
+        "en": "Zone presence",
+        "nl": "Aanwezigheid zone"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/zone.svg",
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Zone occupied",
+        "nl": "Zone bezet"
+      },
+      "insightsTitleFalse": {
+        "en": "Zone empty",
+        "nl": "Zone leeg"
+      }
+    }
+  },
+  "discovery": {
+    "sensy-s1pro": {
+      "type": "mdns-sd",
+      "mdns-sd": {
+        "name": "esphomelib",
+        "protocol": "tcp"
+      },
+      "id": "{{txt.mac}}",
+      "conditions": [
+        [
+          {
+            "field": "txt.project_name",
+            "match": {
+              "type": "string",
+              "value": "Sensy-One.S1 Pro Multi Sense"
+            }
+          }
+        ]
+      ]
+    }
+  }
+}

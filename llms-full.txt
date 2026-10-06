@@ -1,0 +1,2235 @@
+# Climate and air quality (/docs/air-quality)
+
+
+
+The S1 Pro has two air sensors:
+
+* the **SCD40**, a real CO₂ sensor (photoacoustic NDIR), for **CO₂**;
+* the **BME688**, a gas sensor whose readings Bosch's BSEC software turns into an **air quality index (IAQ)**,
+  an **air quality class**, a **VOC** estimate, and temperature, humidity and pressure.
+
+## CO₂ [#co]
+
+**CO₂** (ppm) is measured directly by the SCD40. It is the best indicator of how stale the air is in an occupied
+room: people breathe out CO₂.
+
+| CO₂ (ppm) | Typical meaning              |
+| --------- | ---------------------------- |
+| \~420     | Outdoor air                  |
+| \< 800    | Well ventilated              |
+| 800–1200  | Ventilation is getting short |
+| > 1200    | Stuffy; ventilate            |
+
+The official firmware turns the SCD40's automatic self-calibration **off** and compensates the reading with the
+air pressure from the BME688. If the CO₂ reading drifts over the months (for example it never gets near \~420 ppm
+with the windows wide open), use the [*Calibrate CO₂ sensor*](/docs/maintenance#calibrate-co2-sensor) maintenance
+action.
+
+## Air quality index (IAQ) [#air-quality-index-iaq]
+
+**Air quality (IAQ)** is a number from 0 to 500 that Bosch's BSEC algorithm calculates from the BME688's gas
+readings. It reacts to volatile compounds in the air: cooking, cleaning products, paint, perfume, people. Lower is
+better.
+
+The BME688 has no absolute scale: BSEC learns what clean and polluted air look like *in your room*, so the IAQ is
+relative to the history of that room.
+
+## Air quality class [#air-quality-class]
+
+**Air quality** turns the IAQ into words. The sensor's firmware uses these ranges:
+
+| Class                   | IAQ        |
+| ----------------------- | ---------- |
+| **Excellent**           | 0–50       |
+| **Good**                | 51–100     |
+| **Lightly polluted**    | 101–150    |
+| **Moderately polluted** | 151–200    |
+| **Heavily polluted**    | 201–250    |
+| **Severely polluted**   | 251–350    |
+| **Extremely polluted**  | 351 and up |
+
+The [*Air quality changed*](/docs/flows#when) trigger and the [*Air quality is … or worse*](/docs/flows#and)
+condition use these classes.
+
+## Calibration [#calibration]
+
+**Air quality calibration** tells you how reliable the IAQ, the class and the VOC are right now. It does not
+measure anything itself.
+
+| State           | Meaning                                                                        |
+| --------------- | ------------------------------------------------------------------------------ |
+| **Stabilizing** | Just started; the gas sensor is still warming up. The values mean nothing yet. |
+| **Uncertain**   | Too little history; the values are rough.                                      |
+| **Calibrating** | BSEC is learning the room and getting better.                                  |
+| **Calibrated**  | BSEC knows the room. IAQ, class and VOC are reliable.                          |
+
+Getting to *Calibrated* takes hours to a few days. It goes fastest when the sensor experiences both fresh air
+(a window open) and polluted air. After a power cut or restart the state can drop back a step.
+
+CO₂ comes from the separate SCD40 and does **not** depend on this calibration.
+
+## VOC [#voc]
+
+**VOC** (ppm) is BSEC's estimate of the concentration of volatile organic compounds, derived from the same gas
+readings as the IAQ. Use it as a trend ("something is going on in the kitchen") rather than as an absolute
+measurement.
+
+## Not shown on the device [#not-shown-on-the-device]
+
+The sensor reports a few more air values that the app leaves off the tile on purpose:
+
+| Entity on the sensor           | Why it is not shown                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------ |
+| BME688 CO₂ equivalent          | An estimate from the gas sensor; the real CO₂ from the SCD40 is shown instead.       |
+| BME688 gas resistance          | A raw value that BSEC already turns into IAQ and VOC.                                |
+| SCD40 temperature and humidity | Duplicates of the BME688 values; the SCD40 uses them internally for its CO₂ reading. |
+
+
+# Changelog (/docs/changelog)
+
+
+
+{/* Generated from CHANGELOG.md by scripts/sync-changelog.mjs; edit that file instead. */}
+
+All notable changes to this app are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the app uses
+[Semantic Versioning](https://semver.org/).
+
+## \[Unreleased] [#unreleased]
+
+### Changed [#changed]
+
+* The app is now a Homey Python app on top of `homey-esphomedriver` (and `aioesphomeapi`) instead of
+  `@2colors/esphome-native-api`. The library takes over the connection, reconnects, pairing (mDNS and *Add by IP…*)
+  and the standard capabilities; sensors with an API encryption key can now be added.
+* Presence is `alarm_presence` and movement is `alarm_motion` (was `alarm_motion` and `sensy_moving`).
+  Existing sensors must be removed and added again.
+* Requires Homey 13.0 or newer.
+* App id is `io.github.starredev.sensy`, so later Sensy-One products can be added as drivers of the same app.
+  The Node.js version (`io.github.starredev.sensys1pro`) is kept on the `node` branch and tag `node-1.0.0`.
+
+### Added [#added]
+
+* Diagnostic and configuration entities can be shown as capabilities from the device settings.
+* *Refresh capabilities* maintenance action.
+* Air quality class (*Excellent* … *Extremely polluted*), its calibration state and VOC as capabilities, with an
+  *Air quality changed* trigger and an *Air quality is X or worse* condition.
+* Tracking settings of the radar: holding people who stand still (the firmware's holding engine, off by default),
+  stationary speed, hold after standing still, hold time and jump distance; light and UV offsets.
+* Settings for mirrored mounting, real-time environment readings and the buzzer's pitch and volume.
+* Maintenance actions: calibrate the CO₂ sensor, restart the sensor, restart the radar.
+* The radar widget shows whether a person is moving, standing still or held.
+* A device warning and a *New firmware is available* trigger when Sensy-One releases a newer firmware.
+* Zone capabilities follow the zones drawn in the zone editor automatically.
+
+## \[1.0.0] - unreleased [#100---unreleased]
+
+### Added [#added-1]
+
+* S1 Pro Multi Sense device, discovered through mDNS and followed when its IP address changes.
+* Presence, movement and people count; temperature, humidity, pressure, IAQ, CO₂, light and UV.
+* Up to three zones with presence, movement and people sub-capabilities, shown only for zones that have an outline.
+* Flow cards: seven triggers, four conditions and two actions.
+* Device settings that stay in sync with the sensor in both directions.
+* Zone editor on the app settings page and the *Sensy radar* dashboard widget.
+* Works with the official Sensy-One firmware as well as the Homey edition; live target positions are read from whichever the sensor provides.
+* Adding a sensor by IP address or host name when mDNS discovery finds nothing.
+* A device warning when the sensor's BLE proxy is switched on, since it makes the WiFi connection unstable and Homey does not use it.
+
+### Changed [#changed-1]
+
+* App id is `io.github.starredev.sensys1pro` (was `nl.bryan.sensys1pro` during development).
+* Rewritten as layered, test-covered ES modules; see [CONTRIBUTING.md](https://github.com/starredev/homey-sensy-s1pro/blob/node/CONTRIBUTING.md).
+
+
+# The device (/docs/device)
+
+
+
+The **S1 Pro Multi Sense** device is a Homey *sensor*. Its tile shows the room's presence and climate; zones
+appear as extra values for every zone you draw.
+
+## Presence and people [#presence-and-people]
+
+| Value        | Capability       | Meaning                                                                                                                                            |
+| ------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Presence** | `alarm_presence` | Someone is in the room, also when they sit or lie still. Stays on for the [presence hold time](/docs/settings#detection) after the last detection. |
+| **Motion**   | `alarm_motion`   | Someone in the room is moving.                                                                                                                     |
+| **People**   | `sensy_people`   | Number of people the radar tracks, 0 to 3.                                                                                                         |
+
+Homey's **zone activity** reacts to both presence and motion sensors, so the room the device is in becomes
+active as soon as the sensor sees someone, and stays active while they sit still.
+
+<Callout type="info" title="Up to three people">
+  The radar tracks at most three targets at a time. With more people in the room the count stays at 3.
+</Callout>
+
+## Climate and air [#climate-and-air]
+
+| Value                       | Capability            | Source on the sensor      | Unit                               |
+| --------------------------- | --------------------- | ------------------------- | ---------------------------------- |
+| **Temperature**             | `measure_temperature` | BME688                    | °C                                 |
+| **Humidity**                | `measure_humidity`    | BME688                    | %                                  |
+| **Pressure**                | `measure_pressure`    | BME688                    | mbar (= hPa)                       |
+| **CO₂**                     | `measure_co2`         | SCD40 (a real CO₂ sensor) | ppm                                |
+| **Air quality (IAQ)**       | `sensy_iaq`           | BME688 / Bosch BSEC       | 0–500 index                        |
+| **Air quality**             | `sensy_air_quality`   | BME688 / Bosch BSEC       | *Excellent* … *Extremely polluted* |
+| **Air quality calibration** | `sensy_iaq_accuracy`  | BME688 / Bosch BSEC       | *Stabilizing* … *Calibrated*       |
+| **VOC**                     | `measure_tvoc`        | BME688 / Bosch BSEC       | ppm                                |
+| **Luminance**               | `measure_luminance`   | LTR390                    | lx                                 |
+| **Ultraviolet**             | `measure_ultraviolet` | LTR390                    | UV index                           |
+
+The air quality values are explained in detail on the [Air quality](/docs/air-quality) page.
+
+How often these values update depends on [*Real-time environment readings*](/docs/settings#detection): on (the
+default) they follow every change, off they update once a minute.
+
+## Zones [#zones]
+
+For every zone you draw in the [zone editor](/docs/zones), three values appear:
+
+| Value                | Capability                  | Meaning                        |
+| -------------------- | --------------------------- | ------------------------------ |
+| **Zone N presence**  | `sensy_zone_presence.zoneN` | Someone is inside zone N       |
+| **Zone N movement**  | `sensy_zone_movement.zoneN` | Someone moves inside zone N    |
+| **People in zone N** | `sensy_zone_people.zoneN`   | Number of people inside zone N |
+
+They appear a few seconds after you save a zone with at least three points, and disappear again when you clear
+the zone. Zones you never drew do not clutter the tile.
+
+## Maintenance actions [#maintenance-actions]
+
+Open the device and look under maintenance (the wrench, or *Maintenance* in the device settings) for:
+
+* **Calibrate CO₂ sensor**
+* **Restart sensor**
+* **Restart radar**
+* **Refresh capabilities**
+
+See [Maintenance and firmware](/docs/maintenance) for what they do and when to use them.
+
+## Insights [#insights]
+
+Presence, motion, people, all climate values and the zone values are logged in Homey **Insights**, so you can
+see when a room was used and how CO₂ or humidity developed over the day. The air quality class and its
+calibration state are text values and are not logged.
+
+## Warnings on the device [#warnings-on-the-device]
+
+The device can show a warning bar with one or more of these messages:
+
+| Warning                     | What to do                                                                                                  |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| *The BLE proxy is on…*      | Turn off **BLE \| Proxy** on the sensor's web page; see [Requirements](/docs/installation#bluetooth-proxy). |
+| *Firmware vX is available…* | A newer official firmware is out; see [Firmware updates](/docs/maintenance#firmware-updates).               |
+
+## When the sensor is offline [#when-the-sensor-is-offline]
+
+If the sensor stops answering, the device becomes **unavailable** with the message *ESPHome connection lost*.
+The app reconnects by itself as soon as the sensor is back, also when it got a new IP address. Flows do not fire
+for values that are merely re-sent after a reconnect.
+
+
+# Flows (/docs/flows)
+
+
+
+The device comes with two kinds of flow cards:
+
+* **The app's own cards** for the room, zones, air quality and firmware, listed below.
+* **Homey's standard cards** for the standard capabilities on the device, such as *Presence turned on* or *The
+  CO₂ level changed*. You get these automatically. Every value of the device is also available as a token, so
+  you can compare it in a *Logic* card.
+
+The complete list with every argument and token is in the [flow card reference](/docs/reference/flow-cards).
+
+## When… [#when]
+
+| Card                            | Fires when                                                                                         | Tokens                         |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------ |
+| **Someone became present**      | The room goes from empty to occupied.                                                              | *People*                       |
+| **The room became empty**       | Nobody is left in the room (after the presence hold time).                                         |                                |
+| **Number of people changed**    | The people count changes.                                                                          | *People*, *Previous*           |
+| **Air quality changed**         | The [air quality class](/docs/air-quality) changes, for example from *Good* to *Lightly polluted*. | *Air quality*, *Previous*      |
+| **Someone entered \[zone]**     | The zone goes from empty to occupied.                                                              | *People* (at least 1)          |
+| **\[zone] became empty**        | Nobody is left in the zone (after the zone's hold time).                                           |                                |
+| **Movement started in \[zone]** | Someone in the zone starts moving.                                                                 |                                |
+| **Movement stopped in \[zone]** | Movement in the zone stops.                                                                        |                                |
+| **New firmware is available**   | Sensy-One released a firmware newer than the sensor runs. Fires once per version.                  | *Version*, *Installed version* |
+
+<Callout type="info" title="No false triggers after a reconnect">
+  When the sensor reconnects it re-sends all its values. The app does not treat those as changes, so a
+  reconnect never fires *someone became present*, *zone entered* or similar cards. Zone cards also never fire
+  for zones that have no outline.
+</Callout>
+
+## And… [#and]
+
+| Card                                           | True when                                                                            |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **Someone is / isn't present**                 | The room is occupied (or not).                                                       |
+| **\[zone] is / isn't occupied**                | Someone is inside the zone (or not). Always false for a zone without an outline.     |
+| **There is / is no movement in \[zone]**       | Someone moves inside the zone (or not).                                              |
+| **Number of people is / isn't above \[count]** | The people count is higher than *count* (0–3).                                       |
+| **Air quality is / isn't \[level] or worse**   | The air is at least as polluted as *level*. False until the sensor reported a class. |
+
+## Then… [#then]
+
+| Card                                                        | What it does                                                                                                     |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Set presence hold time of \[zone] to \[seconds] seconds** | Changes the zone's hold time on the sensor (0–3600 s). Handy to make a zone "stickier" at night.                 |
+| **Beep for \[duration] seconds**                            | Sounds the buzzer for 0.1 to 5 seconds. Pitch and volume come from the [buzzer settings](/docs/settings#buzzer). |
+
+## Examples [#examples]
+
+<Accordions>
+  <Accordion title="Light on when someone sits down at the desk">
+    * **When** *Someone entered* **Zone 1 (desk)**
+    * **And** a *Logic* card: the device's *Luminance* token is less than 50
+    * **Then** turn on the desk lamp
+
+    And a second flow: **When** *Zone 1 became empty* **Then** turn off the desk lamp. Raise the zone's
+    *presence hold time* if the lamp goes off while you are still reading.
+  </Accordion>
+
+  <Accordion title="Ventilation on high CO₂">
+    * **When** *The CO₂ level changed* (Homey's standard card)
+    * **And** a *Logic* card: the *CO₂* token is greater than 1000
+    * **Then** set the ventilation to high
+
+    With a separate flow back to normal below 800 ppm, so it does not switch on and off around one value.
+  </Accordion>
+
+  <Accordion title="Feed the sensor's readings to a ventilation system">
+    Many ventilation systems accept external CO₂ and humidity values. Use **When** *The CO₂ level changed*
+    **Then** *report the CO₂ level* with the device's *CO₂* token, and the same for humidity.
+  </Accordion>
+
+  <Accordion title="Bathroom light that stays on in the shower">
+    * **When** *Someone became present* **Then** bathroom light on.
+    * **When** *The room became empty* **Then** bathroom light off.
+    * In the [device settings](/docs/settings#detection), set *Presence hold time* to a few minutes; the radar sees
+      people in the shower, but water and glass can make detection patchy.
+  </Accordion>
+
+  <Accordion title="Warn when the air gets bad">
+    * **When** *Air quality changed*
+    * **And** *Air quality is* **Moderately polluted** *or worse*
+    * **Then** send a notification: "Air quality is now \[Air quality], open a window."
+
+    Right after the sensor started, the air quality is not calibrated yet; see
+    [Air quality](/docs/air-quality#calibration). You can check the *Air quality calibration* token in a *Logic*
+    card if you want to skip notifications until it shows *Calibrated*.
+  </Accordion>
+
+  <Accordion title="Night mode for a bedroom">
+    * At 23:00: **Set presence hold time of Zone 1 (bed) to 1800 seconds**.
+    * At 07:00: set it back to 120 seconds.
+  </Accordion>
+
+  <Accordion title="Know when the sensor has new firmware">
+    **When** *New firmware is available* **Then** send a notification: "Sensy firmware \[Version] is out
+    (installed: \[Installed version])."
+  </Accordion>
+</Accordions>
+
+## Tips [#tips]
+
+* **Use zones rather than the room** when only part of a room matters; zone cards ignore what happens elsewhere.
+* **Tune the hold times** before building complex flows; most "light goes off while I sit still" issues are a
+  hold time that is too short.
+* **Combine with luminance**: the sensor's own light reading tells you whether a light is needed.
+
+
+# Introduction (/docs)
+
+
+
+Sensy S1 Pro turns the [Sensy-One S1 Pro Multi Sense](https://github.com/sensy-one/S1-Pro-Multi-Sense) into a
+native Homey device: presence that also sees people who sit still, up to three zones, the number of people in the
+room, and CO₂, air quality, temperature, humidity, pressure, light and UV.
+
+Homey talks to the sensor directly over the ESPHome native API on your local network. No Home Assistant, no MQTT
+broker and no cloud.
+
+<ThemedImage light="/images/radar-hero-light.svg" dark="/images/radar-hero-dark.svg" alt="The radar map with two zones, an exclusion zone and three people" />
+
+<Callout type="info" title="Unofficial community project">
+  This app is not made, endorsed or supported by Sensy-One. It works with the official Sensy-One firmware.
+</Callout>
+
+## What it does [#what-it-does]
+
+<Cards>
+  <Card title="Presence and people" href="/docs/device">
+    Presence that stays on while you sit still, movement, and how many people are in the room.
+  </Card>
+
+  <Card title="Zones" href="/docs/zones">
+    Draw up to three zones on a live radar map, each with its own presence, flows and settings.
+  </Card>
+
+  <Card title="Climate and air quality" href="/docs/air-quality">
+    CO₂, an air quality index with a plain-language class, VOC, temperature, humidity, light and UV.
+  </Card>
+
+  <Card title="Radar widget" href="/docs/widget">
+    A live top-down radar of the room on your dashboard.
+  </Card>
+
+  <Card title="Flows" href="/docs/flows">
+    Triggers, conditions and actions for the room, every zone, air quality and new firmware.
+  </Card>
+
+  <Card title="Settings" href="/docs/settings">
+    Every setting of the sensor, kept in sync in both directions.
+  </Card>
+</Cards>
+
+## Get started [#get-started]
+
+<Steps>
+  <Step>
+    ### Check the requirements [#check-the-requirements]
+
+    A Homey Pro (2023) or Homey Pro mini on Homey 13 or newer, and the S1 Pro on the official firmware.
+    [Requirements](/docs/installation#requirements)
+  </Step>
+
+  <Step>
+    ### Install the app and add the sensor [#install-the-app-and-add-the-sensor]
+
+    Install **Sensy S1 Pro**, then add the sensor under **Devices → + → Sensy S1 Pro**.
+    [Installation](/docs/installation)
+  </Step>
+
+  <Step>
+    ### Draw your zones [#draw-your-zones]
+
+    Open **Apps → Sensy S1 Pro → Configure** and draw zones while you walk through the room.
+    [Zones](/docs/zones)
+  </Step>
+
+  <Step>
+    ### Automate [#automate]
+
+    Build [flows](/docs/flows) and add the [radar widget](/docs/widget) to a dashboard.
+  </Step>
+</Steps>
+
+## How it works [#how-it-works]
+
+The app is a Homey **Python** app built on
+[`homey-esphomedriver`](https://github.com/Doekse/homey-esphomedriver), the shared ESPHome layer that also powers
+the generic ESPHome app for Homey. That library handles discovery, pairing, encryption, reconnects and the
+standard capabilities. This app adds what is specific to the S1 Pro: zones, live targets, flow cards, the
+settings mirror, the zone editor, the radar widget and firmware notices.
+
+Everything runs on your local network. The only outbound request is a check for new firmware on Sensy-One's
+GitHub releases page, every six hours.
+
+
+# Installation (/docs/installation)
+
+
+
+## Requirements [#requirements]
+
+|                    |                                                                  |
+| ------------------ | ---------------------------------------------------------------- |
+| **Homey**          | Homey Pro (2023) or Homey Pro mini                               |
+| **Homey firmware** | 13.0 or newer (the app is a Python app)                          |
+| **Sensor**         | Sensy-One S1 Pro Multi Sense, official firmware v1.2.21 or newer |
+| **Network**        | Homey reaches the sensor on TCP port 6053                        |
+
+Homey Pro (Early 2019) and older, and Homey Cloud, are not supported.
+
+<Accordions>
+  <Accordion title="Custom firmware">
+    Firmware that keeps the official entity names works as well. The app finds the sensor by its ESPHome project name,
+    `Sensy-One.S1 Pro Multi Sense`, so keep that unchanged. It also understands the live target entities of the
+    earlier "Homey edition" firmware (`live_t1_x` and so on). Features that need entities a custom build left out
+    simply stay empty.
+  </Accordion>
+
+  <Accordion title="Separate networks and VLANs">
+    Automatic discovery uses mDNS (`_esphomelib._tcp`), which does not cross networks or VLANs. If the sensor lives on
+    a separate IoT network, add it [by IP address](#add-by-ip-address) and give it a fixed IP address (a DHCP
+    reservation in your router).
+  </Accordion>
+
+  <Accordion title="Internet access">
+    Everything stays on your local network. Only the [firmware notice](/docs/maintenance#firmware-updates) needs
+    internet access, to check `github.com` for new releases.
+  </Accordion>
+</Accordions>
+
+<Callout type="warn" title="Keep the Bluetooth proxy off">
+  The official firmware has a Bluetooth proxy for Home Assistant (**BLE | Proxy** on the sensor's web page). The
+  ESP32-C3 shares one radio between WiFi and Bluetooth, and with the proxy on the connection to Homey drops
+  regularly. The app shows a warning on the device while it is on.
+</Callout>
+
+## Install the app [#install-the-app]
+
+<Tabs items="[&#x22;Homey App Store&#x22;, &#x22;Homey CLI&#x22;]">
+  <Tab value="Homey App Store">
+    Open the app's page in the Homey App Store and choose **Install**. While the app is in testing, use the test link
+    from the [project page](https://github.com/starredev/homey-sensy-s1pro). Updates arrive through the App Store.
+  </Tab>
+
+  <Tab value="Homey CLI">
+    You need [Node.js](https://nodejs.org/) 22, the Homey CLI and
+    [Docker](https://www.docker.com/products/docker-desktop/), which compiles the app's Python dependencies.
+
+    ```bash
+    npm install --global homey
+    git clone https://github.com/starredev/homey-sensy-s1pro.git
+    cd homey-sensy-s1pro
+    homey login
+    homey select
+    homey app install
+    ```
+
+    On Windows, see the [Windows notes](/docs/developers/development#windows) if the CLI fails with *Error while
+    collecting cross-compiled virtual environment*.
+  </Tab>
+</Tabs>
+
+## Add the sensor [#add-the-sensor]
+
+<Steps>
+  <Step>
+    ### Start adding a device [#start-adding-a-device]
+
+    In the Homey app, go to **Devices → +**, choose **Sensy S1 Pro**, then **S1 Pro Multi Sense**.
+  </Step>
+
+  <Step>
+    ### Pick your sensor [#pick-your-sensor]
+
+    Homey lists the S1 Pro sensors it found on your network that are not added yet. Pick yours. Not in the list?
+    Choose **Add by IP…** (see below).
+  </Step>
+
+  <Step>
+    ### Done [#done]
+
+    Homey connects, reads the sensor and adds the device, named as the sensor reports itself (for example
+    *S1 Pro Multi Sense 2cd9f0*). Move it to the room it hangs in, so Homey's zone activity follows it.
+  </Step>
+</Steps>
+
+Right after adding, the app reads everything from the sensor: the [device values](/docs/device), all
+[settings](/docs/settings), and the zones that are already drawn, which get their own capabilities a few seconds
+later.
+
+### Add by IP address [#add-by-ip-address]
+
+Use **Add by IP…** when the sensor is not found automatically.
+
+1. Enter the sensor's **IP address or host name**, for example `192.168.1.40` or `s1-pro-multi-sense-2cd9f0.local`.
+2. Leave the **port** at `6053` unless you changed it in the firmware.
+3. Choose **Connect**.
+
+You find the IP address in your router or on the sensor's web page. A sensor added this way is still recognised by
+its MAC address, so if mDNS later sees it at another address, Homey follows it.
+
+### Encryption key [#encryption-key]
+
+If the firmware has an API encryption key (`api: encryption: key:` in ESPHome), Homey asks for it after
+connecting. The official firmware has no key, so normally you will not see this step.
+
+### If adding fails [#if-adding-fails]
+
+| Message                                                    | Cause                                                                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| *This ESPHome project is not supported by this Homey app.* | Another ESPHome device answered, or the firmware's project name is not `Sensy-One.S1 Pro Multi Sense`. |
+| *Could not connect to the ESPHome device…*                 | Nothing answered on port 6053. Check the address, power and network.                                   |
+| *The device did not respond in time.*                      | The sensor is busy or the network is slow. Try again.                                                  |
+| *The encryption key is invalid.*                           | The key does not match the firmware.                                                                   |
+| *This device is not using encryption.*                     | You entered a key, but the firmware has none.                                                          |
+
+## Change the address later [#change-the-address-later]
+
+If the sensor got a new IP address that Homey does not pick up by itself, or you added an encryption key, open
+the device's settings and choose **Repair**. The device, its flows and Insights are kept.
+
+## Coming from the previous version [#coming-from-the-previous-version]
+
+Earlier versions of this app were written in Node.js and had the app id `io.github.starredev.sensys1pro`. The
+current app (`io.github.starredev.sensy`) installs **next to** it.
+
+1. Install the new app and add the sensor (both apps can be connected at the same time).
+2. Move your flows to the new device. Presence is now `alarm_presence` (was `alarm_motion`), movement is now
+   `alarm_motion` (was `sensy_moving`). The app's own flow cards kept their names.
+3. Remove the old device and the old app.
+
+
+# Maintenance and firmware (/docs/maintenance)
+
+
+
+## Maintenance actions [#maintenance-actions]
+
+Open the device and find the maintenance actions (in the device's settings, under *Maintenance*).
+
+### Calibrate CO₂ sensor [#calibrate-co-sensor]
+
+Sets the SCD40's CO₂ reading to **426 ppm**, the CO₂ level of outdoor air (forced recalibration).
+
+<Callout type="warn" title="Only in fresh outdoor air">
+  The calibration assumes the sensor is in outdoor air **right now**. Put the sensor outside (or at a wide
+  open window with a breeze) for **at least 3 minutes** first, without people breathing nearby. Calibrating
+  indoors makes every later reading wrong.
+</Callout>
+
+Use it when the CO₂ readings have drifted, for example when they stay well above 420 ppm while the room is
+thoroughly aired. The firmware does not recalibrate the sensor by itself.
+
+### Restart sensor [#restart-sensor]
+
+Restarts the sensor's ESP32. The device is unavailable for a few seconds and reconnects by itself. Zones and
+settings are kept: they are stored on the sensor.
+
+### Restart radar [#restart-radar]
+
+Restarts only the radar module. Use it when the radar stops reporting people while the rest of the sensor
+works.
+
+### Refresh capabilities [#refresh-capabilities]
+
+Rebuilds the device's capabilities from what the sensor reports. You rarely need it:
+
+* capabilities for newly drawn zones appear by themselves;
+* after an app update that adds capabilities, the device refreshes once by itself.
+
+Use it after a firmware update that added new entities, if they do not show up. Your zone capabilities are kept.
+
+## Firmware updates [#firmware-updates]
+
+The app checks the [Sensy-One releases on GitHub](https://github.com/sensy-one/S1-Pro-Multi-Sense/releases)
+when the sensor connects and then every six hours. When a newer version than the one on your sensor is out:
+
+* the device shows a warning: *Firmware vX is available (installed: vY). Update the sensor from its web page.*;
+* the [*New firmware is available*](/docs/flows#when) trigger fires, once per version.
+
+The app does **not** install updates itself. Update the sensor from its own web page:
+
+1. Open the sensor's web page (its address is in the device settings under *Web server*, or
+   `http://<sensor-ip>/`).
+2. Use the firmware update there, following Sensy-One's instructions.
+
+The warning disappears as soon as the sensor reconnects with the new version.
+
+<Callout type="info" title="Why Homey checks instead of the sensor">
+  The firmware can check GitHub itself, but the HTTPS request needs a lot of memory on the ESP32-C3 and rarely
+  gets an answer. Homey checks instead and only compares version numbers; nothing about your sensor is sent.
+</Callout>
+
+## Extra capabilities [#extra-capabilities]
+
+Two switches in the device settings, under *Capabilities*, add more of the sensor's entities to the device:
+
+<Tabs items="[&#x22;Show diagnostic capabilities&#x22;, &#x22;Show configuration capabilities&#x22;]">
+  <Tab value="Show diagnostic capabilities">
+    | Capability          | From the sensor             |
+    | ------------------- | --------------------------- |
+    | Connectivity        | ESP32 status                |
+    | Temperature (ESP32) | Chip temperature            |
+    | IP address          | ESP32 IP                    |
+    | WiFi network        | ESP32 SSID                  |
+    | WiFi strength       | *Very weak* … *Very strong* |
+  </Tab>
+
+  <Tab value="Show configuration capabilities">
+    | Capability                         | From the sensor                                  |
+    | ---------------------------------- | ------------------------------------------------ |
+    | On/off, brightness, colour, effect | The RGB status LED (WS2812)                      |
+    | BLE proxy                          | Bluetooth proxy for Home Assistant (keep it off) |
+    | Buzzer                             | The buzzer as a switch                           |
+    | Radar Bluetooth                    | The radar module's own Bluetooth                 |
+  </Tab>
+</Tabs>
+
+Turning a switch off removes those capabilities again. Settings that already have a place in the
+[device settings](/docs/settings) (single target, mirrored mounting, real-time readings, holding engine, tracking
+numbers, offsets, buzzer pitch and volume) and the factory reset buttons are never added as capabilities.
+
+## Factory resets [#factory-resets]
+
+The sensor has factory reset buttons for the ESP32, the radar and the CO₂ sensor. The app deliberately does not
+offer them: one tap would wipe your sensor's WiFi, zones or calibration. Use the sensor's own web page if you
+really need them.
+
+
+# Placing the sensor (/docs/placement)
+
+
+
+The S1 Pro's mmWave radar sees a **fan-shaped area of about 120°** in front of the sensor. Placement decides
+how well it detects people, and where your zones end up.
+
+## The coordinate system [#the-coordinate-system]
+
+The app, the zone editor and the radar widget all use the radar's own coordinates, in centimetres:
+
+```
+            y (distance in front of the sensor)
+            ▲
+     ╲      │      ╱
+      ╲     │     ╱     ← about 120° field of view
+       ╲    │    ╱
+        ╲   │   ╱
+ ─x ◀────── ● ──────▶ +x
+          sensor
+```
+
+* **x** is left (−) or right (+) as seen *from* the sensor.
+* **y** is the distance straight in front of the sensor.
+* The **detection range** (default 600 cm, see [settings](/docs/settings#detection)) limits how far the
+  radar looks.
+
+## Tips [#tips]
+
+* **Face the open room.** Mount the sensor so the area you care about is in front of it, not at the far edge of
+  the field of view.
+* **Avoid moving objects in view**: fans, curtains in a draught, plants near a heater, robot vacuums. Hide them
+  with an [exclusion zone](/docs/zones#the-exclusion-zone) if you cannot avoid them.
+* **Be careful with mirrors, glass and tiles.** Radar signals reflect off hard, flat surfaces. A person can then
+  show up twice: once where they are and once as a "mirror image" that moves along. Bathrooms with large
+  mirrors or a glass shower wall are the worst case. See [ghost targets](/docs/troubleshooting#ghost-targets).
+* **Pets are seen too.** A cat or dog is a moving target like any other. Zones and the
+  [people count condition](/docs/flows) help to tell a person from a pet in most rooms.
+* **Upside down or facing the other way?** Turn on [*Mirrored mounting*](/docs/settings#detection) so left
+  and right are not swapped in your zones and on the radar.
+
+<Callout type="info" title="Sensy-One's own guidance">
+  For mounting height, angle and the sensor's exact range, follow the instructions that came with the sensor
+  and the [Sensy-One documentation](https://github.com/sensy-one/S1-Pro-Multi-Sense).
+</Callout>
+
+## Checking the result [#checking-the-result]
+
+Open the [zone editor](/docs/zones) (**Apps → Sensy S1 Pro → Configure**) and walk around the room. You
+see yourself as a dot on the radar map. If the dot follows you well everywhere you want to detect people, the
+sensor is placed right.
+
+
+# Capabilities (/docs/reference/capabilities)
+
+
+
+Capabilities are mapped by [`homey-esphomedriver`](/docs/developers/esphomedriver) from the sensor's entities,
+using the app's brand profile. Device class: **sensor**.
+
+## Always present [#always-present]
+
+| Capability            | Type           | Title                   | Unit     | Insights | Source entity                |
+| --------------------- | -------------- | ----------------------- | -------- | -------- | ---------------------------- |
+| `alarm_presence`      | boolean        | Presence                |          | yes      | `any_presence`               |
+| `alarm_motion`        | boolean        | Motion                  |          | yes      | `any_movement`               |
+| `sensy_people`        | number (0–3)   | People                  |          | yes      | `all_targets_count`          |
+| `measure_temperature` | number         | Temperature             | °C       | yes      | `bme688_temperature`         |
+| `measure_humidity`    | number         | Humidity                | %        | yes      | `bme688_humidity`            |
+| `measure_pressure`    | number         | Pressure                | mbar     | yes      | `bme688_pressure`            |
+| `measure_co2`         | number         | CO₂                     | ppm      | yes      | `scd40_co__concentration`    |
+| `sensy_iaq`           | number (0–500) | Air quality (IAQ)       |          | yes      | `bme688_iaq`                 |
+| `sensy_air_quality`   | enum           | Air quality             |          | no       | `bme688_iaq_classification`  |
+| `sensy_iaq_accuracy`  | enum           | Air quality calibration |          | no       | `bme688_iaq_accuracy`        |
+| `measure_tvoc`        | number         | VOC                     | ppm      | yes      | `bme688_voc_equivalent`      |
+| `measure_luminance`   | number         | Luminance               | lx       | yes      | `ltr390_ambient_light__lux_` |
+| `measure_ultraviolet` | number         | Ultraviolet             | UV index | yes      | `ltr390_uv_index`            |
+
+### Enum values [#enum-values]
+
+`sensy_air_quality`: `Excellent`, `Good`, `Lightly polluted`, `Moderately polluted`, `Heavily polluted`,
+`Severely polluted`, `Extremely polluted`. The values are the firmware's own text, so they are also what the
+*Air quality* token contains.
+
+`sensy_iaq_accuracy`: `Stabilizing`, `Uncertain`, `Calibrating`, `Calibrated`.
+
+## Per drawn zone [#per-drawn-zone]
+
+`N` is 1, 2 or 3. Present only for zones with an outline of at least three points.
+
+| Capability                  | Type         | Title            | Insights | Source entity         |
+| --------------------------- | ------------ | ---------------- | -------- | --------------------- |
+| `sensy_zone_presence.zoneN` | boolean      | Zone N presence  | yes      | `zone_N_presence`     |
+| `sensy_zone_movement.zoneN` | boolean      | Zone N movement  | yes      | `zone_N_movement`     |
+| `sensy_zone_people.zoneN`   | number (0–3) | People in zone N | yes      | `zone_N_target_count` |
+
+## Maintenance actions [#maintenance-actions]
+
+| Capability             | Title                | Presses                       |
+| ---------------------- | -------------------- | ----------------------------- |
+| `button.calibrate_co2` | Calibrate CO₂ sensor | `scd40___forced_calibration`  |
+| `button.restart`       | Restart sensor       | `esp32___restart_module`      |
+| `button.restart_radar` | Restart radar        | `radar___restart_module`      |
+| `button.refresh`       | Refresh capabilities | *(rebuilds the capabilities)* |
+
+## Optional [#optional]
+
+With **Show diagnostic capabilities** or **Show configuration capabilities** on, the library adds the remaining
+diagnostic and configuration entities with its generic mapping: `alarm_connectivity`,
+`measure_temperature.esp32___temperature`, `esphome_string.esp32___ip`, `esphome_string.esp32___ssid`,
+`esphome_string.esp32___wifi_strength`, the LED (`onoff`, `dim`, `light_hue`, `light_saturation`,
+`light_effect`) and switches such as `onoff.ble___proxy`, `onoff.mlt8530___buzzer` and
+`onoff.radar___bluetooth`. Exact ids can differ slightly when several entities share a base capability.
+
+## Custom capability definitions [#custom-capability-definitions]
+
+The app defines these custom capabilities (in `.homeycompose/capabilities/`):
+
+| Id                    | Type    | Notes                                  |
+| --------------------- | ------- | -------------------------------------- |
+| `sensy_people`        | number  | 0–3, no decimals                       |
+| `sensy_iaq`           | number  | 0–500, no decimals                     |
+| `sensy_air_quality`   | enum    | See above                              |
+| `sensy_iaq_accuracy`  | enum    | See above                              |
+| `sensy_zone_presence` | boolean | Used as `sensy_zone_presence.zoneN`    |
+| `sensy_zone_movement` | boolean | Used as `sensy_zone_movement.zoneN`    |
+| `sensy_zone_people`   | number  | 0–3, used as `sensy_zone_people.zoneN` |
+
+
+# Sensor entities (/docs/reference/entities)
+
+
+
+The S1 Pro on the official firmware v1.2.21 reports these 151 ESPHome entities. The table shows what the app does with
+each of them. Object ids are as `aioesphomeapi` reports them; for names with non-ASCII characters they can differ
+from other ESPHome clients (`SCD40 CO₂ Concentration` is `scd40_co__concentration`).
+
+*Category* is the ESPHome entity category: entities without one are primary entities, *config* and *diagnostic*
+entities are hidden by default in most ESPHome integrations.
+
+## Presence and people [#presence-and-people]
+
+| Entity                   | Type         | Category | In the app                                  |
+| ------------------------ | ------------ | -------- | ------------------------------------------- |
+| `all_targets_count`      | Sensor       | —        | Capability `sensy_people` · flows, widget   |
+| `any_movement`           | BinarySensor | —        | Capability `alarm_motion` · flows, widget   |
+| `any_movement_threshold` | Number       | —        | Setting `any_movement_threshold`            |
+| `any_presence`           | BinarySensor | —        | Capability `alarm_presence` · flows, widget |
+| `any_presence_delay`     | Number       | —        | Setting `any_presence_delay`                |
+
+## Zones [#zones]
+
+| Entity                        | Type         | Category | In the app                                                                     |
+| ----------------------------- | ------------ | -------- | ------------------------------------------------------------------------------ |
+| `exclusion_zone_p1_x`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p1_y`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p2_x`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p2_y`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p3_x`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p3_y`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p4_x`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p4_y`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p5_x`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p5_y`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p6_x`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p6_y`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p7_x`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p7_y`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p8_x`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_p8_y`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `exclusion_zone_points_count` | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_movement`             | BinarySensor | —        | Capability `sensy_zone_movement.zone1` (drawn zones only) · zone flows, widget |
+| `zone_1_movement_threshold`   | Number       | —        | Setting `zone1_movement_threshold`                                             |
+| `zone_1_p1_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p1_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p2_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p2_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p3_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p3_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p4_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p4_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p5_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p5_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p6_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p6_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p7_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p7_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p8_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_p8_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_points_count`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_1_presence`             | BinarySensor | —        | Capability `sensy_zone_presence.zone1` (drawn zones only) · zone flows, widget |
+| `zone_1_presence_delay`       | Number       | —        | Setting `zone1_presence_delay`                                                 |
+| `zone_1_target_count`         | Sensor       | —        | Capability `sensy_zone_people.zone1` (drawn zones only) · zone flows, widget   |
+| `zone_2_movement`             | BinarySensor | —        | Capability `sensy_zone_movement.zone2` (drawn zones only) · zone flows, widget |
+| `zone_2_movement_threshold`   | Number       | —        | Setting `zone2_movement_threshold`                                             |
+| `zone_2_p1_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p1_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p2_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p2_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p3_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p3_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p4_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p4_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p5_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p5_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p6_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p6_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p7_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p7_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p8_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_p8_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_points_count`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_2_presence`             | BinarySensor | —        | Capability `sensy_zone_presence.zone2` (drawn zones only) · zone flows, widget |
+| `zone_2_presence_delay`       | Number       | —        | Setting `zone2_presence_delay`                                                 |
+| `zone_2_target_count`         | Sensor       | —        | Capability `sensy_zone_people.zone2` (drawn zones only) · zone flows, widget   |
+| `zone_3_movement`             | BinarySensor | —        | Capability `sensy_zone_movement.zone3` (drawn zones only) · zone flows, widget |
+| `zone_3_movement_threshold`   | Number       | —        | Setting `zone3_movement_threshold`                                             |
+| `zone_3_p1_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p1_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p2_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p2_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p3_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p3_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p4_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p4_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p5_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p5_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p6_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p6_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p7_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p7_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p8_x`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_p8_y`                 | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_points_count`         | Number       | —        | Zone outline · zone editor, widget                                             |
+| `zone_3_presence`             | BinarySensor | —        | Capability `sensy_zone_presence.zone3` (drawn zones only) · zone flows, widget |
+| `zone_3_presence_delay`       | Number       | —        | Setting `zone3_presence_delay`                                                 |
+| `zone_3_target_count`         | Sensor       | —        | Capability `sensy_zone_people.zone3` (drawn zones only) · zone flows, widget   |
+
+## Targets [#targets]
+
+| Entity              | Type       | Category | In the app                                            |
+| ------------------- | ---------- | -------- | ----------------------------------------------------- |
+| `target_1_angle`    | Sensor     | —        | Not used (x/y carry the same information)             |
+| `target_1_distance` | Sensor     | —        | Not used (x/y carry the same information)             |
+| `target_1_speed`    | Sensor     | —        | Not used (x/y carry the same information)             |
+| `target_1_state`    | TextSensor | —        | Target state (moving / still / held) · widget markers |
+| `target_1_x`        | Sensor     | —        | Target position · widget, zone editor                 |
+| `target_1_y`        | Sensor     | —        | Target position · widget, zone editor                 |
+| `target_2_angle`    | Sensor     | —        | Not used (x/y carry the same information)             |
+| `target_2_distance` | Sensor     | —        | Not used (x/y carry the same information)             |
+| `target_2_speed`    | Sensor     | —        | Not used (x/y carry the same information)             |
+| `target_2_state`    | TextSensor | —        | Target state (moving / still / held) · widget markers |
+| `target_2_x`        | Sensor     | —        | Target position · widget, zone editor                 |
+| `target_2_y`        | Sensor     | —        | Target position · widget, zone editor                 |
+| `target_3_angle`    | Sensor     | —        | Not used (x/y carry the same information)             |
+| `target_3_distance` | Sensor     | —        | Not used (x/y carry the same information)             |
+| `target_3_speed`    | Sensor     | —        | Not used (x/y carry the same information)             |
+| `target_3_state`    | TextSensor | —        | Target state (moving / still / held) · widget markers |
+| `target_3_x`        | Sensor     | —        | Target position · widget, zone editor                 |
+| `target_3_y`        | Sensor     | —        | Target position · widget, zone editor                 |
+
+## Climate and air [#climate-and-air]
+
+| Entity                       | Type       | Category | In the app                                           |
+| ---------------------------- | ---------- | -------- | ---------------------------------------------------- |
+| `bme688_co__equivalent`      | Sensor     | —        | Not shown (estimate or duplicate; see Air quality)   |
+| `bme688_gas_resistance__k__` | Sensor     | —        | Not shown (estimate or duplicate; see Air quality)   |
+| `bme688_humidity`            | Sensor     | —        | Capability `measure_humidity`                        |
+| `bme688_iaq`                 | Sensor     | —        | Capability `sensy_iaq`                               |
+| `bme688_iaq_accuracy`        | TextSensor | —        | Capability `sensy_iaq_accuracy`                      |
+| `bme688_iaq_classification`  | TextSensor | —        | Capability `sensy_air_quality` · *Air quality* flows |
+| `bme688_pressure`            | Sensor     | —        | Capability `measure_pressure`                        |
+| `bme688_temp_offset`         | Number     | —        | Setting `bme688_temp_offset`                         |
+| `bme688_temperature`         | Sensor     | —        | Capability `measure_temperature`                     |
+| `bme688_voc_equivalent`      | Sensor     | —        | Capability `measure_tvoc`                            |
+| `ltr390_ambient_light__lux_` | Sensor     | —        | Capability `measure_luminance`                       |
+| `ltr390_lux_offset`          | Number     | —        | Setting `lux_offset`                                 |
+| `ltr390_uv_index`            | Sensor     | —        | Capability `measure_ultraviolet`                     |
+| `ltr390_uv_offset`           | Number     | —        | Setting `uv_offset`                                  |
+| `scd40___factory_reset`      | Button     | config   | Not offered (factory reset)                          |
+| `scd40___forced_calibration` | Button     | config   | Maintenance action `button.calibrate_co2`            |
+| `scd40_co__concentration`    | Sensor     | —        | Capability `measure_co2`                             |
+| `scd40_humidity`             | Sensor     | —        | Not shown (estimate or duplicate; see Air quality)   |
+| `scd40_temp_offset`          | Number     | —        | Setting `scd40_temp_offset`                          |
+| `scd40_temperature`          | Sensor     | —        | Not shown (estimate or duplicate; see Air quality)   |
+
+## Radar [#radar]
+
+| Entity                             | Type   | Category | In the app                                        |
+| ---------------------------------- | ------ | -------- | ------------------------------------------------- |
+| `detection_range`                  | Number | —        | Setting `detection_range`                         |
+| `radar___bluetooth`                | Switch | config   | Capability with *Show configuration capabilities* |
+| `radar___factory_reset`            | Button | config   | Not offered (factory reset)                       |
+| `radar___flip_y_axis`              | Switch | config   | Setting `mirrored`                                |
+| `radar___holding_engine`           | Switch | config   | Setting `holding`                                 |
+| `radar___restart_module`           | Button | config   | Maintenance action `button.restart_radar`         |
+| `radar___single_target`            | Switch | config   | Setting `single_target`                           |
+| `radar_dropout_hold_time`          | Number | —        | Setting `dropout_hold_time`                       |
+| `radar_gate_radius`                | Number | —        | Setting `gate_radius`                             |
+| `radar_stationary_speed_threshold` | Number | —        | Setting `stationary_speed_threshold`              |
+| `radar_stationary_time`            | Number | —        | Setting `stationary_time`                         |
+
+## Device, buzzer and LED [#device-buzzer-and-led]
+
+| Entity                    | Type         | Category   | In the app                                                    |
+| ------------------------- | ------------ | ---------- | ------------------------------------------------------------- |
+| `ble___proxy`             | Switch       | config     | Device warning when on · capability with *Show configuration* |
+| `esp32___factory_reset`   | Button       | config     | Not offered (factory reset)                                   |
+| `esp32___firmware_update` | Update       | config     | Not used: Homey checks GitHub itself (firmware notice)        |
+| `esp32___ip`              | TextSensor   | diagnostic | Capability with *Show diagnostic capabilities*                |
+| `esp32___restart_module`  | Button       | config     | Maintenance action `button.restart`                           |
+| `esp32___ssid`            | TextSensor   | diagnostic | Capability with *Show diagnostic capabilities*                |
+| `esp32___status`          | BinarySensor | diagnostic | Capability with *Show diagnostic capabilities*                |
+| `esp32___temperature`     | Sensor       | diagnostic | Capability with *Show diagnostic capabilities*                |
+| `esp32___wifi_strength`   | TextSensor   | diagnostic | Capability with *Show diagnostic capabilities*                |
+| `mlt8530___buzzer`        | Switch       | config     | *Beep* flow action · capability with *Show configuration*     |
+| `mlt8530_buzzer_pitch`    | Number       | —          | Setting `buzzer_pitch`                                        |
+| `mlt8530_buzzer_volume`   | Number       | —          | Setting `buzzer_volume`                                       |
+| `mode___realtime`         | Switch       | config     | Setting `realtime`                                            |
+| `ws2812___led`            | Light        | config     | Capability with *Show configuration capabilities*             |
+
+
+# Flow cards (/docs/reference/flow-cards)
+
+
+
+Every flow card of the app's own, with its id, arguments and tokens. Cards are device cards: they all have a
+*device* argument (the S1 Pro). For when to use them, see the [Flows guide](/docs/flows).
+
+Homey also offers its standard cards for the standard capabilities of the device (see [Capabilities](/docs/reference/capabilities)).
+
+## Triggers (When…) [#triggers-when]
+
+### Someone became present [#someone-became-present]
+
+* **Id:** `room_occupied`
+* **Card text:** Someone became present
+* **Dutch:** Iemand werd aanwezig
+* **Token:** `people` (number): People, for example `1`
+
+### The room became empty [#the-room-became-empty]
+
+* **Id:** `room_empty`
+* **Card text:** The room became empty
+* **Dutch:** De ruimte werd leeg
+
+### Number of people changed [#number-of-people-changed]
+
+* **Id:** `people_changed`
+* **Card text:** Number of people changed
+* **Dutch:** Aantal personen veranderde
+* **Token:** `people` (number): People, for example `2`
+* **Token:** `previous` (number): Previous, for example `1`
+
+### Air quality changed [#air-quality-changed]
+
+* **Id:** `air_quality_changed`
+* **Card text:** Air quality changed
+* **Dutch:** Luchtkwaliteit veranderde
+* **Token:** `air_quality` (string): Air quality, for example `Good`
+* **Token:** `previous` (string): Previous, for example `Excellent`
+
+### Someone entered a zone [#someone-entered-a-zone]
+
+* **Id:** `zone_entered`
+* **Card text:** Someone entered *zone*
+* **Dutch:** Iemand kwam *zone* binnen
+* **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+* **Token:** `people` (number): People in zone, for example `1`
+
+### A zone became empty [#a-zone-became-empty]
+
+* **Id:** `zone_left`
+* **Card text:** *zone* became empty
+* **Dutch:** *zone* werd leeg
+* **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### Movement started in a zone [#movement-started-in-a-zone]
+
+* **Id:** `zone_movement_started`
+* **Card text:** Movement started in *zone*
+* **Dutch:** Beweging gestart in *zone*
+* **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### Movement stopped in a zone [#movement-stopped-in-a-zone]
+
+* **Id:** `zone_movement_stopped`
+* **Card text:** Movement stopped in *zone*
+* **Dutch:** Beweging gestopt in *zone*
+* **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### New firmware is available [#new-firmware-is-available]
+
+* **Id:** `firmware_available`
+* **Card text:** New firmware is available
+* **Dutch:** Er is nieuwe firmware beschikbaar
+* **Hint:** Homey checks the Sensy-One releases every few hours. Update the sensor from its web page.
+* **Token:** `version` (string): Version, for example `v1.3.0`
+* **Token:** `installed` (string): Installed version, for example `v1.2.21`
+
+## Conditions (And…) [#conditions-and]
+
+### Someone is / isn't present [#someone-is--isnt-present]
+
+* **Id:** `is_present`
+* **Card text:** Someone is / isn't present
+* **Dutch:** Er is / is niet iemand aanwezig
+
+### Zone is / isn't occupied [#zone-is--isnt-occupied]
+
+* **Id:** `zone_occupied`
+* **Card text:** *zone* is / isn't occupied
+* **Dutch:** *zone* is / is niet bezet
+* **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### There is / is no movement in a zone [#there-is--is-no-movement-in-a-zone]
+
+* **Id:** `zone_moving`
+* **Card text:** There is / is no movement in *zone*
+* **Dutch:** Er is / is geen beweging in *zone*
+* **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### Number of people is / isn't above [#number-of-people-is--isnt-above]
+
+* **Id:** `people_above`
+* **Card text:** Number of people is / isn't above *count*
+* **Dutch:** Aantal personen is / is niet hoger dan *count*
+* **Argument:** `count` (number, 0–3)
+
+### Air quality is / isn't at least as bad as [#air-quality-is--isnt-at-least-as-bad-as]
+
+* **Id:** `air_quality_at_least`
+* **Card text:** Air quality is / isn't *level* or worse
+* **Dutch:** Luchtkwaliteit is / is niet *level* of slechter
+* **Argument:** `level` (dropdown, one of: `Excellent` (Excellent), `Good` (Good), `Lightly polluted` (Lightly polluted), `Moderately polluted` (Moderately polluted), `Heavily polluted` (Heavily polluted), `Severely polluted` (Severely polluted), `Extremely polluted` (Extremely polluted))
+
+## Actions (Then…) [#actions-then]
+
+### Set zone presence hold time [#set-zone-presence-hold-time]
+
+* **Id:** `set_zone_delay`
+* **Card text:** Set presence hold time of *zone* to *seconds* seconds
+* **Dutch:** Zet vasthoudtijd van *zone* op *seconds* seconden
+* **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+* **Argument:** `seconds` (number, 0–3600)
+
+### Beep [#beep]
+
+* **Id:** `beep`
+* **Card text:** Beep for *duration* seconds
+* **Dutch:** Piep *duration* seconden
+* **Argument:** `duration` (number, 0.1–5)
+
+## Behaviour [#behaviour]
+
+* Room and zone triggers fire on real changes only. Values the sensor re-sends after a reconnect never fire a card.
+* Zone triggers and zone conditions ignore zones without an outline (fewer than three points).
+* *Someone entered a zone* reports at least 1 person, because the zone's people count can lag behind its presence.
+* *Air quality changed* does not fire for the first class reported after a (re)connect, and ignores the firmware's `error` value.
+* *New firmware is available* fires once per release version, and again only for a newer release.
+* *Beep* turns the buzzer on, waits, and always turns it off again, also when the flow is stopped in between.
+
+
+# Settings reference (/docs/reference/settings)
+
+
+
+All device settings, with their id, type, range and the sensor entity they mirror. Settings with a sensor
+entity are kept in sync in both directions; see the [Device settings guide](/docs/settings) for what they do.
+
+## Detection [#detection]
+
+| Setting                        | Id                       | Type     | Default | Range         | Sensor entity            |
+| ------------------------------ | ------------------------ | -------- | ------- | ------------- | ------------------------ |
+| Detection range                | `detection_range`        | number   | 600     | 0 – 1800 cm   | `detection_range`        |
+| Presence hold time             | `any_presence_delay`     | number   | 0       | 0 – 3600 s    | `any_presence_delay`     |
+| Movement threshold             | `any_movement_threshold` | number   | 0       | 0 – 5000 cm/s | `any_movement_threshold` |
+| Track a single person          | `single_target`          | checkbox | False   |               | `radar___single_target`  |
+| Mirrored mounting              | `mirrored`               | checkbox | False   |               | `radar___flip_y_axis`    |
+| Real-time environment readings | `realtime`               | checkbox | True    |               | `mode___realtime`        |
+
+## Zone 1 [#zone-1]
+
+| Setting            | Id                         | Type   | Default | Range         | Sensor entity               |
+| ------------------ | -------------------------- | ------ | ------- | ------------- | --------------------------- |
+| Presence hold time | `zone1_presence_delay`     | number | 0       | 0 – 3600 s    | `zone_1_presence_delay`     |
+| Movement threshold | `zone1_movement_threshold` | number | 0       | 0 – 5000 cm/s | `zone_1_movement_threshold` |
+
+## Zone 2 [#zone-2]
+
+| Setting            | Id                         | Type   | Default | Range         | Sensor entity               |
+| ------------------ | -------------------------- | ------ | ------- | ------------- | --------------------------- |
+| Presence hold time | `zone2_presence_delay`     | number | 0       | 0 – 3600 s    | `zone_2_presence_delay`     |
+| Movement threshold | `zone2_movement_threshold` | number | 0       | 0 – 5000 cm/s | `zone_2_movement_threshold` |
+
+## Zone 3 [#zone-3]
+
+| Setting            | Id                         | Type   | Default | Range         | Sensor entity               |
+| ------------------ | -------------------------- | ------ | ------- | ------------- | --------------------------- |
+| Presence hold time | `zone3_presence_delay`     | number | 0       | 0 – 3600 s    | `zone_3_presence_delay`     |
+| Movement threshold | `zone3_movement_threshold` | number | 0       | 0 – 5000 cm/s | `zone_3_movement_threshold` |
+
+## Tracking [#tracking]
+
+| Setting                     | Id                           | Type     | Default | Range        | Sensor entity                      |
+| --------------------------- | ---------------------------- | -------- | ------- | ------------ | ---------------------------------- |
+| Hold people who stand still | `holding`                    | checkbox | False   |              | `radar___holding_engine`           |
+| Stationary speed            | `stationary_speed_threshold` | number   | 45      | 0 – 100 cm/s | `radar_stationary_speed_threshold` |
+| Hold after standing still   | `stationary_time`            | number   | 55      | 0 – 120 s    | `radar_stationary_time`            |
+| Hold time                   | `dropout_hold_time`          | number   | 15      | 0 – 60 min   | `radar_dropout_hold_time`          |
+| Jump distance               | `gate_radius`                | number   | 100     | 5 – 300 cm   | `radar_gate_radius`                |
+
+## Calibration [#calibration]
+
+| Setting                       | Id                   | Type   | Default | Range             | Sensor entity        |
+| ----------------------------- | -------------------- | ------ | ------- | ----------------- | -------------------- |
+| Temperature offset            | `bme688_temp_offset` | number | 0       | -50 – 50 °C       | `bme688_temp_offset` |
+| CO₂ sensor temperature offset | `scd40_temp_offset`  | number | 0       | -50 – 50 °C       | `scd40_temp_offset`  |
+| Light offset                  | `lux_offset`         | number | 0       | -10000 – 10000 lx | `ltr390_lux_offset`  |
+| UV index offset               | `uv_offset`          | number | 0       | -50 – 50          | `ltr390_uv_offset`   |
+
+## Buzzer [#buzzer]
+
+| Setting | Id              | Type   | Default | Range         | Sensor entity                   |
+| ------- | --------------- | ------ | ------- | ------------- | ------------------------------- |
+| Pitch   | `buzzer_pitch`  | number | 2700    | 100 – 8000 Hz | `mlt8530_buzzer_pitch`          |
+| Volume  | `buzzer_volume` | number | 50      | 0 – 100 %     | `mlt8530_buzzer_volume` (× 100) |
+
+## Device [#device]
+
+| Setting      | Id             | Type     | Default | Range | Sensor entity           |
+| ------------ | -------------- | -------- | ------- | ----- | ----------------------- |
+| Device class | `device_class` | dropdown | auto    |       | *(homey-esphomedriver)* |
+
+## Capabilities [#capabilities]
+
+| Setting                         | Id                   | Type     | Default | Range | Sensor entity           |
+| ------------------------------- | -------------------- | -------- | ------- | ----- | ----------------------- |
+| Show diagnostic capabilities    | `show_diagnostics`   | checkbox | False   |       | *(homey-esphomedriver)* |
+| Show configuration capabilities | `show_configuration` | checkbox | False   |       | *(homey-esphomedriver)* |
+
+## Device Information [#device-information]
+
+| Setting            | Id                 | Type  | Default | Range | Sensor entity           |
+| ------------------ | ------------------ | ----- | ------- | ----- | ----------------------- |
+| Host / IP          | `host`             | label |         |       | *(homey-esphomedriver)* |
+| API port           | `port`             | label |         |       | *(homey-esphomedriver)* |
+| Encryption         | `encryption`       | label |         |       | *(homey-esphomedriver)* |
+| Manufacturer       | `manufacturer`     | label |         |       | *(homey-esphomedriver)* |
+| Model              | `model`            | label |         |       | *(homey-esphomedriver)* |
+| MAC address        | `mac`              | label |         |       | *(homey-esphomedriver)* |
+| Hostname           | `hostname`         | label |         |       | *(homey-esphomedriver)* |
+| ESPHome version    | `esphome_version`  | label |         |       | *(homey-esphomedriver)* |
+| Compilation time   | `compilation_time` | label |         |       | *(homey-esphomedriver)* |
+| Project            | `project`          | label |         |       | *(homey-esphomedriver)* |
+| Bluetooth MAC      | `bluetooth_mac`    | label |         |       | *(homey-esphomedriver)* |
+| Web server         | `webserver`        | label |         |       | *(homey-esphomedriver)* |
+| Deep sleep enabled | `deep_sleep`       | label |         |       | *(homey-esphomedriver)* |
+
+Homey reserves setting ids that start with `zone_`, which is why the zone settings are called `zone1_…`.
+
+
+# Web API (/docs/reference/web-api)
+
+
+
+The app has a small HTTP API and three realtime events. The radar widget and the zone editor use them; you can use
+them too, for example from another Homey app or a script with a Homey API token.
+
+App API paths are relative to `/api/app/io.github.starredev.sensy`.
+
+## Endpoints [#endpoints]
+
+### `GET /devices` [#get-devices]
+
+Lists the S1 Pro devices of the app.
+
+```json
+[
+  { "id": "48f6ee2cd9f0", "name": "S1 Pro Multi Sense 2cd9f0", "connected": true }
+]
+```
+
+`id` is the sensor's MAC address (lower case, no separators); it is also the Homey device's data id.
+
+### `GET /devices/:id` [#get-devicesid]
+
+A full snapshot of one sensor.
+
+```json
+{
+  "id": "48f6ee2cd9f0",
+  "name": "S1 Pro Multi Sense 2cd9f0",
+  "connected": true,
+  "targets": [[-74, 209], null, null],
+  "targetStates": ["stationary", null, null],
+  "presence": true,
+  "moving": false,
+  "people": 1,
+  "detectionRange": 600.0,
+  "zones": {
+    "1": { "points": [[-100, 100], [100, 100], [100, 300], [-100, 300]], "presenceDelay": 30.0, "movementThreshold": 0.0 },
+    "2": { "points": [], "presenceDelay": 0.0, "movementThreshold": 0.0 },
+    "3": { "points": [], "presenceDelay": 0.0, "movementThreshold": 0.0 },
+    "exclusion": { "points": [] }
+  },
+  "env": { "temperature": 23.5, "humidity": 67.8, "co2": 609, "iaq": 55, "lux": 0 }
+}
+```
+
+| Field          | Meaning                                                                            |
+| -------------- | ---------------------------------------------------------------------------------- |
+| `targets`      | Three slots; `[x, y]` in cm or `null` for an empty slot.                           |
+| `targetStates` | Per slot `moving`, `stationary`, `held` or `null`.                                 |
+| `zones`        | Keyed by `1`, `2`, `3`, `exclusion`. An empty `points` list means the zone is off. |
+| `env`          | Current capability values; `null` while unknown.                                   |
+
+### `PUT /devices/:id/zones/:zone` [#put-devicesidzoneszone]
+
+Writes a zone outline. `:zone` is `1`, `2`, `3` or `exclusion`.
+
+```json
+{ "points": [[-100, 100], [100, 100], [100, 300], [-100, 300]] }
+```
+
+`points` must hold 0 points (clears the zone) or 3 to 8 points. Coordinates are rounded to whole centimetres and
+clamped to ±1800. The response echoes the zone and the normalised points.
+
+### `PUT /devices/:id/zones/:zone/options` [#put-devicesidzoneszoneoptions]
+
+Writes a detection zone's options (not for `exclusion`). Omitted fields are left unchanged.
+
+```json
+{ "presenceDelay": 30, "movementThreshold": 0 }
+```
+
+`presenceDelay` is clamped to 0–3600 s, `movementThreshold` to 0–5000 cm/s.
+
+### Errors [#errors]
+
+Errors come back as an error message, for example *Sensor not found*, *Unknown zone: 4*,
+*A zone needs 3 to 8 points*, *Sensor not connected (zone_1_points_count)*.
+
+## Widget API [#widget-api]
+
+The radar widget has its own API endpoint, `get_state` (`GET /` with an optional `id` query parameter), called
+from the widget with `Homey.api('GET', '/?id=…')`. It returns the same snapshot as `GET /devices/:id`; without
+`id` it returns the first sensor (or `null` when there is none).
+
+## Realtime events [#realtime-events]
+
+Subscribe with `Homey.api.on(...)` in a widget or settings page.
+
+| Event           | Payload                                                                                                                               | When                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `sensy.live`    | `id`, `connected`, `targets`, `targetStates`, `presence`, `moving`, `people`, `zones` (array of `{zone, presence, movement, people}`) | When targets, presence or zone states change; at most every 200 ms per sensor |
+| `sensy.zones`   | A full snapshot (as `GET /devices/:id`)                                                                                               | When zone outlines change, about a second after the last change               |
+| `sensy.devices` | The device list (as `GET /devices`)                                                                                                   | When a sensor connects or disconnects                                         |
+
+<Callout type="info" title="Two shapes for zones">
+  In a snapshot, `zones` is an object keyed by zone; in a `sensy.live` frame it is an array with one entry per
+  detection zone.
+</Callout>
+
+
+# Settings (/docs/settings)
+
+
+
+Open the device, then the cog (**Settings**). Most settings are stored **on the sensor itself** and kept in sync
+in both directions:
+
+* Change a setting in Homey and the app writes it to the sensor right away.
+* Change it somewhere else (the sensor's web page, Home Assistant, another app) and the Homey setting follows
+  about a second later.
+
+If the sensor is offline when you save, Homey shows *The sensor is not connected* and nothing is changed.
+
+<Callout type="idea">
+  The exact ranges and defaults of every setting are in the [settings reference](/docs/reference/settings).
+</Callout>
+
+## Detection [#detection]
+
+| Setting                              | What it does                                                                                                                                                                                                          |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Detection range** (0–1800 cm)      | How far the radar looks. People further away are ignored. Also sets the size of the radar map in the zone editor and the widget.                                                                                      |
+| **Presence hold time** (0–3600 s)    | How long *Presence* stays on after the radar last detected someone. Raise it if presence drops while people sit still for a long time.                                                                                |
+| **Movement threshold** (0–5000 cm/s) | The minimum speed that counts as *Motion*. Raise it if small movements (breathing, typing) should not count.                                                                                                          |
+| **Track a single person**            | The radar reports at most one target. Useful in rooms where one person is expected and reflections cause [ghost targets](/docs/troubleshooting#ghost-targets). With two people in the room it still reports only one. |
+| **Mirrored mounting**                | Swaps left and right, for a sensor that is mounted upside down or faces the other way. Zones and the radar map follow.                                                                                                |
+| **Real-time environment readings**   | On: temperature, humidity, CO₂ and the other climate values are sent as soon as they change. Off: once a minute, which means less traffic.                                                                            |
+
+## Zone 1, Zone 2, Zone 3 [#zone-1-zone-2-zone-3]
+
+Each detection zone has its own:
+
+| Setting                              | What it does                                                              |
+| ------------------------------------ | ------------------------------------------------------------------------- |
+| **Presence hold time** (0–3600 s)    | How long the zone's presence stays on after the last detection inside it. |
+| **Movement threshold** (0–5000 cm/s) | The minimum speed that counts as movement inside the zone.                |
+
+These are the same values you can set in the [zone editor](/docs/zones#zone-settings) and with the
+[*Set zone presence hold time*](/docs/flows#then) flow card.
+
+## Tracking [#tracking]
+
+The official firmware has a *holding engine*: it can keep a person in place when the radar briefly loses them,
+for example someone who sits very still on a sofa. These settings tune how people are tracked.
+
+| Setting                                 | What it does                                                                                                                                                                                                              |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Hold people who stand still**         | Turns the holding engine on. **Off by default.** The two hold settings below only work when this is on.                                                                                                                   |
+| **Stationary speed** (0–100 cm/s)       | Below this speed a person counts as standing still.                                                                                                                                                                       |
+| **Hold after standing still** (0–120 s) | A person who stood still this long is *held*: their position stays even when the radar briefly loses them.                                                                                                                |
+| **Hold time** (0–60 min)                | How long a held person stays when the radar no longer sees them. People who disappear at the edge of the detection area are not held.                                                                                     |
+| **Jump distance** (5–300 cm)            | A new measurement further than this from a person's last position counts as a new person. Lower values reduce [ghost targets](/docs/troubleshooting#ghost-targets); too low and a quickly walking person is split in two. |
+
+<Callout type="info" title="A living room where people watch TV">
+  Turn on **Hold people who stand still**, keep **Hold after standing still** at about a minute and set
+  **Hold time** to 15–30 minutes. Someone who watches a film without moving then stays present.
+
+  People who walk out through the edge of the detection area are released straight away. If the door is in
+  the middle of what the radar sees, a person who sat still before leaving can be held until the hold time
+  runs out; keep the hold time short in that case.
+</Callout>
+
+The [radar widget](/docs/widget#markers) shows which people are moving, standing still or held.
+
+## Calibration [#calibration]
+
+| Setting                                          | What it does                                                                                                                                   |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Temperature offset** (−50 to 50 °C)            | Added to the BME688 temperature. The sensor warms up a little from its own electronics; compare with a reference thermometer and correct here. |
+| **CO₂ sensor temperature offset** (−50 to 50 °C) | Temperature offset of the SCD40, which uses its temperature to compensate the CO₂ reading.                                                     |
+| **Light offset** (−10000 to 10000 lx)            | Added to the light reading.                                                                                                                    |
+| **UV index offset** (−50 to 50)                  | Added to the UV index.                                                                                                                         |
+
+To calibrate the CO₂ reading itself, use the [*Calibrate CO₂ sensor*](/docs/maintenance#calibrate-co2-sensor)
+maintenance action.
+
+## Buzzer [#buzzer]
+
+| Setting                 | What it does                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------ |
+| **Pitch** (100–8000 Hz) | Pitch of the buzzer, for example for the [*Beep*](/docs/flows#then) flow card. |
+| **Volume** (0–100 %)    | Loudness of the buzzer.                                                        |
+
+## Device [#device]
+
+| Setting          | What it does                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| **Device class** | The kind of device Homey treats it as. *Auto* keeps *Sensor*; there is normally no reason to change it. |
+
+## Capabilities [#capabilities]
+
+| Setting                             | What it does                                                                                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Show diagnostic capabilities**    | Adds diagnostic values to the tile: WiFi network, signal strength, IP address, the ESP32's temperature and its connection status.                       |
+| **Show configuration capabilities** | Adds the sensor's remaining configuration entities as controls, such as the RGB LED, the radar's Bluetooth, the buzzer switch and the BLE proxy switch. |
+
+Turning these off removes the extra values again. See
+[Maintenance and firmware](/docs/maintenance#extra-capabilities) for the full list.
+
+## Device information [#device-information]
+
+Read-only details that come from the sensor and the connection: IP address and port, whether an encryption key
+is used, manufacturer, model, MAC address, host name, ESPHome version, compilation time, project name and
+version, Bluetooth MAC, the address of the sensor's web page and whether deep sleep is used.
+
+The **Project** line shows the firmware version, for example `Sensy-One.S1 Pro Multi Sense v1.2.21`.
+
+
+# Troubleshooting and FAQ (/docs/troubleshooting)
+
+
+
+## The sensor is not found when adding it [#the-sensor-is-not-found-when-adding-it]
+
+Automatic discovery uses mDNS (`_esphomelib._tcp`), which does not cross networks, VLANs or some mesh WiFi
+systems.
+
+* Choose **Add by IP…** in the list and enter the sensor's address (see
+  [Adding by IP address](/docs/installation#adding-by-ip-address)).
+* Give the sensor a fixed IP address with a DHCP reservation in your router.
+* Make sure Homey can reach the sensor on TCP port 6053 (firewall rules between VLANs).
+* Check that the sensor runs the official firmware: other ESPHome devices are not listed.
+
+## The device keeps going offline [#the-device-keeps-going-offline]
+
+1. **Is the Bluetooth proxy on?** The device shows a warning when it is. Turn off **BLE | Proxy** on the
+   sensor's web page. On the ESP32-C3, Bluetooth and WiFi share one radio, and with the proxy on the connection
+   drops every few minutes.
+2. **WiFi signal.** Turn on [*Show diagnostic capabilities*](/docs/maintenance#extra-capabilities) and look at
+   *WiFi strength*. *Weak* or *Very weak* means the sensor needs a better spot or an access point closer by.
+3. **Power.** Use a decent USB power supply; a weak supply makes the ESP32 restart under load.
+4. **IP address changes.** Homey follows the sensor through mDNS. If mDNS does not work on your network, give
+   the sensor a fixed IP address and use [Repair](/docs/installation#changing-the-address-later-repair).
+
+## Ghost targets [#ghost-targets]
+
+*The radar sees two people while I am alone*, or a second person that moves along with you.
+
+The app shows exactly what the radar reports. Two common causes:
+
+**A real second target.** Pets are moving targets too. A cat walking through or lying on a chair shows up as a
+person.
+
+**Reflections (multipath).** Radar signals bounce off hard, flat surfaces such as mirrors, glass, tiles and
+metal. The radar then sees you twice: once where you are, and once as a "mirror image" that moves along with
+you, often in the opposite direction. Bathrooms are the classic case.
+
+What helps, in this order:
+
+1. **[Track a single person](/docs/settings#detection)** in rooms where one person is expected, such as a bathroom.
+   The mirror image disappears.
+2. **Point the sensor differently**, so it does not look straight at a mirror or glass wall.
+3. **Lower the [jump distance](/docs/settings#tracking)** (for example to 60 cm), so a reflection that appears
+   somewhere else is less likely to be taken for the same person.
+4. **An [exclusion zone](/docs/zones#the-exclusion-zone)** helps when the ghost always appears in the same place
+   (a mirror, a window). It does not help against a ghost that moves along with you.
+
+## Presence turns off while someone sits still [#presence-turns-off-while-someone-sits-still]
+
+* Raise the [**presence hold time**](/docs/settings#detection), for the room and for the zone in question.
+* Turn on [**Hold people who stand still**](/docs/settings#tracking) and set a longer **hold time**.
+* Check that the person is within the detection range and not in the exclusion zone.
+
+## Presence stays on in an empty room [#presence-stays-on-in-an-empty-room]
+
+* Look at the [zone editor](/docs/zones) or the [widget](/docs/widget): is there a marker where nobody is? Then
+  something moves there (a fan, curtains, a plant near a heater) or a reflection shows up: cover it with an
+  exclusion zone.
+* A faded, dashed marker is a **held** person. Lower the [hold time](/docs/settings#tracking), or turn the holding
+  engine off.
+* Lower the presence hold time if it is very long.
+
+## Zone capabilities are missing [#zone-capabilities-are-missing]
+
+They appear a few seconds after you save a zone with **at least three points** in the zone editor. If the
+sensor was offline at that moment, they appear when it reconnects. *Refresh capabilities* keeps them.
+
+## Settings do not stick [#settings-do-not-stick]
+
+If a setting jumps back after you saved it, the sensor was probably offline: Homey then shows *The sensor is not
+connected* and changes nothing. Settings changed on the sensor's own web page show up in Homey after about a
+second; that is the sync working, not an error.
+
+## CO₂ readings look wrong [#co-readings-look-wrong]
+
+* Right after a restart the SCD40 needs a few minutes to settle.
+* If readings have drifted, [calibrate the CO₂ sensor](/docs/maintenance#calibrate-co2-sensor), outdoors.
+
+## Air quality stays "Good" while it smells [#air-quality-stays-good-while-it-smells]
+
+The IAQ, the class and VOC are only reliable once the [calibration](/docs/air-quality#calibration) shows
+*Calibrated*, which can take a few days. CO₂ (from the SCD40) is reliable from the start.
+
+## FAQ [#faq]
+
+<Accordions>
+  <Accordion title="Does the app need the internet or a cloud?">
+    No. Homey talks to the sensor on your local network. The only outbound request is a version check against
+    Sensy-One's GitHub releases page every six hours, for the [firmware notice](/docs/maintenance#firmware-updates).
+  </Accordion>
+
+  <Accordion title="Do I need Home Assistant or MQTT?">
+    No. The app uses the ESPHome native API directly.
+  </Accordion>
+
+  <Accordion title="Can I use the sensor in Home Assistant at the same time?">
+    Yes. The native API accepts several clients at once. Settings and zones changed in Home Assistant show up in
+    Homey (and the other way round).
+  </Accordion>
+
+  <Accordion title="How many people can it count?">
+    Up to three at a time; that is the limit of the radar.
+  </Accordion>
+
+  <Accordion title="Does it detect people who sit or lie still?">
+    Yes. That is what mmWave radar is good at. Tune the [hold times and the tracking](/docs/settings#tracking) for
+    rooms where people stay still for a long time, such as a living room or bedroom.
+  </Accordion>
+
+  <Accordion title="Does it see through walls?">
+    Radar passes through thin, non-metallic materials such as drywall or a wooden door to some extent. Limit the
+    [detection range](/docs/settings#detection) and use an [exclusion zone](/docs/zones#the-exclusion-zone) if it picks
+    up movement in the next room.
+  </Accordion>
+
+  <Accordion title="Can it tell people from pets?">
+    Not reliably; a cat or dog is a moving target too, and the radar only sees positions on the floor plan, not
+    height. Zones and the people count often help, for example by only reacting to the sofa zone.
+  </Accordion>
+
+  <Accordion title="Where are my zones stored?">
+    On the sensor itself. They survive a Homey restart, an app reinstall and re-adding the device.
+  </Accordion>
+
+  <Accordion title="Why does the device show *Presence* and *Motion* as separate values?">
+    *Presence* means someone is there (also when still); *Motion* means someone moves. Use *Presence* for lights
+    and heating, *Motion* for things that should react to activity.
+  </Accordion>
+
+  <Accordion title="Can the app update the sensor's firmware?">
+    No; it tells you when there is an update. Install it from the sensor's web page.
+  </Accordion>
+
+  <Accordion title="What about the RGB light on the sensor?">
+    The firmware only uses it during first-time setup. You can control it from Homey after turning on
+    [*Show configuration capabilities*](/docs/maintenance#extra-capabilities).
+  </Accordion>
+
+  <Accordion title="I moved from the previous (Node.js) app. What changed?">
+    See [Coming from the previous version](/docs/installation#coming-from-the-previous-version).
+  </Accordion>
+
+  <Accordion title="Is this an official Sensy-One app?">
+    No. It is an unofficial community project, open source under the MIT licence.
+  </Accordion>
+</Accordions>
+
+## Getting help [#getting-help]
+
+Open an issue on [GitHub](https://github.com/starredev/homey-sensy-s1pro/issues) and include:
+
+* the app version (Settings → Apps → Sensy S1 Pro) and your Homey model and firmware;
+* the sensor firmware (the device setting *Project*);
+* what you expected and what happened.
+
+A diagnostics report helps a lot: **Settings → Apps → Sensy S1 Pro → Send diagnostics report**, then mention the
+code it shows in the issue.
+
+
+# Radar widget (/docs/widget)
+
+
+
+The **Sensy radar** widget shows a live top-down radar of one sensor on a Homey dashboard: the people it sees,
+your zones, and whether anyone is present.
+
+<ThemedImage light="/images/radar-hero-light.svg" dark="/images/radar-hero-dark.svg" alt="The radar widget: zones, people and their states" />
+
+## Adding the widget [#adding-the-widget]
+
+1. Open a dashboard and choose **Edit**.
+2. Add a widget and pick **Sensy radar** (from the Sensy S1 Pro app).
+3. In the widget settings, choose the **Sensor**. Start typing its name; the list also shows whether each sensor
+   is online.
+
+Without a chosen sensor, the widget shows the first S1 Pro of the app.
+
+## What you see [#what-you-see]
+
+* **Header**: a dot that is lit while the sensor is connected, the sensor's name, and a status pill:
+  * *Empty* when nobody is present;
+  * *2 present* when people are present but not moving;
+  * *2 moving* when someone moves.
+* **Radar map**: the sensor at the bottom centre, the field of view, distance lines, and your zones. A zone
+  lights up while someone is inside it. The exclusion zone is drawn in red.
+* **People** as numbered markers that glide to their new position, with a short fading trail.
+
+The map scales with the [detection range](/docs/settings#detection): a larger range zooms out.
+
+## Markers [#markers]
+
+<ThemedImage light="/images/markers.svg" dark="/images/markers.svg" alt="Marker styles: moving, standing still, held, trail" className="max-w-md" />
+
+| Marker               | Meaning                                                                                                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Solid**            | The person moves.                                                                                                                                           |
+| **Dashed ring**      | The person stands or sits still (below the *Stationary speed*).                                                                                             |
+| **Dashed and faded** | The person stood still long enough to be *held*: the [holding engine](/docs/settings#tracking) keeps them in place, also when the radar briefly loses them. |
+| **Trail**            | The last positions, fading out.                                                                                                                             |
+
+Each of the three people the radar can track has its own colour (blue, orange, green), so you can follow one
+person across the map. The same markers appear in the [zone editor](/docs/zones).
+
+<Callout type="info">
+  Firmware without per-person states (for example a custom build) shows every marker as solid.
+</Callout>
+
+## Updates [#updates]
+
+The widget updates live, several times per second while people move, without polling. When the sensor goes
+offline the dot turns off, and it picks up again by itself when the sensor is back. Changes to zones (from the
+zone editor or elsewhere) appear right away.
+
+
+# Zones (/docs/zones)
+
+
+
+Zones split a room into areas: the sofa, the desk, the bed, the bath. Each zone reports its own presence,
+movement and people count, has its own [flow cards](/docs/flows) and its own settings. The S1 Pro stores up to
+**three detection zones** and one **exclusion zone** in the sensor itself, so they keep working when Homey
+restarts.
+
+## Opening the zone editor [#opening-the-zone-editor]
+
+**Settings → Apps → Sensy S1 Pro → Configure** (or *App settings* in the Homey web app).
+
+At the top you choose the zone: **1**, **2**, **3** or **Exclusion**. With more than one sensor, a list lets you
+choose the sensor first.
+
+The map is a top-down view of what the radar sees: the sensor sits at the bottom centre, the field of view fans
+out upwards, and grid lines mark the distance (every metre, or every two metres for a large detection range). People show up as numbered dots that move live while you walk
+around (see the [radar widget markers](/docs/widget#markers)). Next to the zone tabs, a live label says who is
+there: *Nobody present*, *1 present* or *1 present · moving*.
+
+<ThemedImage light="/images/radar-zones-light.svg" dark="/images/radar-zones-dark.svg" alt="The zone editor drawing zone 2 next to zone 1" />
+
+## Drawing a zone [#drawing-a-zone]
+
+1. Choose the zone tab.
+2. **Tap the map** to place a corner point. Place **3 to 8** points; the outline closes by itself.
+3. **Drag** a point to move it.
+4. **Undo point** removes the last point; **Clear zone** removes all points.
+5. **Save** writes the zone to the sensor.
+
+The status line tells you where you are: *2 more point(s) needed*, *5 points · not saved*, *Zone saved to the
+sensor*. If you switch to another zone with unsaved changes, the editor asks first.
+
+<Callout type="idea" title="Walk the zone">
+  Stand in each corner of the area you want, look where your dot is on the map, and tap there. That is the
+  most reliable way to match zones to the real room.
+</Callout>
+
+After saving, the zone's capabilities (*Zone N presence*, *Zone N movement*, *People in zone N*) appear on the
+device within a few seconds. Clearing a zone and saving removes them again.
+
+## Zone settings [#zone-settings]
+
+Below the map, **Settings for this zone** has the zone's own:
+
+| Setting                       | What it does                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------- |
+| **Presence hold time (s)**    | How long the zone stays occupied after the last detection inside it (0–3600 s). |
+| **Movement threshold (cm/s)** | The minimum speed that counts as movement inside the zone (0–5000 cm/s).        |
+
+Choose **Save settings** to write them. The same values are in the [device settings](/docs/settings#zone-1-zone-2-zone-3).
+
+## The exclusion zone [#the-exclusion-zone]
+
+The exclusion zone masks out an area: the firmware discards every radar measurement inside it, so whatever moves
+there counts neither for the room nor for any zone. Use it for things that move but are not people:
+
+* a ceiling or desk fan;
+* curtains that move in a draught;
+* a door to a busy hallway;
+* a reflection that keeps showing up in the same place.
+
+It has no presence of its own and no settings. On the map it is drawn in red.
+
+## Rules and limits [#rules-and-limits]
+
+* A zone has **0 points** (off) or **3 to 8 points**.
+* Coordinates are whole centimetres within ±1800 cm.
+* Only people within the detection range count, so a zone (partly) beyond it never sees anyone there.
+* Zones may overlap; a person can be in several zones at once.
+* While saving, the app first turns the zone off and then rewrites its points, so the sensor never evaluates a
+  half-saved outline.
+* Flows only fire for zones that have an outline. Values of zones that are not drawn are ignored.
+
+## Zones from elsewhere [#zones-from-elsewhere]
+
+Zones drawn on the sensor's own web page or by another app are the same zones: the editor shows them, and the
+device gets their capabilities as soon as they appear on the sensor.
+
+
+# Architecture (/docs/developers/architecture)
+
+
+
+## Repository layout [#repository-layout]
+
+```
+app.py  api.py  drivers/s1pro/       Homey entry points (thin adapters)
+lib/homey/                           Brand profile, flow cards, zone capabilities, settings mirror,
+                                     realtime hub, web API service, firmware catalog, warnings
+lib/esphome/                         The entity port on top of the homey-esphomedriver session
+lib/sensor/                          The S1 Pro model: zones, targets, events, air quality, firmware profile
+lib/errors.py  timers.py  utils.py   Shared building blocks
+widgets/radar/                       Dashboard widget: api.py, plus the browser modules the
+                                     zone editor reuses (public/lib/)
+settings/                            Zone editor (app settings page)
+tests/                               Python tests and test doubles (fakes.py)
+test/                                Tests of the browser modules (node:test)
+docs/                                This documentation site
+```
+
+`app.json` is generated from `.homeycompose/` and `drivers/*/*.compose.json`; never edit it by hand.
+
+## Layers [#layers]
+
+Imports only point downwards:
+
+<Mermaid
+  chart="`flowchart TB
+  E[&#x22;Entry points<br/>app.py · api.py · drivers/s1pro/*.py · widgets/radar/api.py&#x22;]
+  H[&#x22;lib/homey<br/>brand profile · flow cards · zone capabilities · settings mirror<br/>realtime hub · web API · firmware · warnings&#x22;]
+  S[&#x22;lib/sensor<br/>S1ProSensor · profile · zones · polygons · targets · events · air quality&#x22;]
+  P[&#x22;lib/esphome<br/>EsphomeEntities (entity port)&#x22;]
+  B[&#x22;lib/errors · timers · utils&#x22;]
+  E --> H --> S --> B
+  E --> P --> S`"
+/>
+
+* `lib/sensor` never imports `homey`, the ESPHome client or `homey-esphomedriver`. It talks to the sensor
+  through the `EntityPort` protocol and reports through the `SensorObserver` protocol, so it runs under plain
+  pytest with fakes.
+* `lib/esphome` implements the `EntityPort` on top of the library's Native API session.
+* `lib/homey` adapts the model to Homey: capabilities, flows, settings, realtime events and the web API.
+* The entry points are thin. They wire the pieces together and contain no domain logic.
+
+<Callout type="warn" title="Relative imports">
+  The Homey Python runtime loads the app as the package `app` (`app.app`, `app.drivers.s1pro.device`,
+  `app.widgets.radar.api`), so `lib` is never a top-level module at runtime. All app code imports itself
+  relatively (`from ...lib.sensor.zone import Zone`). A test guards this.
+</Callout>
+
+## Main classes [#main-classes]
+
+| Class                          | Module                           | Responsibility                                                                                                                         |
+| ------------------------------ | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `S1ProProfile`                 | `lib/sensor/profile.py`          | Everything firmware-specific: entity ids, which entities become capabilities, setting bindings, target feeds, limits.                  |
+| `S1ProSensor`                  | `lib/sensor/sensor.py`           | The model of one sensor: queries (presence, zones, targets, air quality), commands (zones, settings, beep) and observer notifications. |
+| `Zone`, `Polygon`              | `lib/sensor/`                    | Zones 1–3 and the exclusion zone; immutable, validated outlines.                                                                       |
+| `TargetTracker`, `TargetState` | `lib/sensor/target_tracker.py`   | Assembles per-axis updates into positions; tracks moving/stationary/held per slot.                                                     |
+| `ValueTracker`                 | `lib/sensor/value_tracker.py`    | Last value per key; the first value after a reconnect never fires flows.                                                               |
+| `StateRouter`                  | `lib/sensor/state_router.py`     | Routes entity states by exact id or pattern.                                                                                           |
+| `ZoneRepository`               | `lib/sensor/zone_repository.py`  | Reads and writes zone outlines and options through the port.                                                                           |
+| `EsphomeEntities`              | `lib/esphome/entities.py`        | The entity port: second state subscription, value cache by object id, typed commands, disconnect detection.                            |
+| `SensyBrandProfile`            | `lib/homey/brand_profile.py`     | Tells the library which entities become capabilities, per device (drawn zones), plus maintenance buttons.                              |
+| `ZoneCapabilities`             | `lib/homey/zone_capabilities.py` | Which zone capabilities a device should have, given its drawn zones.                                                                   |
+| `SettingsMirror`               | `lib/homey/settings_mirror.py`   | Two-way sync between device settings and sensor entities.                                                                              |
+| `FlowCards`                    | `lib/homey/flow_cards.py`        | Registers conditions and actions; translates domain events into triggers.                                                              |
+| `SensorPresenter`              | `lib/homey/presenter.py`         | The JSON shapes of the web API and realtime events.                                                                                    |
+| `RealtimeHub`                  | `lib/homey/realtime_hub.py`      | Publishes realtime events; throttles live frames per sensor.                                                                           |
+| `FirmwareCatalog`              | `lib/homey/firmware.py`          | Latest official release from GitHub, cached for six hours.                                                                             |
+| `DeviceWarnings`               | `lib/homey/warnings.py`          | Combines several warnings into Homey's single device warning.                                                                          |
+
+## Data flow [#data-flow]
+
+<Mermaid
+  chart="`sequenceDiagram
+  participant FW as S1 Pro firmware
+  participant L as homey-esphomedriver
+  participant E as EsphomeEntities
+  participant M as S1ProSensor
+  participant D as S1ProDevice
+  participant H as Homey
+
+  FW->>L: entity states (native API)
+  L->>H: standard capabilities (presence, climate, zones of drawn zones…)
+  FW->>E: same states (second subscription)
+  E->>M: on_entity_state(object_id, value)
+  M->>D: SensorObserver: live, zones changed, settings changed, events
+  D->>H: flow triggers, settings, realtime events, warnings`"
+/>
+
+Commands go the other way: a flow card, the web API or a settings change calls the model
+(`set_zone_outline`, `set_zone_options`, `apply_settings`, `beep`), which writes entities through the port.
+Maintenance buttons are pressed by the library itself.
+
+## Notable design decisions [#notable-design-decisions]
+
+**Capabilities are owned by the library.** All capabilities, including the per-zone ones, are mapped by
+`homey-esphomedriver`. The app only decides *which* through its brand profile. That keeps
+*Refresh capabilities* working without special cases. See [homey-esphomedriver](/docs/developers/esphomedriver).
+
+**Zones follow the drawn outlines.** Whether a zone exists is the *value* of `zone_N_points_count`, which the
+library's pair-time mapping never sees. The device stores its drawn zones and returns a per-device brand profile
+(`SensyBrandProfile.with_zones`). When the outlines change, it presses the library's own refresh action.
+
+**Settings live on the sensor.** The sensor is the source of truth. Homey settings mirror it both ways, debounced
+by a second, so settings changed in other tools show up in Homey.
+
+**No flows from re-sent values.** After every (re)connect the `ValueTracker` forgets which values it has seen;
+the first value of every entity is then *initial* and never fires a trigger.
+
+**Firmware differences live in the profile.** The official firmware reports target positions on every radar
+frame as `target_N_x`/`target_N_y` (with `(0, 0)` for an empty slot, completed by `y`); the older Homey edition
+sent `live_tN_x`/`live_tN_y` only on change, with `-9999` for empty. Each is a `TargetFeed` in the profile.
+
+
+# Development setup (/docs/developers/development)
+
+
+
+## Tools [#tools]
+
+* **Python 3.14** and [uv](https://docs.astral.sh/uv/)
+* **Node.js 22** and the Homey CLI: `npm install --global homey`
+* **Docker**: the Homey CLI compiles the Python dependencies for arm64 and amd64 in containers, and runs the app
+  locally with `homey app run`
+
+## First time [#first-time]
+
+```bash
+git clone https://github.com/starredev/homey-sensy-s1pro.git
+cd homey-sensy-s1pro
+uv venv --python 3.14
+uv pip install -r requirements-dev.txt
+npm install
+```
+
+`requirements-dev.txt` installs the runtime libraries (`aioesphomeapi`, `homey-esphomedriver`), the Homey SDK type
+stubs (`homey-stubs`) and the tools (pytest, pyright, ruff). The Homey SDK itself only exists inside the Homey
+runtime; tests never import it.
+
+## Running on your Homey [#running-on-your-homey]
+
+```bash
+homey login
+homey select
+homey app run        # runs in Docker on your computer, logs in the terminal
+homey app install    # installs it on the Homey itself
+```
+
+<Callout type="warn" title="`homey app run` and `homey app install` with the same id">
+  `homey app run` installs a development copy that is removed again when the session ends, even if you
+  installed the same app id with `homey app install` in the meantime. Stop the run session first, then install.
+</Callout>
+
+<Callout type="info" title="No CPU and memory figures in development mode">
+  With `homey app run` the app runs on your computer, so Homey has no CPU or memory figures for it. Install it
+  to see those.
+</Callout>
+
+## Trying code against a real sensor [#trying-code-against-a-real-sensor]
+
+The domain model and the entity port can run outside Homey. A script like this connects the library's session to
+the model, which is handy to check behaviour against a real sensor:
+
+```python
+import asyncio
+from homey_esphomedriver.esphome_client import EspHomeClient
+from lib.esphome.entities import EsphomeEntities
+
+
+async def main():
+    entities = EsphomeEntities()
+    client = None
+
+    async def on_connected(info):
+        await entities.attach(client)
+
+    async def on_state(state):
+        pass
+
+    client = EspHomeClient("192.168.1.40", expected_mac="48f6ee2cd9f0", on_connected=on_connected)
+    await client.start(on_state)
+    await asyncio.sleep(10)
+    print(entities.get("any_presence"), entities.get("zone_1_points_count"))
+    await client.stop()
+
+
+asyncio.run(main())
+```
+
+## Windows [#windows]
+
+The compiled dependency cache (`python_packages/*/.venv`) contains Linux symbolic links. Without Developer Mode,
+Windows cannot copy them, and the CLI fails with *Error while collecting cross-compiled virtual environment*
+(`EPERM … symlink`).
+
+Either enable **Developer Mode** in Windows, or delete the links once after the dependencies were compiled; the CLI
+removes them from the build anyway:
+
+```bash
+for a in arm64 amd64; do
+  rm -f python_packages/$a/.venv/bin/python python_packages/$a/.venv/bin/python3 \
+        python_packages/$a/.venv/bin/python3.14 python_packages/$a/.venv/lib64
+done
+```
+
+Build the dependencies from PowerShell or a terminal where Docker is on the `PATH`.
+
+## Code style [#code-style]
+
+Ruff and Pyright enforce the style; `ruff check --fix . && ruff format .` fixes most of it.
+
+* Classes with type hints and docstrings; collaborators are injected, protocols describe the ports.
+* Readability over brevity: one statement per line, no one-line `if x: return`, written-out loops where a dense
+  comprehension would hide the intent, blank lines before `return`.
+* New behaviour comes with tests.
+
+The browser code follows the ESLint rules in `eslint.config.js` (`npm run lint:fix`).
+
+## Adding things [#adding-things]
+
+**A sensor reading**: add the entity to `S1ProProfile.CAPABILITIES`, with `None` to keep the capability the
+library picks or a capability id to remap it. For a custom capability, add it under `.homeycompose/capabilities/`
+and to the `capabilities` list in `drivers/s1pro/driver.compose.json`. Raise `SensyBrandProfile.VERSION` so
+existing devices refresh.
+
+**A setting**: add a binding to `S1ProProfile.SETTINGS` and the setting to
+`drivers/s1pro/driver.settings.compose.json` with the same id.
+
+**A flow trigger**: declare it in `drivers/s1pro/driver.flow.compose.json`, add (or reuse) a domain event in
+`lib/sensor/events.py` that `S1ProSensor` raises, map it in `FlowCards.translate` and add the id to `Cards`.
+
+
+# homey-esphomedriver (/docs/developers/esphomedriver)
+
+
+
+[`homey-esphomedriver`](https://github.com/Doekse/homey-esphomedriver) by Abe Haverkamp is the shared ESPHome
+layer for Homey Python apps. The generic [ESPHome app](https://homey.app/en-nl/app/io.esphome/ESPHome/) uses it
+for any ESPHome node; brand apps like this one use the same core for their own products.
+
+## What the library does [#what-the-library-does]
+
+* **Discovery and pairing**: mDNS discovery, *Add by IP…*, encryption keys, repair.
+* **The Native API session**: connect, reconnect with back-off, follow IP changes, availability.
+* **Entity mapping**: turns ESPHome entities into Homey capabilities (sensors, binary sensors, switches, lights,
+  buttons, numbers, text sensors and many more), writes their values and handles commands.
+* **Defaults**: compose templates (`esphome-defaults`), pair and repair views, generic flow cards, locales and
+  capability icons, synced into the app with `esphome-homey sync`.
+
+## What this app adds [#what-this-app-adds]
+
+| Need                                    | How                                                                                                                                                                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Only show the S1 Pro's primary entities | `SensyBrandProfile.skip_entity` whitelists entities without a category through `S1ProProfile.CAPABILITIES`. Diagnostic and configuration entities keep the library behaviour (hidden until the user turns them on). |
+| Better capabilities for some entities   | `device_entities` remaps `all_targets_count` → `sensy_people`, `bme688_iaq` → `sensy_iaq`, and the air quality texts to enum capabilities.                                                                          |
+| Zone capabilities only for drawn zones  | `S1ProDevice.brand_profile` returns `SensyBrandProfile.with_zones(drawn)`; zone entities of drawn zones are mapped to `sensy_zone_*.zoneN` with localised titles.                                                   |
+| Maintenance actions                     | `after_map` adds `button.calibrate_co2`, `button.restart` and `button.restart_radar` with the button entity's key; the library presses `button.*` capabilities that carry a key.                                    |
+| One device class                        | `device_class_for` always returns `sensor`, also when LED or switches are shown.                                                                                                                                    |
+| Everything beyond capabilities          | `EsphomeEntities` opens a second state subscription on the library's session (`client.api.subscribe_states`) and feeds the domain model.                                                                            |
+| Disconnects                             | `aioesphomeapi`'s public `APIClient.add_connection_closed_callback`.                                                                                                                                                |
+
+## Hooks used [#hooks-used]
+
+Only documented hooks and public API:
+
+* `EspHomeDriver.on_esphome_init` registers the app's flow cards.
+* `EspHomeDevice.on_esphome_init`, `on_esphome_connected` and `on_esphome_uninit` wire the domain model.
+* `EspHomeDevice.brand_profile` (a public property) is overridden per device.
+* `Device.trigger_capability_listener("button.refresh", True)` presses the library's refresh action.
+
+## Refresh rules [#refresh-rules]
+
+The device triggers a refresh itself when:
+
+* the drawn zones differ from the zone capabilities it has;
+* the brand profile's `VERSION` is newer than the one the device was last mapped with (stored as
+  `profile_version`), so app updates that add capabilities reach existing devices;
+* zone capabilities are inconsistent (no entity key, or an odd id). Then it first refreshes **without** zones,
+  so the library removes them all, and then with the drawn zones.
+
+<Callout type="info" title="Why not remove capabilities directly?">
+  The library's refresh compares against its own record of capability options. Removing a capability through
+  the SDK does not update that record, so the library would think it still exists. Letting the library remove
+  and add keeps both in sync.
+</Callout>
+
+## Upgrading the library [#upgrading-the-library]
+
+1. Raise `homey-esphomedriver` in `.homeycompose/app.json` (`pythonPackages`) and `requirements-dev.txt`.
+2. Run `esphome-homey sync` to refresh the library-owned files: `.homeycompose/drivers/templates/`, the pair and
+   repair views, `.homeycompose/flow/`, the generic capabilities and icons, and the library's locale keys.
+3. Delete what this app does not use: `.homeycompose/discovery/esphome.json` and `assets/logo.svg`.
+4. Compare `.homeycompose/drivers/templates/esphome-defaults.json` with the app's own copies:
+   * new settings → add them to `drivers/s1pro/driver.settings.compose.json` (the app's settings file replaces
+     the template's settings, so they are copied there);
+   * new capabilities → add them to the `capabilities` list in `drivers/s1pro/driver.compose.json` (which leaves
+     out the battery capabilities, so publish validation does not ask for battery information).
+5. Run all checks and test on a real sensor.
+
+
+# Developers (/docs/developers)
+
+
+
+The app is open source under the MIT licence:
+[github.com/starredev/homey-sensy-s1pro](https://github.com/starredev/homey-sensy-s1pro). Bug reports, tested
+sensor setups and pull requests are welcome.
+
+| Page                                                  | Contents                                                                 |
+| ----------------------------------------------------- | ------------------------------------------------------------------------ |
+| [Architecture](/docs/developers/architecture)         | Layers, the main classes and how data flows                              |
+| [homey-esphomedriver](/docs/developers/esphomedriver) | What the shared ESPHome library does and how this app builds on it       |
+| [Development setup](/docs/developers/development)     | Tools, running the app on your Homey, Windows notes                      |
+| [Testing and CI](/docs/developers/testing)            | Test suites, coverage, linting, type checking and the CI workflows       |
+| [Releasing](/docs/developers/releasing)               | Versions, changelog, publishing to the Homey App Store, library upgrades |
+| [Documentation site](/docs/developers/website)        | Working on this site                                                     |
+
+## At a glance [#at-a-glance]
+
+* **Homey Python app** (Python 3.14, Homey SDK v3, Homey 13+), id `io.github.starredev.sensy`.
+* Built on [`homey-esphomedriver`](https://github.com/Doekse/homey-esphomedriver) and
+  [`aioesphomeapi`](https://github.com/esphome/aioesphomeapi).
+* The **web views** (radar widget, zone editor) are plain JavaScript ES modules with their own Node tooling.
+* Quality gates: ruff, pyright (strict for `lib/`), pytest with ≥ 85 % coverage, ESLint and node:test for the
+  web views, and `homey app validate --level publish`.
+* The previous Node.js implementation is kept on the
+  [`node`](https://github.com/starredev/homey-sensy-s1pro/tree/node) branch (tag `node-1.0.0`).
+
+
+# Releasing (/docs/developers/releasing)
+
+
+
+## Versions and changelog [#versions-and-changelog]
+
+The app uses [semantic versioning](https://semver.org/). For every release:
+
+1. Update `CHANGELOG.md` (move *Unreleased* to the new version).
+2. Add the user-facing changelog for the App Store to `.homeychangelog.json`, in English and Dutch.
+3. Bump the version: `homey app version patch` (or `minor`, `major`). This updates `.homeycompose/app.json` and
+   `app.json`.
+4. Commit and push; wait for CI to pass.
+
+## Publishing to the Homey App Store [#publishing-to-the-homey-app-store]
+
+```bash
+HOMEY_HEADLESS=1 homey app publish
+```
+
+`HOMEY_HEADLESS=1` skips the interactive questions: the version is not bumped and the changelog comes from
+`.homeychangelog.json` (publishing fails if the current version has no entry). Without it, the CLI asks whether
+to bump the version and whether you have read the
+[App Store guidelines](https://apps.developer.homey.app/app-store/guidelines).
+
+The CLI validates the app at the *publish* level, compiles the Python dependencies for arm64 and amd64, uploads
+the build and prints a link to the Developer Tools. There:
+
+1. Open the build.
+2. **Release to Test** makes it installable through the app's test link.
+3. **Submit for certification** sends it to Athom for review; after approval it can be released to everyone.
+
+The app archive is around 100 MB, because the compiled Python dependencies for both architectures are part of
+it.
+
+## Store texts and images [#store-texts-and-images]
+
+| File                           | Used for                                   |
+| ------------------------------ | ------------------------------------------ |
+| `README.txt`, `README.nl.txt`  | The App Store description (English, Dutch) |
+| `.homeychangelog.json`         | The *What's new* text per version          |
+| `assets/images/`               | The app's store images                     |
+| `drivers/s1pro/assets/images/` | The device's images                        |
+| `widgets/radar/preview-*.png`  | The widget preview in light and dark mode  |
+
+## App id [#app-id]
+
+The app id is `io.github.starredev.sensy`. It cannot change after the first publication: a new id is a new app
+for Homey, and users would have to re-add their devices.
+
+
+# Testing and CI (/docs/developers/testing)
+
+
+
+## Python [#python]
+
+```bash
+ruff check . && ruff format --check .   # lint and formatting
+pyright                                 # types: strict for lib/, standard for the entry points
+pytest --cov                            # tests; coverage must stay above 85 %
+```
+
+| Test module                  | Covers                                                                                                                                                   |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tests/test_core.py`         | Utilities, timers (debouncer, keyed throttle), errors, the task runner                                                                                   |
+| `tests/test_domain.py`       | Zones, polygons, value and target trackers, state router, setting bindings, zone repository, air quality                                                 |
+| `tests/test_sensor.py`       | The S1 Pro model: presence, people, targets and their states, zones, settings, air quality, buzzer                                                       |
+| `tests/test_esphome.py`      | The entity port on a fake session: state routing, commands, disconnects, stale sessions                                                                  |
+| `tests/test_homey.py`        | Brand profile mapping (with the real library mapper), capability store, zone capabilities, settings mirror, flow cards, presenter, realtime hub, web API |
+| `tests/test_firmware.py`     | Version comparison, the firmware catalog, combined warnings, the firmware trigger                                                                        |
+| `tests/test_entry_points.py` | Static checks: relative imports only, no device attributes that shadow SDK or library internals                                                          |
+
+`tests/fakes.py` has the test doubles: a manual clock, an in-memory entity port, recorders for observers, flows,
+capabilities and realtime events. `build(Kind, **fields)` creates `aioesphomeapi` models, whose compiled
+dataclasses hide their fields from type checkers.
+
+The entry points (`app.py`, `drivers/`, `api.py`) need the Homey runtime and are not imported by the tests; keep
+them thin.
+
+## Web views [#web-views]
+
+```bash
+npm run lint            # ESLint
+npm run test:coverage   # node:test with coverage thresholds for widgets/radar/public/lib
+npm run check           # both
+```
+
+Keep DOM-free logic (geometry, drafts, styles) in its own modules so it can be tested without a browser.
+
+## Manifest [#manifest]
+
+```bash
+homey app validate --level publish
+```
+
+This compiles the Python dependencies in Docker the first time (see the [Windows note](/docs/developers/development#windows)).
+
+## CI [#ci]
+
+`.github/workflows/ci.yml` runs on every push to `main` and on pull requests:
+
+| Job                              | Steps                                                                               |
+| -------------------------------- | ----------------------------------------------------------------------------------- |
+| Python lint, type-check and test | uv with Python 3.14, `ruff check`, `ruff format --check`, `pyright`, `pytest --cov` |
+| Web views lint and test          | Node 22, `npm ci`, `npm run check`                                                  |
+| Validate the app manifest        | QEMU for arm64, the Homey CLI, `homey app validate --level publish`                 |
+
+`.github/workflows/docs.yml` builds and publishes this documentation site; see [Documentation site](/docs/developers/website).
+
+
+# This website (/docs/developers/website)
+
+
+
+This website is built with [Fumadocs](https://fumadocs.dev/) on Next.js, with the shadcn theme, and exported as a
+static site. Everything lives in `website/`:
+
+| Path                         | Contents                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| `content/docs/(guide)/`      | The user documentation (MDX); `meta.json` sets the order and the sidebar groups |
+| `content/docs/developers/`   | The developer documentation, a separate sidebar tab                             |
+| `app/(home)/page.tsx`        | The landing page                                                                |
+| `components/`                | Extra MDX components: `ThemedImage`, `Mermaid`                                  |
+| `public/images/`             | Images; the radar images are rendered with the app's own `RadarView`            |
+| `scripts/sync-changelog.mjs` | Copies `../CHANGELOG.md` into the changelog page before every build             |
+
+## Working locally [#working-locally]
+
+```bash
+cd website
+npm install
+npm run dev       # http://localhost:3000
+npm run build     # static export to website/out
+```
+
+## Writing pages [#writing-pages]
+
+Pages are MDX with front matter (`title`, `description`). Besides Markdown you can use:
+
+| Component                                   | Use                                                             |
+| ------------------------------------------- | --------------------------------------------------------------- |
+| `<Callout type="info" title="…">`           | Notes and warnings (`info`, `warn`, `error`, `idea`, `success`) |
+| `<Tabs items={[…]}>` with `<Tab value="…">` | Alternatives, such as App Store or CLI                          |
+| `<Accordions>` with `<Accordion title="…">` | Recipes and FAQ                                                 |
+| `<Steps>` with `<Step>`                     | Step-by-step instructions                                       |
+| `<Cards>` with `<Card title href>`          | Link grids                                                      |
+| `<ThemedImage light dark alt>`              | An image from `public/` with a light and a dark variant         |
+| `<Mermaid chart={…} />`                     | Diagrams                                                        |
+
+Link to other pages by their route (`/docs/zones`, `/docs/reference/flow-cards`). In MDX, `{`, `}` and `<` in plain
+text must be escaped (`\{`, `&lt;`); inside code they are fine.
+
+The changelog page is generated: edit `CHANGELOG.md` in the repository root.
+
+## Publishing [#publishing]
+
+`.github/workflows/docs.yml` runs on pushes to `main` that touch `website/` or the changelog. It builds the site with
+`NEXT_PUBLIC_BASE_PATH=/homey-sensy-s1pro` (GitHub Pages serves it from that sub path) and publishes `website/out`
+to the `gh-pages` branch, which GitHub Pages serves at
+[starredev.github.io/homey-sensy-s1pro](https://starredev.github.io/homey-sensy-s1pro/).
+
+On Windows with Git Bash, set `MSYS_NO_PATHCONV=1` when you build with a base path, or Git Bash turns
+`/homey-sensy-s1pro` into a Windows path.
+
+## Keeping the reference in sync [#keeping-the-reference-in-sync]
+
+`reference/flow-cards`, `reference/settings` and `reference/entities` mirror `driver.flow.compose.json`,
+`driver.settings.compose.json` and the sensor's entity list; update them together with those files.

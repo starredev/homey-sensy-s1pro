@@ -1,0 +1,38 @@
+# Docs
+
+- Documentation: Using the app
+
+  - **Getting started**
+  - [Introduction](/docs): A Homey app for the Sensy-One S1 Pro Multi Sense mmWave presence sensor.
+  - [Installation](/docs/installation): Requirements, installing the app and adding the sensor.
+  - [Placing the sensor](/docs/placement): Mount the S1 Pro so the radar sees the room well, and understand its coordinates.
+
+  - **Using the app**
+  - [The device](/docs/device): What the device tile shows, and where every value comes from.
+  - [Zones](/docs/zones): Draw up to three zones and an exclusion zone on a live radar map.
+  - [Climate and air quality](/docs/air-quality): CO₂, the air quality index and class, its calibration and VOC.
+  - [Radar widget](/docs/widget): A live top-down radar of the room on your Homey dashboard.
+  - [Flows](/docs/flows): The app's triggers, conditions and actions, with ready-to-use recipes.
+
+  - **Configuration**
+  - [Settings](/docs/settings): Detection, zones, tracking, calibration, buzzer and the connection details.
+  - [Maintenance and firmware](/docs/maintenance): Maintenance actions, firmware notices and extra capabilities.
+
+  - **Help**
+  - [Troubleshooting and FAQ](/docs/troubleshooting): Fixes for common problems, and short answers to common questions.
+  - [Changelog](/docs/changelog): All notable changes to the app.
+
+  - **Reference**
+  - [Capabilities](/docs/reference/capabilities): Every capability id, its type, units and source entity.
+  - [Flow cards](/docs/reference/flow-cards): Every flow card with id, arguments and tokens.
+  - [Settings reference](/docs/reference/settings): Every device setting with id, default, range and sensor entity.
+  - [Sensor entities](/docs/reference/entities): All entities of the sensor and what the app does with each.
+  - [Web API](/docs/reference/web-api): The app's HTTP API and realtime events.
+- Developers: Working on the app
+  - [Developers](/docs/developers): How the app is built, and how to work on it.
+  - [Architecture](/docs/developers/architecture): Layers, the main classes and how data flows.
+  - [homey-esphomedriver](/docs/developers/esphomedriver): What the shared ESPHome library does and how this app builds on it.
+  - [Development setup](/docs/developers/development): Tools, running the app on your Homey, Windows notes.
+  - [Testing and CI](/docs/developers/testing): Test suites, coverage, linting, type checking and CI.
+  - [Releasing](/docs/developers/releasing): Versions, changelog and publishing to the Homey App Store.
+  - [This website](/docs/developers/website): Working on the documentation website.

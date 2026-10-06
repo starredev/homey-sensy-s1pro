@@ -1,0 +1,135 @@
+# Installation (/docs/installation)
+
+
+
+## Requirements [#requirements]
+
+|                    |                                                                  |
+| ------------------ | ---------------------------------------------------------------- |
+| **Homey**          | Homey Pro (2023) or Homey Pro mini                               |
+| **Homey firmware** | 13.0 or newer (the app is a Python app)                          |
+| **Sensor**         | Sensy-One S1 Pro Multi Sense, official firmware v1.2.21 or newer |
+| **Network**        | Homey reaches the sensor on TCP port 6053                        |
+
+Homey Pro (Early 2019) and older, and Homey Cloud, are not supported.
+
+<Accordions>
+  <Accordion title="Custom firmware">
+    Firmware that keeps the official entity names works as well. The app finds the sensor by its ESPHome project name,
+    `Sensy-One.S1 Pro Multi Sense`, so keep that unchanged. It also understands the live target entities of the
+    earlier "Homey edition" firmware (`live_t1_x` and so on). Features that need entities a custom build left out
+    simply stay empty.
+  </Accordion>
+
+  <Accordion title="Separate networks and VLANs">
+    Automatic discovery uses mDNS (`_esphomelib._tcp`), which does not cross networks or VLANs. If the sensor lives on
+    a separate IoT network, add it [by IP address](#add-by-ip-address) and give it a fixed IP address (a DHCP
+    reservation in your router).
+  </Accordion>
+
+  <Accordion title="Internet access">
+    Everything stays on your local network. Only the [firmware notice](/docs/maintenance#firmware-updates) needs
+    internet access, to check `github.com` for new releases.
+  </Accordion>
+</Accordions>
+
+<Callout type="warn" title="Keep the Bluetooth proxy off">
+  The official firmware has a Bluetooth proxy for Home Assistant (**BLE | Proxy** on the sensor's web page). The
+  ESP32-C3 shares one radio between WiFi and Bluetooth, and with the proxy on the connection to Homey drops
+  regularly. The app shows a warning on the device while it is on.
+</Callout>
+
+## Install the app [#install-the-app]
+
+<Tabs items="[&#x22;Homey App Store&#x22;, &#x22;Homey CLI&#x22;]">
+  <Tab value="Homey App Store">
+    Open the app's page in the Homey App Store and choose **Install**. While the app is in testing, use the test link
+    from the [project page](https://github.com/starredev/homey-sensy-s1pro). Updates arrive through the App Store.
+  </Tab>
+
+  <Tab value="Homey CLI">
+    You need [Node.js](https://nodejs.org/) 22, the Homey CLI and
+    [Docker](https://www.docker.com/products/docker-desktop/), which compiles the app's Python dependencies.
+
+    ```bash
+    npm install --global homey
+    git clone https://github.com/starredev/homey-sensy-s1pro.git
+    cd homey-sensy-s1pro
+    homey login
+    homey select
+    homey app install
+    ```
+
+    On Windows, see the [Windows notes](/docs/developers/development#windows) if the CLI fails with *Error while
+    collecting cross-compiled virtual environment*.
+  </Tab>
+</Tabs>
+
+## Add the sensor [#add-the-sensor]
+
+<Steps>
+  <Step>
+    ### Start adding a device [#start-adding-a-device]
+
+    In the Homey app, go to **Devices → +**, choose **Sensy S1 Pro**, then **S1 Pro Multi Sense**.
+  </Step>
+
+  <Step>
+    ### Pick your sensor [#pick-your-sensor]
+
+    Homey lists the S1 Pro sensors it found on your network that are not added yet. Pick yours. Not in the list?
+    Choose **Add by IP…** (see below).
+  </Step>
+
+  <Step>
+    ### Done [#done]
+
+    Homey connects, reads the sensor and adds the device, named as the sensor reports itself (for example
+    *S1 Pro Multi Sense 2cd9f0*). Move it to the room it hangs in, so Homey's zone activity follows it.
+  </Step>
+</Steps>
+
+Right after adding, the app reads everything from the sensor: the [device values](/docs/device), all
+[settings](/docs/settings), and the zones that are already drawn, which get their own capabilities a few seconds
+later.
+
+### Add by IP address [#add-by-ip-address]
+
+Use **Add by IP…** when the sensor is not found automatically.
+
+1. Enter the sensor's **IP address or host name**, for example `192.168.1.40` or `s1-pro-multi-sense-2cd9f0.local`.
+2. Leave the **port** at `6053` unless you changed it in the firmware.
+3. Choose **Connect**.
+
+You find the IP address in your router or on the sensor's web page. A sensor added this way is still recognised by
+its MAC address, so if mDNS later sees it at another address, Homey follows it.
+
+### Encryption key [#encryption-key]
+
+If the firmware has an API encryption key (`api: encryption: key:` in ESPHome), Homey asks for it after
+connecting. The official firmware has no key, so normally you will not see this step.
+
+### If adding fails [#if-adding-fails]
+
+| Message                                                    | Cause                                                                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| *This ESPHome project is not supported by this Homey app.* | Another ESPHome device answered, or the firmware's project name is not `Sensy-One.S1 Pro Multi Sense`. |
+| *Could not connect to the ESPHome device…*                 | Nothing answered on port 6053. Check the address, power and network.                                   |
+| *The device did not respond in time.*                      | The sensor is busy or the network is slow. Try again.                                                  |
+| *The encryption key is invalid.*                           | The key does not match the firmware.                                                                   |
+| *This device is not using encryption.*                     | You entered a key, but the firmware has none.                                                          |
+
+## Change the address later [#change-the-address-later]
+
+If the sensor got a new IP address that Homey does not pick up by itself, or you added an encryption key, open
+the device's settings and choose **Repair**. The device, its flows and Insights are kept.
+
+## Coming from the previous version [#coming-from-the-previous-version]
+
+Earlier versions of this app were written in Node.js and had the app id `io.github.starredev.sensys1pro`. The
+current app (`io.github.starredev.sensy`) installs **next to** it.
+
+1. Install the new app and add the sensor (both apps can be connected at the same time).
+2. Move your flows to the new device. Presence is now `alarm_presence` (was `alarm_motion`), movement is now
+   `alarm_motion` (was `sensy_moving`). The app's own flow cards kept their names.
+3. Remove the old device and the old app.

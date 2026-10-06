@@ -1,0 +1,116 @@
+# Development setup (/docs/developers/development)
+
+
+
+## Tools [#tools]
+
+* **Python 3.14** and [uv](https://docs.astral.sh/uv/)
+* **Node.js 22** and the Homey CLI: `npm install --global homey`
+* **Docker**: the Homey CLI compiles the Python dependencies for arm64 and amd64 in containers, and runs the app
+  locally with `homey app run`
+
+## First time [#first-time]
+
+```bash
+git clone https://github.com/starredev/homey-sensy-s1pro.git
+cd homey-sensy-s1pro
+uv venv --python 3.14
+uv pip install -r requirements-dev.txt
+npm install
+```
+
+`requirements-dev.txt` installs the runtime libraries (`aioesphomeapi`, `homey-esphomedriver`), the Homey SDK type
+stubs (`homey-stubs`) and the tools (pytest, pyright, ruff). The Homey SDK itself only exists inside the Homey
+runtime; tests never import it.
+
+## Running on your Homey [#running-on-your-homey]
+
+```bash
+homey login
+homey select
+homey app run        # runs in Docker on your computer, logs in the terminal
+homey app install    # installs it on the Homey itself
+```
+
+<Callout type="warn" title="`homey app run` and `homey app install` with the same id">
+  `homey app run` installs a development copy that is removed again when the session ends, even if you
+  installed the same app id with `homey app install` in the meantime. Stop the run session first, then install.
+</Callout>
+
+<Callout type="info" title="No CPU and memory figures in development mode">
+  With `homey app run` the app runs on your computer, so Homey has no CPU or memory figures for it. Install it
+  to see those.
+</Callout>
+
+## Trying code against a real sensor [#trying-code-against-a-real-sensor]
+
+The domain model and the entity port can run outside Homey. A script like this connects the library's session to
+the model, which is handy to check behaviour against a real sensor:
+
+```python
+import asyncio
+from homey_esphomedriver.esphome_client import EspHomeClient
+from lib.esphome.entities import EsphomeEntities
+
+
+async def main():
+    entities = EsphomeEntities()
+    client = None
+
+    async def on_connected(info):
+        await entities.attach(client)
+
+    async def on_state(state):
+        pass
+
+    client = EspHomeClient("192.168.1.40", expected_mac="48f6ee2cd9f0", on_connected=on_connected)
+    await client.start(on_state)
+    await asyncio.sleep(10)
+    print(entities.get("any_presence"), entities.get("zone_1_points_count"))
+    await client.stop()
+
+
+asyncio.run(main())
+```
+
+## Windows [#windows]
+
+The compiled dependency cache (`python_packages/*/.venv`) contains Linux symbolic links. Without Developer Mode,
+Windows cannot copy them, and the CLI fails with *Error while collecting cross-compiled virtual environment*
+(`EPERM … symlink`).
+
+Either enable **Developer Mode** in Windows, or delete the links once after the dependencies were compiled; the CLI
+removes them from the build anyway:
+
+```bash
+for a in arm64 amd64; do
+  rm -f python_packages/$a/.venv/bin/python python_packages/$a/.venv/bin/python3 \
+        python_packages/$a/.venv/bin/python3.14 python_packages/$a/.venv/lib64
+done
+```
+
+Build the dependencies from PowerShell or a terminal where Docker is on the `PATH`.
+
+## Code style [#code-style]
+
+Ruff and Pyright enforce the style; `ruff check --fix . && ruff format .` fixes most of it.
+
+* Classes with type hints and docstrings; collaborators are injected, protocols describe the ports.
+* Readability over brevity: one statement per line, no one-line `if x: return`, written-out loops where a dense
+  comprehension would hide the intent, blank lines before `return`.
+* New behaviour comes with tests.
+
+The browser code follows the ESLint rules in `eslint.config.js` (`npm run lint:fix`).
+
+## Adding things [#adding-things]
+
+**A sensor reading**: add the entity to `S1ProProfile.CAPABILITIES`, with `None` to keep the capability the
+library picks or a capability id to remap it. For a custom capability, add it under `.homeycompose/capabilities/`
+and to the `capabilities` list in `drivers/s1pro/driver.compose.json`. Raise `SensyBrandProfile.VERSION` so
+existing devices refresh.
+
+**A setting**: add a binding to `S1ProProfile.SETTINGS` and the setting to
+`drivers/s1pro/driver.settings.compose.json` with the same id.
+
+**A flow trigger**: declare it in `drivers/s1pro/driver.flow.compose.json`, add (or reuse) a domain event in
+`lib/sensor/events.py` that `S1ProSensor` raises, map it in `FlowCards.translate` and add the id to `Cards`.

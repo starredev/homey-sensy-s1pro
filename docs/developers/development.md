@@ -48,6 +48,7 @@ import asyncio
 from homey_esphomedriver.esphome_client import EspHomeClient
 from lib.esphome.entities import EsphomeEntities
 
+
 async def main():
     entities = EsphomeEntities()
     client = None
@@ -63,6 +64,7 @@ async def main():
     await asyncio.sleep(10)
     print(entities.get("any_presence"), entities.get("zone_1_points_count"))
     await client.stop()
+
 
 asyncio.run(main())
 ```

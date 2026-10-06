@@ -1,6 +1,6 @@
 {
   "1.0.0": {
-    "en": "First release: presence, movement and people count, three zones with flow cards, environment sensors, zone editor and radar widget.",
-    "nl": "Eerste versie: aanwezigheid, beweging en aantal personen, drie zones met flowkaarten, omgevingssensoren, zone-editor en radarwidget."
+    "en": "First release: presence, movement and people count, up to three zones with flow cards, air quality (IAQ, class, VOC), CO₂ and other environment sensors, zone editor, radar widget and firmware update notices. Built on homey-esphomedriver.",
+    "nl": "Eerste versie: aanwezigheid, beweging en aantal personen, tot drie zones met flowkaarten, luchtkwaliteit (IAQ, klasse, VOC), CO₂ en andere omgevingssensoren, zone-editor, radarwidget en meldingen bij nieuwe firmware. Gebouwd op homey-esphomedriver."
   }
 }

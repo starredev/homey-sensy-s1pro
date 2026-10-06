@@ -24,6 +24,7 @@ from aioesphomeapi import (
 )
 from aioesphomeapi.client import APIClient
 from aioesphomeapi.core import APIConnectionError
+from aioesphomeapi.model import ConnectionClosedEvent
 
 from lib.errors import NotConnectedError, ValidationError
 from lib.esphome.entities import EsphomeEntities
@@ -42,13 +43,30 @@ ENTITIES: list[EntityInfo] = [
 class FakeApi:
     def __init__(self) -> None:
         self.subscriptions: list[Callable[[EntityState], None]] = []
+        self.closed_callbacks: list[Callable[[ConnectionClosedEvent], None]] = []
 
     def subscribe_states(self, on_state: Callable[[EntityState], None]) -> None:
         self.subscriptions.append(on_state)
 
+    def add_connection_closed_callback(
+        self,
+        callback: Callable[[ConnectionClosedEvent], None],
+    ) -> Callable[[], None]:
+        self.closed_callbacks.append(callback)
+
+        def remove() -> None:
+            if callback in self.closed_callbacks:
+                self.closed_callbacks.remove(callback)
+
+        return remove
+
     def emit(self, state: EntityState) -> None:
         for subscription in self.subscriptions:
             subscription(state)
+
+    def close(self) -> None:
+        for callback in self.closed_callbacks.copy():
+            callback(ConnectionClosedEvent(expected_disconnect=False))
 
 
 class FakeSession:
@@ -164,6 +182,29 @@ class TestEsphomeEntities:
 
         with pytest.raises(NotConnectedError):
             entities.set_switch("mlt8530___buzzer", True)
+
+    async def test_a_dropped_connection_detaches(self) -> None:
+        entities, session, listener = await _attached()
+
+        session.fake_api.close()
+        session.fake_api.close()
+
+        assert listener.calls == ["connected", "disconnected"]
+        assert not entities.connected
+        assert session.fake_api.closed_callbacks == []
+
+    async def test_reconnect_watches_the_new_session_only(self) -> None:
+        entities, old, listener = await _attached()
+        new = FakeSession()
+
+        await entities.attach(new)
+        old.fake_api.close()
+
+        assert old.fake_api.closed_callbacks == []
+        assert listener.calls == ["connected", "connected"]
+
+        new.fake_api.close()
+        assert listener.calls == ["connected", "connected", "disconnected"]
 
     async def test_send_without_session(self) -> None:
         entities, _, _ = await _attached()

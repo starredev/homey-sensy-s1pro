@@ -63,13 +63,6 @@ class S1ProDevice(EspHomeDevice):
 
         await super().on_esphome_uninit()
 
-    async def _on_disconnected(self, expected: bool) -> None:
-        # homey-esphomedriver has no public disconnect hook yet.
-        await super()._on_disconnected(expected)
-
-        if self._components_ready:
-            self._entities.detach()
-
     # --- Homey hooks ----------------------------------------------------------
 
     async def on_settings(

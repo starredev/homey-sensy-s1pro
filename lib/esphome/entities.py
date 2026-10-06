@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Protocol
 
 from aioesphomeapi import (
@@ -18,6 +19,7 @@ from aioesphomeapi import (
 )
 from aioesphomeapi.client import APIClient
 from aioesphomeapi.core import APIConnectionError
+from aioesphomeapi.model import ConnectionClosedEvent
 
 from ..errors import NotConnectedError, ValidationError
 from ..sensor.ports import EntityListener, EntityValue
@@ -58,11 +60,15 @@ class EsphomeEntities:
     state subscription on that session for everything the model needs beyond
     capabilities: zones, targets and setting entities. The last reported value
     of every entity is cached, so the model can read state synchronously.
+
+    A dropped connection is noticed through ``aioesphomeapi``'s own
+    connection-closed callback, so no library internals are needed.
     """
 
     def __init__(self) -> None:
         self._listener: EntityListener = _NoListener()
         self._session: Session | None = None
+        self._unwatch: Callable[[], None] | None = None
         self._by_key: dict[int, EntityInfo] = {}
         self._by_object_id: dict[str, EntityInfo] = {}
         self._values: dict[str, EntityValue] = {}
@@ -88,6 +94,7 @@ class EsphomeEntities:
 
         self._session = session
         self._index(entities)
+        self._watch(session)
         self._listener.on_entities_connected()
 
         def on_state(state: EntityState) -> None:
@@ -99,6 +106,8 @@ class EsphomeEntities:
 
     def detach(self) -> None:
         """Forget the session after it dropped or stopped."""
+        self._stop_watching()
+
         if self._session is None:
             return
 
@@ -119,6 +128,26 @@ class EsphomeEntities:
         info = self._commandable(object_id, SwitchInfo)
 
         self._send("switch_command", info, bool(on))
+
+    def _watch(self, session: Session) -> None:
+        """Follow the connection of this session; replaces the watch of a previous one."""
+        self._stop_watching()
+
+        def on_closed(event: ConnectionClosedEvent) -> None:
+            del event
+
+            if self._session is session:
+                self.detach()
+
+        self._unwatch = session.api.add_connection_closed_callback(on_closed)
+
+    def _stop_watching(self) -> None:
+        unwatch = self._unwatch
+
+        self._unwatch = None
+
+        if unwatch is not None:
+            unwatch()
 
     def _index(self, entities: list[EntityInfo]) -> None:
         self._by_key.clear()

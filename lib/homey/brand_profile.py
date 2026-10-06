@@ -30,6 +30,60 @@ _ZONE_ENTITIES = ZoneCapabilities.entity_capabilities()
 
 
 @dataclass(frozen=True, slots=True)
+class MaintenanceButton:
+    """An ESPHome button offered as a maintenance action on the device.
+
+    ``homey-esphomedriver`` presses the entity itself for any ``button.*``
+    capability that carries the entity key.
+    """
+
+    object_id: str
+    capability: str
+    title: dict[str, str]
+    description: dict[str, str] | None = None
+
+    def options(self, key: int) -> dict[str, object]:
+        options: dict[str, object] = {
+            "key": key,
+            "entity_type": "button",
+            "maintenanceAction": True,
+            "title": self.title,
+        }
+
+        if self.description is not None:
+            options["desc"] = self.description
+
+        return options
+
+
+MAINTENANCE_BUTTONS = (
+    MaintenanceButton(
+        S1ProProfile.CO2_CALIBRATION,
+        "button.calibrate_co2",
+        {"en": "Calibrate CO₂ sensor", "nl": "CO₂-sensor kalibreren"},
+        {
+            "en": "Sets the CO₂ reading to 426 ppm (outdoor air). Only use this after the sensor has been "
+            "in fresh outdoor air for at least 3 minutes.",
+            "nl": "Zet de CO₂-meting op 426 ppm (buitenlucht). Gebruik dit alleen als de sensor minstens "
+            "3 minuten in frisse buitenlucht heeft gestaan.",
+        },
+    ),
+    MaintenanceButton(
+        S1ProProfile.RESTART,
+        "button.restart",
+        {"en": "Restart sensor", "nl": "Sensor herstarten"},
+    ),
+    MaintenanceButton(
+        S1ProProfile.RADAR_RESTART,
+        "button.restart_radar",
+        {"en": "Restart radar", "nl": "Radar herstarten"},
+    ),
+)
+
+_MAINTENANCE_ENTITIES = frozenset(button.object_id for button in MAINTENANCE_BUTTONS)
+
+
+@dataclass(frozen=True, slots=True)
 class SensyBrandProfile(BrandProfile):
     """Tells ``homey-esphomedriver`` which S1 Pro entities become capabilities.
 
@@ -51,6 +105,9 @@ class SensyBrandProfile(BrandProfile):
 
     DEVICE_CLASS = "sensor"
 
+    VERSION = 2
+    """Raise when the mapping changes; devices then refresh their capabilities once."""
+
     def with_zones(self, drawn_zones: Iterable[str]) -> SensyBrandProfile:
         """A copy that maps the zone entities of these zones."""
         zones = frozenset(drawn_zones)
@@ -64,6 +121,10 @@ class SensyBrandProfile(BrandProfile):
         object_id = entity.object_id
 
         if object_id in S1ProProfile.HIDDEN or object_id in _SETTING_ENTITIES:
+            return True
+
+        if object_id in _MAINTENANCE_ENTITIES:
+            # Added as maintenance actions by after_map, not as tile buttons.
             return True
 
         zone_capability = _ZONE_ENTITIES.get(object_id)
@@ -103,11 +164,11 @@ class SensyBrandProfile(BrandProfile):
         entities: Sequence[EntityInfo],
         homey_device: HomeyEspHomeDeviceOption,
     ) -> None:
-        """Localise zone titles and drop ``esphome_*`` flow markers left without sub-capabilities by a remap."""
-        del entities
+        """Add maintenance actions, localise zone titles and drop orphaned ``esphome_*`` flow markers."""
         capabilities = homey_device["capabilities"]
         options = homey_device["capabilitiesOptions"]
 
+        self._add_maintenance_buttons(entities, capabilities, options)
         self._localise_zone_titles(options)
 
         for capability in list(capabilities):
@@ -116,6 +177,26 @@ class SensyBrandProfile(BrandProfile):
 
             capabilities.remove(capability)
             options.pop(capability, None)
+
+    @staticmethod
+    def _add_maintenance_buttons(
+        entities: Sequence[EntityInfo],
+        capabilities: list[str],
+        options: dict[str, dict[str, object]],
+    ) -> None:
+        keys: dict[str, int] = {}
+
+        for entity in entities:
+            keys[entity.object_id] = entity.key
+
+        for button in MAINTENANCE_BUTTONS:
+            key = keys.get(button.object_id)
+
+            if key is None or button.capability in capabilities:
+                continue
+
+            capabilities.append(button.capability)
+            options[button.capability] = button.options(key)
 
     @staticmethod
     def _localise_zone_titles(options: dict[str, dict[str, object]]) -> None:

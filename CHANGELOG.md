@@ -21,8 +21,13 @@ All notable changes to this app are documented here. The format follows
 - *Refresh capabilities* maintenance action.
 - Air quality class (*Excellent* … *Extremely polluted*), its calibration state and VOC as capabilities, with an
   *Air quality changed* trigger and an *Air quality is X or worse* condition.
-- Tracking settings of the radar: stationary speed, hold after standing still, hold time and jump distance;
-  light and UV offsets.
+- Tracking settings of the radar: holding people who stand still (the firmware's holding engine, off by default),
+  stationary speed, hold after standing still, hold time and jump distance; light and UV offsets.
+- Settings for mirrored mounting, real-time environment readings and the buzzer's pitch and volume.
+- Maintenance actions: calibrate the CO₂ sensor, restart the sensor, restart the radar.
+- The radar widget shows whether a person is moving, standing still or held.
+- A device warning and a *New firmware is available* trigger when Sensy-One releases a newer firmware.
+- Zone capabilities follow the zones drawn in the zone editor automatically.
 
 ## [1.0.0] - unreleased
 

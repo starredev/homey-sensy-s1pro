@@ -1,8 +1,11 @@
 import { RadarGeometry } from './RadarGeometry.js';
 import { Svg } from './Svg.js';
+import { TargetStyle } from './TargetStyle.js';
 import { Theme, ZONE_DRAW_ORDER } from './theme.js';
 
 /** @typedef {[number, number] | null} TargetPosition */
+
+/** @typedef {import('./TargetStyle.js').TargetState} TargetState */
 
 /**
  * @typedef {object} ZoneShape
@@ -321,7 +324,8 @@ export class DraftLayer extends Layer {
 }
 
 /**
- * Live target markers with a fading trail of recent positions.
+ * Live target markers with a fading trail of recent positions, styled by
+ * what each person is doing (see {@link TargetStyle}).
  */
 export class TargetLayer {
   static TRAIL_LENGTH = 30;
@@ -359,8 +363,9 @@ export class TargetLayer {
   /**
    * @param {RadarGeometry} geometry
    * @param {TargetPosition[]} targets
+   * @param {TargetState[]} [states] what each target is doing, when the firmware reports it
    */
-  render(geometry, targets) {
+  render(geometry, targets, states = []) {
     this.#trailLayer.clear();
 
     this.#markers.forEach((marker, slot) => {
@@ -377,8 +382,27 @@ export class TargetLayer {
 
       this.#extendTrail(slot, position);
       this.#renderTrail(slot);
+      TargetLayer.#applyStyle(marker, states[slot] ?? null);
       TargetLayer.#moveMarker(marker, position);
     });
+  }
+
+  /**
+   * @param {SVGElement} marker
+   * @param {TargetState} state
+   */
+  static #applyStyle(marker, state) {
+    const style = TargetStyle.for(state);
+    const circle = marker.querySelector('circle');
+
+    marker.dataset.state = state ?? 'moving';
+
+    if (!circle) {
+      return;
+    }
+
+    circle.setAttribute('fill-opacity', String(style.fillOpacity));
+    circle.setAttribute('stroke-dasharray', style.strokeDasharray);
   }
 
   /**

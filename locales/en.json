@@ -1,7 +1,8 @@
 {
   "device": {
     "not_connected": "The sensor is not connected. Try again in a moment.",
-    "bluetooth_proxy_on": "The BLE proxy is on. Homey does not use it and it makes the connection unstable. Turn off “BLE | Proxy” on the sensor's web page."
+    "bluetooth_proxy_on": "The BLE proxy is on. Homey does not use it and it makes the connection unstable. Turn off “BLE | Proxy” on the sensor's web page.",
+    "firmware_available": "Firmware __version__ is available (installed: __installed__). Update the sensor from its web page."
   },
   "zone": {
     "point_count": "A zone needs 3 to 8 points."

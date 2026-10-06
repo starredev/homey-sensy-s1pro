@@ -10,10 +10,12 @@ import { RadarGeometry } from './RadarGeometry.js';
 /** @typedef {import('./layers.js').ZoneShape} ZoneShape */
 /** @typedef {import('./layers.js').LiveZone} LiveZone */
 /** @typedef {import('./layers.js').TargetPosition} TargetPosition */
+/** @typedef {import('./layers.js').TargetState} TargetState */
 
 /**
  * @typedef {object} LiveState
  * @property {TargetPosition[]} [targets]
+ * @property {TargetState[]} [targetStates]
  * @property {LiveZone[]} [zones]
  */
 
@@ -110,7 +112,7 @@ export class RadarView {
   setLive(live) {
     this.#live = live ?? {};
     this.#renderZones();
-    this.#targets.render(this.#geometry, this.#live.targets ?? []);
+    this.#targets.render(this.#geometry, this.#live.targets ?? [], this.#live.targetStates ?? []);
   }
 
   /**
@@ -148,7 +150,7 @@ export class RadarView {
     this.#targets.reset();
     this.#renderZones();
     this.#draftLayer.render(this.#geometry, this.#editing, this.#draft);
-    this.#targets.render(this.#geometry, this.#live.targets ?? []);
+    this.#targets.render(this.#geometry, this.#live.targets ?? [], this.#live.targetStates ?? []);
   }
 
   #renderZones() {

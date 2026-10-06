@@ -102,6 +102,16 @@ class TestTargets:
 
         assert rig.observer.count("live") == 1
 
+    def test_states_are_shown_live(self, rig: SensorRig) -> None:
+        rig.port.report("target_1_x", 100)
+        rig.port.report("target_1_y", 200)
+        rig.port.report("target_1_state", "Stationary")
+        rig.port.report("target_1_state", "Stationary")
+        rig.port.report("target_1_state", "Holding")
+
+        assert rig.observer.count("live") == 3
+        assert [str(state) for state in rig.sensor.target_states] == ["held", "None", "None"]
+
     def test_homey_edition_feed(self, rig: SensorRig) -> None:
         rig.port.report("live_t2_x", 10)
         rig.port.report("live_t2_y", 20)

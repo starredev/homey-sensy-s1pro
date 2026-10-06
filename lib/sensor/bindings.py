@@ -100,6 +100,20 @@ class NumberSettingBinding(SettingBinding):
 
 
 @dataclass(frozen=True, slots=True)
+class ScaledNumberSettingBinding(SettingBinding):
+    """A ``number:`` entity shown in other units, e.g. a 0-1 volume as 0-100 %."""
+
+    factor: float = 1.0
+    """Setting value = sensor value x factor."""
+
+    def from_sensor(self, raw: EntityValue) -> SettingValue:
+        return _ONE_DECIMAL(to_finite_number(raw, 0.0) * self.factor)
+
+    def write(self, port: EntityPort, value: SettingValue) -> None:
+        port.set_number(self.object_id, to_finite_number(value, 0.0) / self.factor)
+
+
+@dataclass(frozen=True, slots=True)
 class SwitchSettingBinding(SettingBinding):
     """A ``switch:`` entity, mirrored as a checkbox."""
 

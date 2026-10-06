@@ -64,6 +64,32 @@
           "nl": "Eén persoon volgen"
         },
         "value": false
+      },
+      {
+        "id": "mirrored",
+        "type": "checkbox",
+        "label": {
+          "en": "Mirrored mounting",
+          "nl": "Gespiegelde montage"
+        },
+        "value": false,
+        "hint": {
+          "en": "Swaps left and right, for a sensor that is mounted upside down or faces the other way.",
+          "nl": "Wisselt links en rechts om, voor een sensor die ondersteboven of andersom hangt."
+        }
+      },
+      {
+        "id": "realtime",
+        "type": "checkbox",
+        "label": {
+          "en": "Real-time environment readings",
+          "nl": "Omgevingswaarden direct"
+        },
+        "value": true,
+        "hint": {
+          "en": "Send temperature, humidity, CO₂ and the other readings as soon as they change. Off: once a minute.",
+          "nl": "Stuur temperatuur, vochtigheid, CO₂ en de andere waarden zodra ze veranderen. Uit: één keer per minuut."
+        }
       }
     ]
   },
@@ -185,6 +211,19 @@
       "nl": "Volgen"
     },
     "children": [
+      {
+        "id": "holding",
+        "type": "checkbox",
+        "label": {
+          "en": "Hold people who stand still",
+          "nl": "Stilstaande personen vasthouden"
+        },
+        "value": false,
+        "hint": {
+          "en": "Keeps a person who stood still in place when the radar briefly loses them. The two hold settings below only work when this is on.",
+          "nl": "Houdt iemand die stilstond vast als de radar diegene even kwijtraakt. De twee vasthoud-instellingen hieronder werken alleen als dit aan staat."
+        }
+      },
       {
         "id": "stationary_speed_threshold",
         "type": "number",
@@ -322,6 +361,45 @@
         "min": -50,
         "max": 50,
         "step": 0.1
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Buzzer",
+      "nl": "Zoemer"
+    },
+    "children": [
+      {
+        "id": "buzzer_pitch",
+        "type": "number",
+        "label": {
+          "en": "Pitch",
+          "nl": "Toonhoogte"
+        },
+        "value": 2700,
+        "min": 100,
+        "max": 8000,
+        "units": {
+          "en": "Hz"
+        },
+        "step": 50
+      },
+      {
+        "id": "buzzer_volume",
+        "type": "number",
+        "label": {
+          "en": "Volume",
+          "nl": "Volume"
+        },
+        "value": 50,
+        "min": 0,
+        "max": 100,
+        "units": {
+          "en": "%"
+        },
+        "step": 1
       }
     ]
   },

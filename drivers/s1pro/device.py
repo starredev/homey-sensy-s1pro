@@ -11,9 +11,11 @@ from ...lib.esphome.entities import EsphomeEntities
 from ...lib.homey.app_port import SensyAppPort
 from ...lib.homey.brand_profile import SensyBrandProfile
 from ...lib.homey.capability_store import CapabilityStore
+from ...lib.homey.firmware import is_newer
 from ...lib.homey.presenter import SensorView
 from ...lib.homey.settings_mirror import SettingsMirror
 from ...lib.homey.tasks import TaskRunner
+from ...lib.homey.warnings import DeviceWarnings
 from ...lib.homey.zone_capabilities import ZoneCapabilities
 from ...lib.sensor.events import SensorEvent
 from ...lib.sensor.sensor import S1ProSensor
@@ -35,13 +37,17 @@ class S1ProDevice(EspHomeDevice):
     """The library's maintenance action that rebuilds the capabilities."""
 
     DRAWN_ZONES_STORE = "drawn_zones"
+    PROFILE_VERSION_STORE = "profile_version"
+    FIRMWARE_NOTIFIED_STORE = "firmware_notified"
 
     _components_ready: bool = False
+    _installed_firmware: str = ""
     _tasks: TaskRunner
     _entities: EsphomeEntities
     _sensor: S1ProSensor
     _capability_store: CapabilityStore
     _settings_mirror: SettingsMirror
+    _warnings: DeviceWarnings
 
     # --- homey-esphomedriver hooks --------------------------------------------
 
@@ -64,6 +70,13 @@ class S1ProDevice(EspHomeDevice):
         await super().on_esphome_connected(client)
         self._ensure_components()
         await self._entities.attach(client)
+
+        device_info = client.device_info
+
+        if device_info is not None:
+            self._installed_firmware = device_info.project_version
+
+        self.check_firmware_soon()
 
     async def on_esphome_uninit(self) -> None:
         if self._components_ready:
@@ -143,6 +156,7 @@ class S1ProDevice(EspHomeDevice):
         self._entities = EsphomeEntities()
         self._sensor = S1ProSensor(port=self._entities, timers=self.homey, observer=self)
         self._capability_store = CapabilityStore(self, self)
+        self._warnings = DeviceWarnings(self)
         self._settings_mirror = SettingsMirror(self, self._sensor)
         self._components_ready = True
 
@@ -165,16 +179,22 @@ class S1ProDevice(EspHomeDevice):
             # capability first (a refresh without drawn zones), then add them cleanly.
             self.log(f"Rebuilding zone capabilities {sorted(present)}")
             await self._refresh_with_zones(frozenset())
-        elif bound == ZoneCapabilities.expected(drawn) and drawn == self._stored_drawn_zones():
-            return
+        elif not self._profile_outdated() and bound == ZoneCapabilities.expected(drawn):
+            if drawn == self._stored_drawn_zones():
+                return
 
-        self.log(f"Drawn zones are now {sorted(drawn)}; refreshing capabilities")
+        self.log(f"Refreshing capabilities for drawn zones {sorted(drawn)}")
         await self._refresh_with_zones(drawn)
 
     async def _refresh_with_zones(self, drawn: frozenset[str]) -> None:
         """Store the drawn zones (read by ``brand_profile``) and press the library's refresh action."""
         await self.set_store_value(self.DRAWN_ZONES_STORE, sorted(drawn))
         await self.trigger_capability_listener(self.REFRESH_CAPABILITY, True)
+        await self.set_store_value(self.PROFILE_VERSION_STORE, SensyBrandProfile.VERSION)
+
+    def _profile_outdated(self) -> bool:
+        """Whether the capabilities were mapped by an older version of the brand profile."""
+        return self.get_store().get(self.PROFILE_VERSION_STORE) != SensyBrandProfile.VERSION
 
     def _bound_zone_capabilities(self) -> frozenset[str]:
         """Zone capabilities that the library feeds (they carry the entity key)."""
@@ -201,9 +221,40 @@ class S1ProDevice(EspHomeDevice):
 
     async def _show_bluetooth_proxy_warning(self, enabled: bool) -> None:
         if enabled:
-            await self.set_warning(self.homey.translate("device.bluetooth_proxy_on"))
+            message = self.homey.translate("device.bluetooth_proxy_on") or "Bluetooth proxy on"
+
+            await self._warnings.raise_warning("bluetooth_proxy", message)
         else:
-            await self.unset_warning()
+            await self._warnings.clear("bluetooth_proxy")
+
+    # --- Firmware -------------------------------------------------------------
+
+    def check_firmware_soon(self) -> None:
+        """Compare the installed firmware with the latest release (in the background)."""
+        if self._components_ready and self._installed_firmware:
+            self._tasks.run(self._check_firmware())
+
+    async def _check_firmware(self) -> None:
+        installed = self._installed_firmware
+        release = await self._app.firmware.latest()
+
+        if release is None:
+            return
+
+        if not is_newer(release.version, installed):
+            await self._warnings.clear("firmware")
+
+            return
+
+        message = self.homey.translate("device.firmware_available", version=release.version, installed=installed)
+
+        await self._warnings.raise_warning("firmware", message or f"Firmware {release.version} available")
+
+        if self.get_store().get(self.FIRMWARE_NOTIFIED_STORE) == release.version:
+            return
+
+        await self.set_store_value(self.FIRMWARE_NOTIFIED_STORE, release.version)
+        await self._driver.flow_cards.firmware_available(self, release.version, installed)
 
     @property
     def _app(self) -> SensyAppPort:

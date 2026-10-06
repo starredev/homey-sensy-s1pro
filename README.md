@@ -34,6 +34,7 @@ are supported too.
 **Flow cards**
 
 - *When:* someone became present · the room became empty · the number of people changed · the air quality changed ·
+  new firmware is available ·
   someone entered zone X · zone X became empty · movement started / stopped in zone X
 - *And:* someone is present · zone X is occupied · there is movement in zone X · the number of people is above N ·
   the air quality is X or worse
@@ -42,11 +43,18 @@ are supported too.
 **Zone editor** (*Apps → Sensy S1 Pro → Configure*) — watch people move live, tap to place 3–8 corner
 points, drag them, save. Three zones plus an exclusion zone, each with its own hold time and movement threshold.
 
-**Dashboard widget** — a top-down radar with people as moving dots and zones that light up on presence.
+**Dashboard widget** — a top-down radar with people as moving dots and zones that light up on presence. A person
+who stands still gets a dashed ring; a person the radar is holding is drawn faded.
 
-**Device settings** — detection range, hold times, movement thresholds, single-target mode, the radar's
-tracking (when a person counts as standing still, how long a still person is held, the jump distance that
-separates two people) and temperature, light and UV offsets, kept in sync with the sensor in both directions. Diagnostic and configuration entities
+**Device settings** — detection range, hold times, movement thresholds, single-target mode, mirrored mounting,
+real-time or once-a-minute environment readings, the radar's tracking (holding people who stand still, when a
+person counts as standing still, how long a still person is held, the jump distance that separates two people),
+temperature, light and UV offsets and the buzzer's pitch and volume, kept in sync with the sensor in both directions.
+
+**Maintenance actions** — calibrate the CO₂ sensor (after a few minutes in outdoor air), restart the sensor or the radar.
+
+**Firmware** — Homey checks the Sensy-One releases every six hours and shows a warning on the device (plus a flow
+trigger) when a newer firmware is out. Updating itself is done from the sensor's web page. Diagnostic and configuration entities
 (WiFi details, LED, restart buttons, radar switches) can be shown as extra capabilities from the device settings.
 
 ## Requirements

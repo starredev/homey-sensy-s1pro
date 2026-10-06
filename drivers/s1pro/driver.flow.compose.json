@@ -249,6 +249,37 @@
           ]
         }
       ]
+    },
+    {
+      "id": "firmware_available",
+      "title": {
+        "en": "New firmware is available",
+        "nl": "Er is nieuwe firmware beschikbaar"
+      },
+      "hint": {
+        "en": "Homey checks the Sensy-One releases every few hours. Update the sensor from its web page.",
+        "nl": "Homey controleert de Sensy-One-releases om de paar uur. Werk de sensor bij via zijn webpagina."
+      },
+      "tokens": [
+        {
+          "name": "version",
+          "type": "string",
+          "title": {
+            "en": "Version",
+            "nl": "Versie"
+          },
+          "example": "v1.3.0"
+        },
+        {
+          "name": "installed",
+          "type": "string",
+          "title": {
+            "en": "Installed version",
+            "nl": "Geïnstalleerde versie"
+          },
+          "example": "v1.2.21"
+        }
+      ]
     }
   ],
   "conditions": [

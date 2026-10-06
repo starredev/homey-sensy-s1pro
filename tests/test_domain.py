@@ -8,11 +8,11 @@ import pytest
 
 from lib.errors import ValidationError
 from lib.sensor.air_quality import AirQuality
-from lib.sensor.bindings import NumberSettingBinding, SwitchSettingBinding, TargetFeed
+from lib.sensor.bindings import NumberSettingBinding, ScaledNumberSettingBinding, SwitchSettingBinding, TargetFeed
 from lib.sensor.polygon import Polygon
 from lib.sensor.profile import S1ProProfile
 from lib.sensor.state_router import StateRouter
-from lib.sensor.target_tracker import TargetTracker
+from lib.sensor.target_tracker import TargetState, TargetTracker
 from lib.sensor.value_tracker import ValueTracker
 from lib.sensor.zone import Zone
 from lib.sensor.zone_repository import ZoneRepository
@@ -136,6 +136,24 @@ class TestTargetTracker:
         assert tracker.update(1, "x", -9999, feed)
         assert tracker.positions[1] is None
 
+    def test_states_follow_positions(self) -> None:
+        tracker = TargetTracker()
+        feed = _feed("homey-edition")
+
+        assert TargetState.parse("Holding") is TargetState.HELD
+        assert TargetState.parse("No target") is None
+        assert tracker.update_state(0, TargetState.MOVING)
+        assert not tracker.update_state(0, TargetState.MOVING)
+        assert not tracker.update_state(5, TargetState.MOVING)
+        assert tracker.states == [None, None, None]
+
+        tracker.update(0, "x", 10, feed)
+        tracker.update(0, "y", 20, feed)
+        assert tracker.states == [TargetState.MOVING, None, None]
+
+        tracker.reset()
+        assert tracker.states == [None, None, None]
+
     def test_ignores_unknown_slots_and_resets(self) -> None:
         tracker = TargetTracker()
         feed = _feed("homey-edition")
@@ -195,12 +213,22 @@ class TestBindings:
         binding.write(port, False)
         assert port.commands == [("switch", "radar___single_target", False)]
 
+    def test_scaled_number_setting(self) -> None:
+        port = FakePort()
+        binding = ScaledNumberSettingBinding("buzzer_volume", "mlt8530_buzzer_volume", factor=100)
+
+        port.values["mlt8530_buzzer_volume"] = 0.5
+        assert binding.read(port) == 50.0
+
+        binding.write(port, 25)
+        assert port.commands == [("number", "mlt8530_buzzer_volume", 0.25)]
+
     def test_profile_settings_cover_every_zone(self) -> None:
         keys = [binding.key for binding in S1ProProfile.SETTINGS]
 
         assert "zone3_movement_threshold" in keys
         assert "gate_radius" in keys
-        assert len(keys) == len(set(keys)) == 18
+        assert len(keys) == len(set(keys)) == 23
 
 
 class TestZoneRepository:

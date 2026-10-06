@@ -1,7 +1,8 @@
 {
   "device": {
     "not_connected": "De sensor is niet verbonden. Probeer het zo opnieuw.",
-    "bluetooth_proxy_on": "De BLE-proxy staat aan. Homey gebruikt die niet en hij maakt de verbinding instabiel. Zet “BLE | Proxy” uit op de webpagina van de sensor."
+    "bluetooth_proxy_on": "De BLE-proxy staat aan. Homey gebruikt die niet en hij maakt de verbinding instabiel. Zet “BLE | Proxy” uit op de webpagina van de sensor.",
+    "firmware_available": "Firmware __version__ is beschikbaar (geïnstalleerd: __installed__). Werk de sensor bij via zijn webpagina."
   },
   "zone": {
     "point_count": "Een zone heeft 3 tot 8 punten nodig."

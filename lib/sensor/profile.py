@@ -19,6 +19,7 @@ from types import MappingProxyType
 
 from ..sensor.bindings import (
     NumberSettingBinding,
+    ScaledNumberSettingBinding,
     SettingBinding,
     SwitchSettingBinding,
     TargetFeed,
@@ -87,6 +88,15 @@ class S1ProProfile:
 
     BLUETOOTH_PROXY = "ble___proxy"
     """Official firmware only: Bluetooth proxy for Home Assistant, off by default."""
+
+    TARGET_STATE = re.compile(r"target_([1-3])_state")
+    """Official firmware: Moving, Stationary, Holding or No target, per slot."""
+
+    CO2_CALIBRATION = "scd40___forced_calibration"
+    """Button: calibrates the CO₂ sensor to 400 ppm (outdoor air)."""
+
+    RESTART = "esp32___restart_module"
+    RADAR_RESTART = "radar___restart_module"
 
     ZONE_STATE = re.compile(r"zone_([1-3])_(presence|movement|target_count)")
     """``zone_1_presence`` -> zone 1, kind presence."""
@@ -160,7 +170,12 @@ class S1ProProfile:
         NumberSettingBinding("lux_offset", "ltr390_lux_offset"),
         NumberSettingBinding("uv_offset", "ltr390_uv_offset"),
         SwitchSettingBinding("single_target", "radar___single_target"),
+        SwitchSettingBinding("mirrored", "radar___flip_y_axis"),
+        SwitchSettingBinding("realtime", "mode___realtime"),
+        NumberSettingBinding("buzzer_pitch", "mlt8530_buzzer_pitch"),
+        ScaledNumberSettingBinding("buzzer_volume", "mlt8530_buzzer_volume", factor=100),
         # Tracking ("holding engine") of the official firmware.
+        SwitchSettingBinding("holding", "radar___holding_engine"),
         NumberSettingBinding("stationary_speed_threshold", "radar_stationary_speed_threshold"),
         NumberSettingBinding("stationary_time", "radar_stationary_time"),
         NumberSettingBinding("dropout_hold_time", "radar_dropout_hold_time"),

@@ -59,6 +59,7 @@ class SensorPresenter:
             "id": view.id,
             "connected": sensor.connected,
             "targets": cls._targets(sensor),
+            "targetStates": cls._target_states(sensor),
             "presence": sensor.present,
             "moving": sensor.moving,
             "people": sensor.people,
@@ -88,6 +89,19 @@ class SensorPresenter:
                 targets.append([position[0], position[1]])
 
         return targets
+
+    @staticmethod
+    def _target_states(sensor: S1ProSensor) -> list[str | None]:
+        """``moving``, ``stationary`` or ``held`` per slot; ``None`` when unknown or empty."""
+        states: list[str | None] = []
+
+        for state in sensor.target_states:
+            if state is None:
+                states.append(None)
+            else:
+                states.append(state.value)
+
+        return states
 
     @staticmethod
     def _live_zone(sensor: S1ProSensor, zone: Zone) -> dict[str, Any]:

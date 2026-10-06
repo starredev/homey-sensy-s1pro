@@ -58,6 +58,7 @@ class Cards:
     ZONE_MOVEMENT_STARTED = "zone_movement_started"
     ZONE_MOVEMENT_STOPPED = "zone_movement_stopped"
     AIR_QUALITY_CHANGED = "air_quality_changed"
+    FIRMWARE_AVAILABLE = "firmware_available"
 
     IS_PRESENT = "is_present"
     ZONE_OCCUPIED = "zone_occupied"
@@ -71,7 +72,7 @@ class Cards:
     ZONE_TRIGGERS = (ZONE_ENTERED, ZONE_LEFT, ZONE_MOVEMENT_STARTED, ZONE_MOVEMENT_STOPPED)
     """Trigger cards with a zone dropdown; they only fire for the selected zone."""
 
-    TRIGGERS = (ROOM_OCCUPIED, ROOM_EMPTY, PEOPLE_CHANGED, AIR_QUALITY_CHANGED, *ZONE_TRIGGERS)
+    TRIGGERS = (ROOM_OCCUPIED, ROOM_EMPTY, PEOPLE_CHANGED, AIR_QUALITY_CHANGED, FIRMWARE_AVAILABLE, *ZONE_TRIGGERS)
 
 
 @dataclass(frozen=True, slots=True)
@@ -124,6 +125,18 @@ class FlowCards:
                 await card.trigger(device, invocation.tokens, zone=invocation.zone)
         except Exception as error:  # noqa: BLE001 - a failing flow must not break the sensor
             self._logger.error(f"Trigger {invocation.card} failed:", error)
+
+    async def firmware_available(self, device: object, version: str, installed: str) -> None:
+        """Fire the trigger for a firmware release the sensor does not run yet."""
+        card = self._triggers.get(Cards.FIRMWARE_AVAILABLE)
+
+        if card is None:
+            return
+
+        try:
+            await card.trigger(device, {"version": version, "installed": installed})
+        except Exception as error:  # noqa: BLE001 - a failing flow must not break the sensor
+            self._logger.error(f"Trigger {Cards.FIRMWARE_AVAILABLE} failed:", error)
 
     @staticmethod
     def translate(event: SensorEvent) -> TriggerInvocation | None:  # noqa: PLR0911 - one case per card

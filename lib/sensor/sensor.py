@@ -21,7 +21,7 @@ from ..sensor.polygon import Polygon
 from ..sensor.ports import EntityPort, EntityValue
 from ..sensor.profile import S1ProProfile
 from ..sensor.state_router import StateRouter
-from ..sensor.target_tracker import TargetPosition, TargetTracker
+from ..sensor.target_tracker import TargetPosition, TargetState, TargetTracker
 from ..sensor.value_tracker import ValueTracker
 from ..sensor.zone import Zone
 from ..sensor.zone_repository import ZoneOptions, ZoneRepository
@@ -136,6 +136,11 @@ class S1ProSensor:
     @property
     def targets(self) -> list[TargetPosition]:
         return self._targets.positions
+
+    @property
+    def target_states(self) -> list[TargetState | None]:
+        """Moving, stationary or held, per target slot."""
+        return self._targets.states
 
     @property
     def detection_range(self) -> float:
@@ -281,6 +286,7 @@ class S1ProSensor:
         for feed in S1ProProfile.TARGET_FEEDS:
             router.on(feed.pattern, self._target_handler(feed))
 
+        router.on(S1ProProfile.TARGET_STATE, self._on_target_state)
         router.on(S1ProProfile.ZONE_STATE, self._on_zone_state)
         router.on(S1ProProfile.ZONE_GEOMETRY, self._on_zone_geometry)
         router.on(self._setting_entities(), self._on_setting)
@@ -335,6 +341,13 @@ class S1ProSensor:
         changed = self._targets.update(slot, "x" if axis == "x" else "y", position, feed)
 
         # The official firmware repeats positions on every radar frame; only real moves count.
+        if changed:
+            self._observer.on_live()
+
+    def _on_target_state(self, value: EntityValue, groups: tuple[str, ...]) -> None:
+        (slot,) = groups
+        changed = self._targets.update_state(int(slot) - 1, TargetState.parse(value))
+
         if changed:
             self._observer.on_live()
 

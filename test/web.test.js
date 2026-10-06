@@ -7,6 +7,7 @@ import {
   messageOf,
 } from '../widgets/radar/public/lib/ApiClient.js';
 import { RadarGeometry } from '../widgets/radar/public/lib/RadarGeometry.js';
+import { TargetStyle } from '../widgets/radar/public/lib/TargetStyle.js';
 import { Translator } from '../widgets/radar/public/lib/Translator.js';
 import { ZoneDraft } from '../widgets/radar/public/lib/ZoneDraft.js';
 
@@ -187,5 +188,19 @@ describe('ApiClient', () => {
   it('turns errors into messages', () => {
     assert.equal(messageOf(new Error('boom')), 'boom');
     assert.equal(messageOf('plain'), 'plain');
+  });
+});
+
+describe('TargetStyle', () => {
+  it('styles a target by what it is doing', () => {
+    assert.deepEqual(TargetStyle.for('moving'), { fillOpacity: 1, strokeDasharray: 'none' });
+    assert.equal(TargetStyle.for('stationary').strokeDasharray, '5 3');
+    assert.equal(TargetStyle.for('held').fillOpacity, 0.45);
+  });
+
+  it('treats a missing or unknown state as moving', () => {
+    assert.deepEqual(TargetStyle.for(null), TargetStyle.for('moving'));
+    assert.deepEqual(TargetStyle.for(undefined), TargetStyle.for('moving'));
+    assert.deepEqual(TargetStyle.for(/** @type {any} */ ('dancing')), TargetStyle.for('moving'));
   });
 });

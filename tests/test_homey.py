@@ -7,6 +7,7 @@ from typing import Any
 import pytest
 from aioesphomeapi import (
     BinarySensorInfo,
+    ButtonInfo,
     EntityCategory,
     EntityInfo,
     NumberInfo,
@@ -74,6 +75,9 @@ S1_PRO_ENTITIES: list[EntityInfo] = [
     build(NumberInfo, key=10, object_id="detection_range", max_value=1800),
     build(SwitchInfo, key=11, object_id="radar___single_target", entity_category=EntityCategory.CONFIG),
     build(SwitchInfo, key=12, object_id="radar___flip_y_axis", entity_category=EntityCategory.CONFIG),
+    build(SwitchInfo, key=19, object_id="radar___bluetooth", entity_category=EntityCategory.CONFIG),
+    build(ButtonInfo, key=20, object_id="scd40___forced_calibration", entity_category=EntityCategory.CONFIG),
+    build(ButtonInfo, key=21, object_id="esp32___restart_module", entity_category=EntityCategory.CONFIG),
     build(TextSensorInfo, key=13, object_id="esp32___ssid", entity_category=EntityCategory.DIAGNOSTIC),
     build(SensorInfo, key=14, object_id="esp32___factory_reset", entity_category=EntityCategory.CONFIG),
 ]
@@ -114,8 +118,15 @@ class TestBrandProfile:
             "measure_tvoc",
             "sensy_air_quality",
             "sensy_iaq_accuracy",
+            "button.calibrate_co2",
+            "button.restart",
             "button.refresh",
         ]
+        calibrate = device["capabilitiesOptions"]["button.calibrate_co2"]
+        assert calibrate["key"] == 20
+        assert calibrate["maintenanceAction"] is True
+        assert "desc" in calibrate
+        assert "desc" not in device["capabilitiesOptions"]["button.restart"]
         assert device["capabilitiesOptions"]["sensy_people"]["key"] == 4
         assert device.get("class") == "sensor"
 
@@ -123,10 +134,13 @@ class TestBrandProfile:
         device = _mapped(diagnostics=True, configuration=True)
         capabilities = device["capabilities"]
 
-        assert "onoff" in capabilities or "onoff.radar___flip_y_axis" in capabilities
+        assert "onoff" in capabilities or "onoff.radar___bluetooth" in capabilities
+        assert not any("flip_y_axis" in capability for capability in capabilities)
         assert "esphome_string.esp32___ssid" in capabilities
         assert not any("single_target" in capability for capability in capabilities)
         assert not any("factory_reset" in capability for capability in capabilities)
+        assert capabilities.count("button.calibrate_co2") == 1
+        assert not any("forced_calibration" in capability for capability in capabilities)
         assert device.get("class") == "sensor"
 
     def test_accepts_only_the_s1_pro(self) -> None:
@@ -410,6 +424,10 @@ class TestPresenter:
         live = SensorPresenter.live(view)
 
         assert live["targets"] == [[100, 200], None, None]
+        assert live["targetStates"] == [None, None, None]
+
+        rig.port.report("target_1_state", "Moving")
+        assert SensorPresenter.live(view)["targetStates"] == ["moving", None, None]
         assert live["presence"] is True
         assert live["zones"][0] == {"zone": 1, "presence": False, "movement": False, "people": 0}
 

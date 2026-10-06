@@ -9,8 +9,34 @@ permissions:
   contents: read
 
 jobs:
-  check:
-    name: Lint, type-check, test and validate
+  python:
+    name: Python lint, type-check and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.14"
+          activate-environment: true
+
+      - name: Install dependencies
+        run: uv pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Type-check
+        run: pyright
+
+      - name: Test with coverage
+        run: pytest --cov
+
+  web:
+    name: Web views lint and test
     runs-on: ubuntu-latest
 
     steps:
@@ -24,17 +50,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint and test with coverage
+        run: npm run check
+
+  validate:
+    name: Validate the app manifest
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The Homey CLI compiles the Python dependencies for arm64 and amd64 in Docker.
+      - uses: docker/setup-qemu-action@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install the Homey CLI
         run: npm install --global homey
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Type-check
-        run: npm run typecheck
-
-      - name: Test with coverage
-        run: npm run test:coverage
-
-      - name: Validate the app manifest
-        run: npm run validate
+      - name: Validate
+        run: homey app validate --level publish

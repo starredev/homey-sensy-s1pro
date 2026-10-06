@@ -1,0 +1,50 @@
+# Development tooling only. The Homey CLI ignores this file when it packs the
+# app; runtime dependencies are `pythonPackages` in `.homeycompose/app.json`.
+
+[tool.ruff]
+target-version = "py314"
+line-length = 120
+extend-exclude = ["node_modules", "python_packages", ".homeybuild"]
+
+[tool.ruff.lint]
+# E7xx forbids one-line `if x: return` and stacked statements.
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "RET", "BLE", "PIE", "PL", "RUF", "N"]
+ignore = [
+  "PLR0913", # constructors take their collaborators as keyword arguments
+  "PLR2004", # small literals (2 coordinates, 3 slots) read better inline
+  "RET505",  # an explicit else after return is allowed for symmetry
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["PLR0915", "PLC2701", "SLF001"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["lib"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.coverage.run]
+source = ["lib"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+skip_covered = true
+
+[tool.pyright]
+pythonVersion = "3.14"
+typeCheckingMode = "standard"
+# The app code is fully typed; the Homey entry points lean on a partially typed SDK.
+strict = ["lib"]
+include = ["app.py", "api.py", "lib", "drivers", "widgets", "tests"]
+exclude = ["**/node_modules", "python_packages", ".homeybuild"]
+reportMissingTypeStubs = false
+reportPrivateUsage = false
+reportMissingModuleSource = false
+venvPath = "."
+venv = ".venv"

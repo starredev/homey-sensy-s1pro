@@ -15,7 +15,7 @@
     }
   ],
   "api": {
-    "getState": {
+    "get_state": {
       "method": "GET",
       "path": "/"
     }

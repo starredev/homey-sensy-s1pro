@@ -3,3 +3,19 @@
 /coverage/
 /env.json
 *.log
+
+# Python
+/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+/htmlcov/
+
+# Homey Python dependency cache (`homey app dependencies install`)
+/python_packages/
+
+# Pair and repair views, generated from .homeycompose/drivers/ by the Homey CLI
+/drivers/*/pair/
+/drivers/*/repair/

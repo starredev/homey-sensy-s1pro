@@ -4,6 +4,22 @@ All notable changes to this app are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the app uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- The app is now a Homey Python app on top of `homey-esphomedriver` (and `aioesphomeapi`) instead of
+  `@2colors/esphome-native-api`. The library takes over the connection, reconnects, pairing (mDNS and *Add by IP…*)
+  and the standard capabilities; sensors with an API encryption key can now be added.
+- Presence is `alarm_presence` and movement is `alarm_motion` (was `alarm_motion` and `sensy_moving`).
+  Existing sensors must be removed and added again.
+- Requires Homey 13.0 or newer.
+
+### Added
+
+- Diagnostic and configuration entities can be shown as capabilities from the device settings.
+- *Refresh capabilities* maintenance action.
+
 ## [1.0.0] - unreleased
 
 ### Added

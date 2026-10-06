@@ -1,10 +1,13 @@
 {
   "id": "io.github.starredev.sensys1pro",
   "version": "1.0.0",
-  "compatibility": ">=12.4.0",
+  "compatibility": ">=13.0.0",
   "sdk": 3,
-  "runtime": "nodejs",
-  "platforms": ["local"],
+  "runtime": "python",
+  "pythonVersion": "3.14",
+  "platforms": [
+    "local"
+  ],
   "name": {
     "en": "Sensy S1 Pro",
     "nl": "Sensy S1 Pro"
@@ -13,7 +16,9 @@
     "en": "mmWave presence, zones and air quality from the Sensy-One S1 Pro Multi Sense.",
     "nl": "mmWave-aanwezigheid, zones en luchtkwaliteit van de Sensy-One S1 Pro Multi Sense."
   },
-  "category": ["security"],
+  "category": [
+    "security"
+  ],
   "brandColor": "#1D6FD8",
   "permissions": [],
   "author": {
@@ -25,21 +30,26 @@
     "xlarge": "/assets/images/xlarge.png"
   },
   "api": {
-    "getDevices": {
+    "get_devices": {
       "method": "GET",
       "path": "/devices"
     },
-    "getDevice": {
+    "get_device": {
       "method": "GET",
       "path": "/devices/:id"
     },
-    "setZone": {
+    "set_zone": {
       "method": "PUT",
       "path": "/devices/:id/zones/:zone"
     },
-    "setZoneOptions": {
+    "set_zone_options": {
       "method": "PUT",
       "path": "/devices/:id/zones/:zone/options"
     }
-  }
+  },
+  "source": "https://github.com/starredev/homey-sensy-s1pro",
+  "pythonPackages": [
+    "aioesphomeapi",
+    "homey-esphomedriver>=0.4.1"
+  ]
 }

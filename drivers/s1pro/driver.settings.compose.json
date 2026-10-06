@@ -1,83 +1,972 @@
 [
   {
     "type": "group",
-    "label": { "en": "Detection", "nl": "Detectie" },
+    "label": {
+      "en": "Detection",
+      "nl": "Detectie"
+    },
     "children": [
       {
         "id": "detection_range",
         "type": "number",
-        "label": { "en": "Detection range", "nl": "Detectiebereik" },
+        "label": {
+          "en": "Detection range",
+          "nl": "Detectiebereik"
+        },
         "value": 600,
         "min": 0,
         "max": 1800,
-        "units": { "en": "cm" }
+        "units": {
+          "en": "cm"
+        }
       },
       {
         "id": "any_presence_delay",
         "type": "number",
-        "label": { "en": "Presence hold time", "nl": "Aanwezigheid vasthouden" },
-        "hint": { "en": "How long presence stays on after the last detection.", "nl": "Hoe lang aanwezigheid aan blijft na de laatste detectie." },
+        "label": {
+          "en": "Presence hold time",
+          "nl": "Aanwezigheid vasthouden"
+        },
+        "hint": {
+          "en": "How long presence stays on after the last detection.",
+          "nl": "Hoe lang aanwezigheid aan blijft na de laatste detectie."
+        },
         "value": 0,
         "min": 0,
         "max": 3600,
-        "units": { "en": "s" }
+        "units": {
+          "en": "s"
+        }
       },
       {
         "id": "any_movement_threshold",
         "type": "number",
-        "label": { "en": "Movement threshold", "nl": "Bewegingsdrempel" },
-        "hint": { "en": "Minimum speed that counts as movement.", "nl": "Minimale snelheid die als beweging telt." },
+        "label": {
+          "en": "Movement threshold",
+          "nl": "Bewegingsdrempel"
+        },
+        "hint": {
+          "en": "Minimum speed that counts as movement.",
+          "nl": "Minimale snelheid die als beweging telt."
+        },
         "value": 0,
         "min": 0,
         "max": 5000,
-        "units": { "en": "cm/s" }
+        "units": {
+          "en": "cm/s"
+        }
       },
       {
         "id": "single_target",
         "type": "checkbox",
-        "label": { "en": "Track a single person", "nl": "Eén persoon volgen" },
+        "label": {
+          "en": "Track a single person",
+          "nl": "Eén persoon volgen"
+        },
         "value": false
       }
     ]
   },
   {
     "type": "group",
-    "label": { "en": "Zone 1", "nl": "Zone 1" },
+    "label": {
+      "en": "Zone 1",
+      "nl": "Zone 1"
+    },
     "children": [
-      { "id": "zone1_presence_delay", "type": "number", "label": { "en": "Presence hold time", "nl": "Aanwezigheid vasthouden" }, "value": 0, "min": 0, "max": 3600, "units": { "en": "s" } },
-      { "id": "zone1_movement_threshold", "type": "number", "label": { "en": "Movement threshold", "nl": "Bewegingsdrempel" }, "value": 0, "min": 0, "max": 5000, "units": { "en": "cm/s" } }
+      {
+        "id": "zone1_presence_delay",
+        "type": "number",
+        "label": {
+          "en": "Presence hold time",
+          "nl": "Aanwezigheid vasthouden"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 3600,
+        "units": {
+          "en": "s"
+        }
+      },
+      {
+        "id": "zone1_movement_threshold",
+        "type": "number",
+        "label": {
+          "en": "Movement threshold",
+          "nl": "Bewegingsdrempel"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 5000,
+        "units": {
+          "en": "cm/s"
+        }
+      }
     ]
   },
   {
     "type": "group",
-    "label": { "en": "Zone 2", "nl": "Zone 2" },
+    "label": {
+      "en": "Zone 2",
+      "nl": "Zone 2"
+    },
     "children": [
-      { "id": "zone2_presence_delay", "type": "number", "label": { "en": "Presence hold time", "nl": "Aanwezigheid vasthouden" }, "value": 0, "min": 0, "max": 3600, "units": { "en": "s" } },
-      { "id": "zone2_movement_threshold", "type": "number", "label": { "en": "Movement threshold", "nl": "Bewegingsdrempel" }, "value": 0, "min": 0, "max": 5000, "units": { "en": "cm/s" } }
+      {
+        "id": "zone2_presence_delay",
+        "type": "number",
+        "label": {
+          "en": "Presence hold time",
+          "nl": "Aanwezigheid vasthouden"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 3600,
+        "units": {
+          "en": "s"
+        }
+      },
+      {
+        "id": "zone2_movement_threshold",
+        "type": "number",
+        "label": {
+          "en": "Movement threshold",
+          "nl": "Bewegingsdrempel"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 5000,
+        "units": {
+          "en": "cm/s"
+        }
+      }
     ]
   },
   {
     "type": "group",
-    "label": { "en": "Zone 3", "nl": "Zone 3" },
+    "label": {
+      "en": "Zone 3",
+      "nl": "Zone 3"
+    },
     "children": [
-      { "id": "zone3_presence_delay", "type": "number", "label": { "en": "Presence hold time", "nl": "Aanwezigheid vasthouden" }, "value": 0, "min": 0, "max": 3600, "units": { "en": "s" } },
-      { "id": "zone3_movement_threshold", "type": "number", "label": { "en": "Movement threshold", "nl": "Bewegingsdrempel" }, "value": 0, "min": 0, "max": 5000, "units": { "en": "cm/s" } }
+      {
+        "id": "zone3_presence_delay",
+        "type": "number",
+        "label": {
+          "en": "Presence hold time",
+          "nl": "Aanwezigheid vasthouden"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 3600,
+        "units": {
+          "en": "s"
+        }
+      },
+      {
+        "id": "zone3_movement_threshold",
+        "type": "number",
+        "label": {
+          "en": "Movement threshold",
+          "nl": "Bewegingsdrempel"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 5000,
+        "units": {
+          "en": "cm/s"
+        }
+      }
     ]
   },
   {
     "type": "group",
-    "label": { "en": "Calibration", "nl": "Kalibratie" },
+    "label": {
+      "en": "Calibration",
+      "nl": "Kalibratie"
+    },
     "children": [
-      { "id": "bme688_temp_offset", "type": "number", "label": { "en": "Temperature offset", "nl": "Temperatuurcorrectie" }, "value": 0, "min": -50, "max": 50, "step": 0.1, "units": { "en": "°C" } },
-      { "id": "scd40_temp_offset", "type": "number", "label": { "en": "CO₂ sensor temperature offset", "nl": "Temperatuurcorrectie CO₂-sensor" }, "value": 0, "min": -50, "max": 50, "step": 0.1, "units": { "en": "°C" } }
+      {
+        "id": "bme688_temp_offset",
+        "type": "number",
+        "label": {
+          "en": "Temperature offset",
+          "nl": "Temperatuurcorrectie"
+        },
+        "value": 0,
+        "min": -50,
+        "max": 50,
+        "step": 0.1,
+        "units": {
+          "en": "°C"
+        }
+      },
+      {
+        "id": "scd40_temp_offset",
+        "type": "number",
+        "label": {
+          "en": "CO₂ sensor temperature offset",
+          "nl": "Temperatuurcorrectie CO₂-sensor"
+        },
+        "value": 0,
+        "min": -50,
+        "max": 50,
+        "step": 0.1,
+        "units": {
+          "en": "°C"
+        }
+      }
     ]
   },
   {
     "type": "group",
-    "label": { "en": "Connection", "nl": "Verbinding" },
+    "label": {
+      "en": "Device",
+      "nl": "Apparaat"
+    },
     "children": [
-      { "id": "address", "type": "label", "label": { "en": "IP address", "nl": "IP-adres" }, "value": "-" },
-      { "id": "firmware", "type": "label", "label": { "en": "Firmware", "nl": "Firmware" }, "value": "-" }
+      {
+        "id": "device_class",
+        "type": "dropdown",
+        "label": {
+          "en": "Device class",
+          "nl": "Apparaatklasse"
+        },
+        "value": "auto",
+        "hint": {
+          "en": "Auto keeps the class detected from entities.",
+          "nl": "Automatisch gebruikt de apparaatklasse die uit de capabilities is herkend."
+        },
+        "values": [
+          {
+            "id": "auto",
+            "label": {
+              "en": "Auto (from device)",
+              "nl": "Automatisch (van apparaat)"
+            }
+          },
+          {
+            "id": "airconditioning",
+            "label": {
+              "en": "Air conditioning",
+              "nl": "Airconditioning"
+            }
+          },
+          {
+            "id": "airfryer",
+            "label": {
+              "en": "Air fryer",
+              "nl": "Airfryer"
+            }
+          },
+          {
+            "id": "airpurifier",
+            "label": {
+              "en": "Air purifier",
+              "nl": "Luchtreiniger"
+            }
+          },
+          {
+            "id": "airtreatment",
+            "label": {
+              "en": "Air treatment",
+              "nl": "Luchtbehandeling"
+            }
+          },
+          {
+            "id": "amplifier",
+            "label": {
+              "en": "Amplifier",
+              "nl": "Versterker"
+            }
+          },
+          {
+            "id": "battery",
+            "label": {
+              "en": "Battery",
+              "nl": "Batterij"
+            }
+          },
+          {
+            "id": "bicycle",
+            "label": {
+              "en": "Bicycle",
+              "nl": "Fiets"
+            }
+          },
+          {
+            "id": "blinds",
+            "label": {
+              "en": "Blinds",
+              "nl": "Jaloezieën"
+            }
+          },
+          {
+            "id": "boiler",
+            "label": {
+              "en": "Boiler",
+              "nl": "Ketel"
+            }
+          },
+          {
+            "id": "bridge",
+            "label": {
+              "en": "Bridge"
+            }
+          },
+          {
+            "id": "button",
+            "label": {
+              "en": "Button",
+              "nl": "Knop"
+            }
+          },
+          {
+            "id": "camera",
+            "label": {
+              "en": "Camera"
+            }
+          },
+          {
+            "id": "car",
+            "label": {
+              "en": "Car",
+              "nl": "Auto"
+            }
+          },
+          {
+            "id": "coffeemachine",
+            "label": {
+              "en": "Coffee machine",
+              "nl": "Koffiezetapparaat"
+            }
+          },
+          {
+            "id": "cooktop",
+            "label": {
+              "en": "Cooktop",
+              "nl": "Kookplaat"
+            }
+          },
+          {
+            "id": "curtain",
+            "label": {
+              "en": "Curtain",
+              "nl": "Gordijn"
+            }
+          },
+          {
+            "id": "dehumidifier",
+            "label": {
+              "en": "Dehumidifier",
+              "nl": "Ontvochtiger"
+            }
+          },
+          {
+            "id": "diffuser",
+            "label": {
+              "en": "Diffuser"
+            }
+          },
+          {
+            "id": "dishwasher",
+            "label": {
+              "en": "Dishwasher",
+              "nl": "Vaatwasser"
+            }
+          },
+          {
+            "id": "doorbell",
+            "label": {
+              "en": "Doorbell",
+              "nl": "Deurbel"
+            }
+          },
+          {
+            "id": "dryer",
+            "label": {
+              "en": "Dryer",
+              "nl": "Droger"
+            }
+          },
+          {
+            "id": "evcharger",
+            "label": {
+              "en": "EV charger",
+              "nl": "EV-lader"
+            }
+          },
+          {
+            "id": "fan",
+            "label": {
+              "en": "Fan",
+              "nl": "Ventilator"
+            }
+          },
+          {
+            "id": "faucet",
+            "label": {
+              "en": "Faucet",
+              "nl": "Kraan"
+            }
+          },
+          {
+            "id": "fireplace",
+            "label": {
+              "en": "Fireplace",
+              "nl": "Open haard"
+            }
+          },
+          {
+            "id": "freezer",
+            "label": {
+              "en": "Freezer",
+              "nl": "Diepvries"
+            }
+          },
+          {
+            "id": "fridge_and_freezer",
+            "label": {
+              "en": "Fridge and freezer",
+              "nl": "Koelkast met vriesvak"
+            }
+          },
+          {
+            "id": "fridge",
+            "label": {
+              "en": "Fridge",
+              "nl": "Koelkast"
+            }
+          },
+          {
+            "id": "fryer",
+            "label": {
+              "en": "Fryer",
+              "nl": "Friteuse"
+            }
+          },
+          {
+            "id": "gameconsole",
+            "label": {
+              "en": "Game console",
+              "nl": "Spelcomputer"
+            }
+          },
+          {
+            "id": "garagedoor",
+            "label": {
+              "en": "Garage door",
+              "nl": "Garagedeur"
+            }
+          },
+          {
+            "id": "grill",
+            "label": {
+              "en": "Grill"
+            }
+          },
+          {
+            "id": "heater",
+            "label": {
+              "en": "Heater",
+              "nl": "Verwarming"
+            }
+          },
+          {
+            "id": "heatpump",
+            "label": {
+              "en": "Heat pump",
+              "nl": "Warmtepomp"
+            }
+          },
+          {
+            "id": "homealarm",
+            "label": {
+              "en": "Home alarm",
+              "nl": "Huisalarm"
+            }
+          },
+          {
+            "id": "hood",
+            "label": {
+              "en": "Hood",
+              "nl": "Afzuigkap"
+            }
+          },
+          {
+            "id": "humidifier",
+            "label": {
+              "en": "Humidifier",
+              "nl": "Luchtbevochtiger"
+            }
+          },
+          {
+            "id": "kettle",
+            "label": {
+              "en": "Kettle",
+              "nl": "Waterkoker"
+            }
+          },
+          {
+            "id": "lawnmower",
+            "label": {
+              "en": "Lawnmower",
+              "nl": "Grasmaaier"
+            }
+          },
+          {
+            "id": "light",
+            "label": {
+              "en": "Light",
+              "nl": "Lamp"
+            }
+          },
+          {
+            "id": "lock",
+            "label": {
+              "en": "Lock",
+              "nl": "Slot"
+            }
+          },
+          {
+            "id": "mediaplayer",
+            "label": {
+              "en": "Media player",
+              "nl": "Mediaspeler"
+            }
+          },
+          {
+            "id": "microwave",
+            "label": {
+              "en": "Microwave",
+              "nl": "Magnetron"
+            }
+          },
+          {
+            "id": "mop",
+            "label": {
+              "en": "Mop",
+              "nl": "Dweilrobot"
+            }
+          },
+          {
+            "id": "multicooker",
+            "label": {
+              "en": "Multi cooker",
+              "nl": "Multicooker"
+            }
+          },
+          {
+            "id": "networkrouter",
+            "label": {
+              "en": "Network router",
+              "nl": "Netwerkrouter"
+            }
+          },
+          {
+            "id": "other",
+            "label": {
+              "en": "Other",
+              "nl": "Overig"
+            }
+          },
+          {
+            "id": "oven_and_microwave",
+            "label": {
+              "en": "Oven and microwave",
+              "nl": "Oven met magnetronfunctie"
+            }
+          },
+          {
+            "id": "oven",
+            "label": {
+              "en": "Oven"
+            }
+          },
+          {
+            "id": "petfeeder",
+            "label": {
+              "en": "Pet feeder",
+              "nl": "Voerautomaat"
+            }
+          },
+          {
+            "id": "pump",
+            "label": {
+              "en": "Pump",
+              "nl": "Pomp"
+            }
+          },
+          {
+            "id": "radiator",
+            "label": {
+              "en": "Radiator"
+            }
+          },
+          {
+            "id": "remote",
+            "label": {
+              "en": "Remote",
+              "nl": "Afstandsbediening"
+            }
+          },
+          {
+            "id": "scooter",
+            "label": {
+              "en": "Scooter"
+            }
+          },
+          {
+            "id": "sensor",
+            "label": {
+              "en": "Sensor"
+            }
+          },
+          {
+            "id": "service",
+            "label": {
+              "en": "Service"
+            }
+          },
+          {
+            "id": "settopbox",
+            "label": {
+              "en": "Set-top box",
+              "nl": "Decoder"
+            }
+          },
+          {
+            "id": "shutterblinds",
+            "label": {
+              "en": "Shutter blinds",
+              "nl": "Rolluiken"
+            }
+          },
+          {
+            "id": "siren",
+            "label": {
+              "en": "Siren",
+              "nl": "Sirene"
+            }
+          },
+          {
+            "id": "smokealarm",
+            "label": {
+              "en": "Smoke alarm",
+              "nl": "Rookmelder"
+            }
+          },
+          {
+            "id": "socket",
+            "label": {
+              "en": "Socket",
+              "nl": "Plug"
+            }
+          },
+          {
+            "id": "solarpanel",
+            "label": {
+              "en": "Solar panel",
+              "nl": "Zonnepaneel"
+            }
+          },
+          {
+            "id": "speaker",
+            "label": {
+              "en": "Speaker"
+            }
+          },
+          {
+            "id": "sprinkler",
+            "label": {
+              "en": "Sprinkler",
+              "nl": "Sproeier"
+            }
+          },
+          {
+            "id": "sunshade",
+            "label": {
+              "en": "Sunshade",
+              "nl": "Zonnescherm"
+            }
+          },
+          {
+            "id": "thermostat",
+            "label": {
+              "en": "Thermostat",
+              "nl": "Thermostaat"
+            }
+          },
+          {
+            "id": "tv",
+            "label": {
+              "en": "TV"
+            }
+          },
+          {
+            "id": "vacuumcleaner",
+            "label": {
+              "en": "Vacuum cleaner",
+              "nl": "Stofzuiger"
+            }
+          },
+          {
+            "id": "vehicle",
+            "label": {
+              "en": "Vehicle",
+              "nl": "Voertuig"
+            }
+          },
+          {
+            "id": "washer_and_dryer",
+            "label": {
+              "en": "Washer and dryer",
+              "nl": "Wasmachine met droogfunctie"
+            }
+          },
+          {
+            "id": "washer",
+            "label": {
+              "en": "Washer",
+              "nl": "Wasmachine"
+            }
+          },
+          {
+            "id": "waterheater",
+            "label": {
+              "en": "Water heater",
+              "nl": "Boiler"
+            }
+          },
+          {
+            "id": "waterpurifier",
+            "label": {
+              "en": "Water purifier",
+              "nl": "Waterzuiveraar"
+            }
+          },
+          {
+            "id": "watervalve",
+            "label": {
+              "en": "Water valve",
+              "nl": "Waterklep"
+            }
+          },
+          {
+            "id": "windowcoverings",
+            "label": {
+              "en": "Window coverings",
+              "nl": "Raambekleding"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Capabilities"
+    },
+    "children": [
+      {
+        "id": "show_diagnostics",
+        "type": "checkbox",
+        "label": {
+          "en": "Show diagnostic capabilities",
+          "nl": "Diagnostische capabilities tonen"
+        },
+        "value": false,
+        "hint": {
+          "en": "Adds diagnostic entities such as signal strength and uptime. Turning off removes them again.",
+          "nl": "Voegt diagnostische capabilities toe, zoals signaalsterkte en uptime. Uitschakelen verwijdert ze weer."
+        }
+      },
+      {
+        "id": "show_configuration",
+        "type": "checkbox",
+        "label": {
+          "en": "Show configuration capabilities",
+          "nl": "Configuratie-capabilities tonen"
+        },
+        "value": false,
+        "hint": {
+          "en": "Adds configuration entities such as calibration numbers and restart buttons. Turning off removes them again.",
+          "nl": "Voegt configuratie-capabilities toe, zoals kalibratienummers en herstartknoppen. Uitschakelen verwijdert ze weer."
+        }
+      }
+    ]
+  },
+  {
+    "id": "device_information",
+    "type": "group",
+    "label": {
+      "en": "Device Information",
+      "nl": "Apparaatinformatie"
+    },
+    "children": [
+      {
+        "id": "host",
+        "type": "label",
+        "label": {
+          "en": "Host / IP"
+        },
+        "value": "",
+        "hint": {
+          "en": "LAN address used to reach this node. Updated automatically when mDNS discovery sees a new IP.",
+          "nl": "LAN-adres om dit apparaat te bereiken. Wordt automatisch bijgewerkt wanneer mDNS-ontdekking een nieuw IP-adres ziet."
+        }
+      },
+      {
+        "id": "port",
+        "type": "label",
+        "label": {
+          "en": "API port"
+        },
+        "value": "6053",
+        "hint": {
+          "en": "Native API port (default 6053).",
+          "nl": "Native API-poort (standaard 6053)."
+        }
+      },
+      {
+        "id": "encryption",
+        "type": "label",
+        "label": {
+          "en": "Encryption",
+          "nl": "Encryptie"
+        },
+        "value": "Not set",
+        "hint": {
+          "en": "Whether a Noise encryption key is configured for the API connection.",
+          "nl": "Of er een Noise-encryptiesleutel is ingesteld voor de API-verbinding."
+        }
+      },
+      {
+        "id": "manufacturer",
+        "type": "label",
+        "label": {
+          "en": "Manufacturer",
+          "nl": "Fabrikant"
+        },
+        "value": "",
+        "hint": {
+          "en": "Board or vendor reported by the ESPHome firmware.",
+          "nl": "Bord of fabrikant zoals doorgegeven door de ESPHome-firmware."
+        }
+      },
+      {
+        "id": "model",
+        "type": "label",
+        "label": {
+          "en": "Model"
+        },
+        "value": "",
+        "hint": {
+          "en": "Hardware model reported by the ESPHome firmware.",
+          "nl": "Hardwaremodel zoals doorgegeven door de ESPHome-firmware."
+        }
+      },
+      {
+        "id": "mac",
+        "type": "label",
+        "label": {
+          "en": "MAC address"
+        },
+        "value": "",
+        "hint": {
+          "en": "Primary network MAC used as this device's identity in Homey.",
+          "nl": "Primaire netwerk-MAC die Homey gebruikt als identiteit van dit apparaat."
+        }
+      },
+      {
+        "id": "hostname",
+        "type": "label",
+        "label": {
+          "en": "Hostname",
+          "nl": "Hostnaam"
+        },
+        "value": "",
+        "hint": {
+          "en": "ESPHome node name (mDNS hostname).",
+          "nl": "ESPHome-apparaatnaam (mDNS-hostnaam)."
+        }
+      },
+      {
+        "id": "esphome_version",
+        "type": "label",
+        "label": {
+          "en": "ESPHome version",
+          "nl": "ESPHome-versie"
+        },
+        "value": "",
+        "hint": {
+          "en": "ESPHome version that built the firmware running on this node.",
+          "nl": "ESPHome-versie waarmee de firmware op dit apparaat is gebouwd."
+        }
+      },
+      {
+        "id": "compilation_time",
+        "type": "label",
+        "label": {
+          "en": "Compilation time",
+          "nl": "Compilatietijd"
+        },
+        "value": "",
+        "hint": {
+          "en": "When the current firmware binary was compiled.",
+          "nl": "Wanneer de huidige firmwarebinary is gecompileerd."
+        }
+      },
+      {
+        "id": "project",
+        "type": "label",
+        "label": {
+          "en": "Project"
+        },
+        "value": "",
+        "hint": {
+          "en": "Optional project name and version set in the ESPHome config.",
+          "nl": "Optionele projectnaam en -versie uit de ESPHome-configuratie."
+        }
+      },
+      {
+        "id": "bluetooth_mac",
+        "type": "label",
+        "label": {
+          "en": "Bluetooth MAC"
+        },
+        "value": "",
+        "hint": {
+          "en": "Bluetooth adapter MAC when the node exposes BLE.",
+          "nl": "MAC-adres van de Bluetooth-adapter als het apparaat BLE aanbiedt."
+        }
+      },
+      {
+        "id": "webserver",
+        "type": "label",
+        "label": {
+          "en": "Web server",
+          "nl": "Webserver"
+        },
+        "value": "",
+        "hint": {
+          "en": "Local web UI URL when the ESPHome web server component is enabled.",
+          "nl": "Lokale web-UI-URL wanneer de ESPHome-webservercomponent is ingeschakeld."
+        }
+      },
+      {
+        "id": "deep_sleep",
+        "type": "label",
+        "label": {
+          "en": "Deep sleep enabled",
+          "nl": "Deep sleep ingeschakeld"
+        },
+        "value": "No",
+        "hint": {
+          "en": "Whether this node uses deep sleep (may appear offline between wake-ups).",
+          "nl": "Of dit apparaat deep sleep gebruikt (kan offline lijken tussen wake-ups)."
+        }
+      }
     ]
   }
 ]

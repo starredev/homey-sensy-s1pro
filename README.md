@@ -10,17 +10,22 @@ mmWave presence (including people who sit still), up to three zones, people coun
 environment sensors, straight from the sensor to Homey over the ESPHome native API. No Home Assistant
 and no MQTT broker needed.
 
+The app is a Homey **Python** app built on [`homey-esphomedriver`](https://github.com/Doekse/homey-esphomedriver),
+the shared ESPHome layer that also powers the generic ESPHome app for Homey. That library handles the
+connection, reconnects, encryption, pairing and the standard capabilities; this app adds what is specific to
+the S1 Pro: zones, live targets, flow cards, settings, the zone editor and the radar widget.
+
 > **Unofficial community project.** Not made, endorsed or supported by Sensy-One.
 
 ## Features
 
 **Device** — found automatically on your network (mDNS) and followed when its IP address changes. If it is not found,
-for example because it is on a separate IoT network, you can add it by IP address or host name instead.
+for example because it is on a separate IoT network, choose *Add by IP…* instead. Sensors with an API encryption key
+are supported too.
 
 | Capability | Source |
 |---|---|
-| Presence (`alarm_motion`, so Homey zone activity works even when people sit still) | mmWave radar |
-| Movement, number of people | mmWave radar |
+| Presence (`alarm_presence`), movement (`alarm_motion`), number of people | mmWave radar |
 | Temperature, humidity, pressure, air quality (IAQ) | BME688 |
 | CO₂ | SCD40 |
 | Light (lux), UV index | LTR390 |
@@ -39,20 +44,21 @@ points, drag them, save. Three zones plus an exclusion zone, each with its own h
 **Dashboard widget** — a top-down radar with people as moving dots and zones that light up on presence.
 
 **Device settings** — detection range, hold times, movement thresholds, single-target mode and
-temperature offsets, kept in sync with the sensor in both directions.
+temperature offsets, kept in sync with the sensor in both directions. Diagnostic and configuration entities
+(WiFi details, LED, restart buttons, radar switches) can be shown as extra capabilities from the device settings.
 
 ## Requirements
 
 - A Sensy-One **S1 Pro Multi Sense** with the official firmware (v1.2.21 or newer) or the Homey edition
   firmware. The app finds the sensor through mDNS by its ESPHome project name, so keep that unchanged.
-- Homey Pro (2023) or Homey Pro mini with firmware **12.4 or newer**.
+- Homey Pro (2023) or Homey Pro mini with firmware **13.0 or newer** (Python apps).
 
 ## Installation
 
-Until the app is in the Homey App Store, install it with the Homey CLI:
+Until the app is in the Homey App Store, install it with the Homey CLI (needs Docker, which compiles the
+Python dependencies for your Homey):
 
 ```bash
-npm install
 homey login
 homey select
 homey app install
@@ -66,26 +72,29 @@ Then add the sensor: **Devices → + → Sensy S1 Pro → S1 Pro Multi Sense**.
   The proxy is only for Home Assistant; on the single-radio ESP32-C3 it competes with WiFi. The app shows a warning
   on the device while the proxy is on.
 - **The sensor is not found when adding it.** The app finds sensors through mDNS (`_esphomelib._tcp`), which does not
-  cross networks or VLANs. When nothing is found, the app asks for the sensor's IP address instead; give the sensor
-  a fixed IP address (DHCP reservation) in that case.
+  cross networks or VLANs. Choose *Add by IP…* in the list and give the sensor a fixed IP address (DHCP reservation).
+- **Zone capabilities disappeared after *Refresh capabilities*.** They come back by themselves; the app re-adds them
+  for every zone that has an outline right after the refresh.
 
 ## Development
 
 ```bash
-npm install
-npm run check      # lint, type-check, tests with coverage, manifest validation
-npm test           # tests only
-homey app run      # run on your Homey (needs Docker)
+uv venv --python 3.14 && uv pip install -r requirements-dev.txt
+ruff check . && ruff format --check . && pyright && pytest --cov   # the app (Python)
+npm install && npm run check                                       # the web views (JavaScript)
+homey app validate --level publish                                 # the manifest (needs Docker)
+homey app run                                                      # run on your Homey (needs Docker)
 ```
 
-The code is organised in layers (ESPHome connection → sensor model → Homey adapters), with the sensor
-logic free of Homey so it runs under plain `node --test`. [CONTRIBUTING.md](CONTRIBUTING.md) explains the
+The code is organised in layers (entity port → sensor model → Homey adapters), with the sensor
+logic free of Homey so it runs under plain `pytest`. [CONTRIBUTING.md](CONTRIBUTING.md) explains the
 structure and the code style.
 
 ## Credits
 
 - [Sensy-One](https://github.com/sensy-one) for the S1 Pro hardware and its ESPHome firmware.
-- [`@2colors/esphome-native-api`](https://www.npmjs.com/package/@2colors/esphome-native-api) for the ESPHome client.
+- [`homey-esphomedriver`](https://github.com/Doekse/homey-esphomedriver) by Abe Haverkamp and
+  [`aioesphomeapi`](https://github.com/esphome/aioesphomeapi) for the ESPHome integration.
 
 ## License
 

@@ -1,7 +1,11 @@
 # Development files that are not part of the app bundle.
 test/
+tests/
 coverage/
+htmlcov/
 eslint.config.js
-jsconfig.json
+package.json
+package-lock.json
+requirements-dev.txt
 *.md
 assets/logo.png

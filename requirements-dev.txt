@@ -1,0 +1,10 @@
+# Python 3.14 development environment:
+#   uv venv --python 3.14 && uv pip install -r requirements-dev.txt
+aioesphomeapi
+homey-esphomedriver>=0.4.1
+homey-stubs
+pytest
+pytest-asyncio
+pytest-cov
+pyright
+ruff

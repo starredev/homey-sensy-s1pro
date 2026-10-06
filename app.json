@@ -2,9 +2,10 @@
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "io.github.starredev.sensys1pro",
   "version": "1.0.0",
-  "compatibility": ">=12.4.0",
+  "compatibility": ">=13.0.0",
   "sdk": 3,
-  "runtime": "nodejs",
+  "runtime": "python",
+  "pythonVersion": "3.14",
   "platforms": [
     "local"
   ],
@@ -30,26 +31,1693 @@
     "xlarge": "/assets/images/xlarge.png"
   },
   "api": {
-    "getDevices": {
+    "get_devices": {
       "method": "GET",
       "path": "/devices"
     },
-    "getDevice": {
+    "get_device": {
       "method": "GET",
       "path": "/devices/:id"
     },
-    "setZone": {
+    "set_zone": {
       "method": "PUT",
       "path": "/devices/:id/zones/:zone"
     },
-    "setZoneOptions": {
+    "set_zone_options": {
       "method": "PUT",
       "path": "/devices/:id/zones/:zone/options"
     }
   },
-  "esm": true,
+  "source": "https://github.com/starredev/homey-sensy-s1pro",
+  "pythonPackages": [
+    "aioesphomeapi",
+    "homey-esphomedriver>=0.4.1"
+  ],
   "flow": {
     "triggers": [
+      {
+        "id": "aircleaner_mode_changed",
+        "title": {
+          "en": "The air cleaner mode changed to",
+          "ar": "تغيّر وضع منقّي الهواء إلى",
+          "da": "Luftrensertilstanden er ændret til",
+          "de": "Der Luftreiniger-Modus wurde geändert zu",
+          "es": "El modo del purificador ha cambiado a",
+          "fr": "Le mode du purificateur a changé pour",
+          "it": "La modalità del purificatore è cambiata in",
+          "ko": "공기청정기 모드가 다음으로 변경됨",
+          "nl": "De luchtreinigermodus is veranderd naar",
+          "no": "Luftrensermodus er endret til",
+          "pl": "Tryb oczyszczacza zmienił się na",
+          "ru": "Режим очистителя изменился на",
+          "sv": "Luftrenarläget har ändrats till"
+        },
+        "titleFormatted": {
+          "en": "The air cleaner mode changed to [[aircleaner_mode]]",
+          "ar": "تغيّر وضع منقّي الهواء إلى [[aircleaner_mode]]",
+          "da": "Luftrensertilstanden er ændret til [[aircleaner_mode]]",
+          "de": "Der Luftreiniger-Modus wurde geändert zu [[aircleaner_mode]]",
+          "es": "El modo del purificador ha cambiado a [[aircleaner_mode]]",
+          "fr": "Le mode du purificateur a changé pour [[aircleaner_mode]]",
+          "it": "La modalità del purificatore è cambiata in [[aircleaner_mode]]",
+          "ko": "공기청정기 모드가 [[aircleaner_mode]](으)로 변경됨",
+          "nl": "De luchtreinigermodus is veranderd naar [[aircleaner_mode]]",
+          "no": "Luftrensermodus er endret til [[aircleaner_mode]]",
+          "pl": "Tryb oczyszczacza zmienił się na [[aircleaner_mode]]",
+          "ru": "Режим очистителя изменился на [[aircleaner_mode]]",
+          "sv": "Luftrenarläget har ändrats till [[aircleaner_mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=aircleaner_mode"
+          },
+          {
+            "name": "aircleaner_mode",
+            "title": {
+              "en": "Mode",
+              "ar": "الوضع",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "ko": "모드",
+              "nl": "Modus",
+              "no": "Modus",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "sv": "Läge"
+            },
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "fan",
+                "title": {
+                  "en": "Fan",
+                  "ar": "مروحة",
+                  "da": "Ventilator",
+                  "de": "Lüfter",
+                  "es": "Ventilador",
+                  "fr": "Ventilateur",
+                  "it": "Ventilatore",
+                  "ko": "팬",
+                  "nl": "Ventilator",
+                  "no": "Vifte",
+                  "pl": "Wentylator",
+                  "ru": "Вентилятор",
+                  "sv": "Fläkt"
+                }
+              },
+              {
+                "id": "auto",
+                "title": {
+                  "en": "Auto"
+                }
+              },
+              {
+                "id": "silent",
+                "title": {
+                  "en": "Silent",
+                  "ar": "صامت",
+                  "da": "Stille",
+                  "de": "Leise",
+                  "es": "Silencioso",
+                  "fr": "Silencieux",
+                  "it": "Silenzioso",
+                  "ko": "조용히",
+                  "nl": "Stil",
+                  "no": "Stille",
+                  "pl": "Cichy",
+                  "ru": "Тихий",
+                  "sv": "Tyst"
+                }
+              },
+              {
+                "id": "favorite",
+                "title": {
+                  "en": "Favorite"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "alarm_doorbell_received",
+        "title": {
+          "en": "Someone rang the doorbell",
+          "ar": "شخص ما رن جرس الباب",
+          "da": "Nogen ringede på dørklokken",
+          "de": "Jemand hat geklingelt",
+          "es": "Alguien ha llamado al timbre",
+          "fr": "Quelqu’un a sonné à la porte",
+          "it": "Qualcuno ha suonato il campanello",
+          "ko": "누가 초인종을 눌렀음",
+          "nl": "Iemand heeft aangebeld",
+          "no": "Noen ringte på døren",
+          "pl": "Ktoś zadzwonił do drzwi",
+          "ru": "Кто-то позвонил в дверь",
+          "sv": "Någon ringde på dörren"
+        },
+        "tokens": [
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "string",
+            "example": "Front door"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=alarm_doorbell"
+          }
+        ]
+      },
+      {
+        "id": "alarm_plugged_in_false",
+        "title": {
+          "en": "The plugged in alarm turned off",
+          "ar": "تم إيقاف إنذار التوصيل",
+          "da": "Tilsluttet-alarmen blev slukket",
+          "de": "Der Eingesteckt-Alarm wurde ausgeschaltet",
+          "es": "La alarma de enchufado se ha desactivado",
+          "fr": "L’alarme branché s’est désactivée",
+          "it": "L’allarme collegato si è disattivato",
+          "ko": "연결됨 알람이 꺼짐",
+          "nl": "Het ingeplugd alarm gaat uit",
+          "no": "Tilkoblet-alarmen ble slått av",
+          "pl": "Alarm podłączenia wyłączył się",
+          "ru": "Сигнал «подключено» выключился",
+          "sv": "Inkopplad-larmet slogs av"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=alarm_plugged_in"
+          }
+        ]
+      },
+      {
+        "id": "alarm_plugged_in_true",
+        "title": {
+          "en": "The plugged in alarm turned on",
+          "ar": "تم تشغيل إنذار التوصيل",
+          "da": "Tilsluttet-alarmen blev tændt",
+          "de": "Der Eingesteckt-Alarm wurde eingeschaltet",
+          "es": "La alarma de enchufado se ha activado",
+          "fr": "L’alarme branché s’est activée",
+          "it": "L’allarme collegato si è attivato",
+          "ko": "연결됨 알람이 켜짐",
+          "nl": "Het ingeplugd alarm gaat aan",
+          "no": "Tilkoblet-alarmen ble slått på",
+          "pl": "Alarm podłączenia włączył się",
+          "ru": "Сигнал «подключено» включился",
+          "sv": "Inkopplad-larmet slogs på"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=alarm_plugged_in"
+          }
+        ]
+      },
+      {
+        "id": "alarm_triggered_false",
+        "title": {
+          "en": "The home alarm is no longer triggered",
+          "ar": "لم يعد إنذار المنزل يعمل",
+          "da": "Husalarmen udløses ikke længere",
+          "de": "Die Alarmanlage wird nicht mehr ausgelöst",
+          "es": "La alarma del hogar ya no se dispara",
+          "fr": "L’alarme maison ne se déclenche plus",
+          "it": "L’allarme casa non è più attivo",
+          "ko": "홈 알람이 더 이상 울리지 않음",
+          "nl": "Het huisalarm gaat niet langer af",
+          "no": "Husalarmen utløses ikke lenger",
+          "pl": "Alarm domowy nie jest już uruchomiony",
+          "ru": "Домашняя сигнализация больше не срабатывает",
+          "sv": "Hemlarmet utlöses inte längre"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=alarm_triggered"
+          }
+        ]
+      },
+      {
+        "id": "alarm_triggered_true",
+        "title": {
+          "en": "The home alarm is triggered",
+          "ar": "يتم تشغيل إنذار المنزل",
+          "da": "Husalarmen udløses",
+          "de": "Die Alarmanlage wird ausgelöst",
+          "es": "La alarma del hogar se dispara",
+          "fr": "L’alarme maison se déclenche",
+          "it": "L’allarme casa si attiva",
+          "ko": "홈 알람이 울림",
+          "nl": "Het huisalarm gaat af",
+          "no": "Husalarmen utløses",
+          "pl": "Alarm domowy zostaje uruchomiony",
+          "ru": "Домашняя сигнализация срабатывает",
+          "sv": "Hemlarmet utlöses"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=alarm_triggered"
+          }
+        ]
+      },
+      {
+        "id": "esphome_boolean_false",
+        "title": {
+          "en": "A boolean became false",
+          "ar": "أصبح boolean خاطئًا",
+          "da": "En boolean blev falsk",
+          "de": "Ein Boolean wurde falsch",
+          "es": "Un booleano pasó a falso",
+          "fr": "Un booléen est devenu faux",
+          "it": "Un booleano è diventato falso",
+          "ko": "boolean이 false가 됨",
+          "nl": "Een boolean werd onwaar",
+          "no": "En boolean ble usann",
+          "pl": "Wartość boolean stała się fałszywa",
+          "ru": "Boolean стал false",
+          "sv": "En boolean blev falsk"
+        },
+        "tokens": [
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "string",
+            "example": "Flag"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_boolean"
+          }
+        ]
+      },
+      {
+        "id": "esphome_boolean_true",
+        "title": {
+          "en": "A boolean became true",
+          "ar": "أصبح boolean صحيحًا",
+          "da": "En boolean blev sand",
+          "de": "Ein Boolean wurde wahr",
+          "es": "Un booleano pasó a verdadero",
+          "fr": "Un booléen est devenu vrai",
+          "it": "Un booleano è diventato vero",
+          "ko": "boolean이 true가 됨",
+          "nl": "Een boolean werd waar",
+          "no": "En boolean ble sann",
+          "pl": "Wartość boolean stała się prawdziwa",
+          "ru": "Boolean стал true",
+          "sv": "En boolean blev sann"
+        },
+        "tokens": [
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "string",
+            "example": "Flag"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_boolean"
+          }
+        ]
+      },
+      {
+        "id": "esphome_number_changed",
+        "title": {
+          "en": "A number value changed",
+          "ar": "تغيّرت قيمة رقمية",
+          "da": "En talværdi er ændret",
+          "de": "Ein Zahlenwert hat sich geändert",
+          "es": "Un valor numérico ha cambiado",
+          "fr": "Une valeur numérique a changé",
+          "it": "Un valore numerico è cambiato",
+          "ko": "숫자 값이 변경됨",
+          "nl": "Een nummerwaarde is veranderd",
+          "no": "En tallverdi er endret",
+          "pl": "Wartość liczbowa uległa zmianie",
+          "ru": "Числовое значение изменилось",
+          "sv": "Ett nummervärde har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "esphome_number",
+            "title": {
+              "en": "Number",
+              "ar": "رقم",
+              "da": "Tal",
+              "de": "Nummer",
+              "es": "Número",
+              "fr": "Nombre",
+              "it": "Numero",
+              "ko": "숫자",
+              "nl": "Nummer",
+              "no": "Tall",
+              "pl": "Liczba",
+              "ru": "Число",
+              "sv": "Nummer"
+            },
+            "type": "number",
+            "example": 42
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "string",
+            "example": "Sensor"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_number"
+          }
+        ]
+      },
+      {
+        "id": "esphome_select_changed",
+        "title": {
+          "en": "A select option changed",
+          "ar": "تغيّر خيار Select",
+          "da": "En Select-indstilling er ændret",
+          "de": "Eine Select-Option hat sich geändert",
+          "es": "Una opción de Select ha cambiado",
+          "fr": "Une option Select a changé",
+          "it": "Un’opzione Select è cambiata",
+          "ko": "Select 옵션이 변경됨",
+          "nl": "Een Select-optie is veranderd",
+          "no": "Et Select-alternativ er endret",
+          "pl": "Opcja Select uległa zmianie",
+          "ru": "Параметр Select изменился",
+          "sv": "Ett Select-alternativ har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "esphome_select",
+            "title": {
+              "en": "Select"
+            },
+            "type": "string",
+            "example": "Auto"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "string",
+            "example": "Mode"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_select"
+          }
+        ]
+      },
+      {
+        "id": "esphome_string_changed",
+        "title": {
+          "en": "A text value changed",
+          "ar": "تغيّرت قيمة نصية",
+          "da": "En tekstværdi er ændret",
+          "de": "Ein Textwert hat sich geändert",
+          "es": "Un valor de texto ha cambiado",
+          "fr": "Une valeur texte a changé",
+          "it": "Un valore di testo è cambiato",
+          "ko": "텍스트 값이 변경됨",
+          "nl": "Een tekstwaarde is veranderd",
+          "no": "En tekstverdi er endret",
+          "pl": "Wartość tekstowa uległa zmianie",
+          "ru": "Текстовое значение изменилось",
+          "sv": "Ett textvärde har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "esphome_string",
+            "title": {
+              "en": "Text",
+              "ar": "نص",
+              "da": "Tekst",
+              "de": "Text",
+              "es": "Texto",
+              "fr": "Texte",
+              "it": "Testo",
+              "ko": "텍스트",
+              "nl": "Tekst",
+              "no": "Tekst",
+              "pl": "Tekst",
+              "ru": "Текст",
+              "sv": "Text"
+            },
+            "type": "string",
+            "example": "ok"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "string",
+            "example": "Status"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_string"
+          }
+        ]
+      },
+      {
+        "id": "event_button_received",
+        "title": {
+          "en": "A button was pressed",
+          "ar": "تم الضغط على زر",
+          "da": "Der blev trykket på en knap",
+          "de": "Ein Knopf wurde gedrückt",
+          "es": "Se ha pulsado un botón",
+          "fr": "Un bouton a été enfoncé",
+          "it": "È stato premuto un pulsante",
+          "ko": "버튼 눌림",
+          "nl": "Een knop werd ingedrukt",
+          "no": "En knapp ble trykket inn",
+          "pl": "Któryś przycisk został naciśnięty",
+          "ru": "Одна из кнопок нажата",
+          "sv": "En knapp trycktes in"
+        },
+        "tokens": [
+          {
+            "name": "event_button",
+            "title": {
+              "en": "Event",
+              "ar": "حدث",
+              "da": "Begivenhed",
+              "de": "Ereignis",
+              "es": "Evento",
+              "fr": "Evénement",
+              "it": "Evento",
+              "ko": "이벤트",
+              "nl": "Evenement",
+              "no": "Hendelse",
+              "pl": "Zdarzenie",
+              "ru": "Событие",
+              "sv": "Händelse"
+            },
+            "type": "string",
+            "example": "Click"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "string",
+            "example": "Button 1"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=event_button"
+          }
+        ]
+      },
+      {
+        "id": "event_generic_received",
+        "title": {
+          "en": "An event occurred",
+          "ar": "وقع حدث",
+          "da": "En begivenhed indtraf",
+          "de": "Ein Ereignis ist aufgetreten",
+          "es": "Ha ocurrido un evento",
+          "fr": "Un événement s’est produit",
+          "it": "Si è verificato un evento",
+          "ko": "이벤트가 발생함",
+          "nl": "Er is een evenement opgetreden",
+          "no": "En hendelse inntraff",
+          "pl": "Wystąpiło zdarzenie",
+          "ru": "Произошло событие",
+          "sv": "En händelse inträffade"
+        },
+        "tokens": [
+          {
+            "name": "event_generic",
+            "title": {
+              "en": "Event",
+              "ar": "حدث",
+              "da": "Begivenhed",
+              "de": "Ereignis",
+              "es": "Evento",
+              "fr": "Evénement",
+              "it": "Evento",
+              "ko": "이벤트",
+              "nl": "Evenement",
+              "no": "Hendelse",
+              "pl": "Zdarzenie",
+              "ru": "Событие",
+              "sv": "Händelse"
+            },
+            "type": "string",
+            "example": "Click"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "string",
+            "example": "Button 1"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=event_generic"
+          }
+        ]
+      },
+      {
+        "id": "fan_oscillate_false",
+        "title": {
+          "en": "Oscillation turned off",
+          "ar": "تم إيقاف التذبذب",
+          "da": "Oscillation er slået fra",
+          "de": "Oszillation wurde ausgeschaltet",
+          "es": "La oscilación se ha desactivado",
+          "fr": "L’oscillation a été désactivée",
+          "it": "L’oscillazione è stata disattivata",
+          "ko": "오실레이션이 꺼짐",
+          "nl": "Oscillatie is uitgeschakeld",
+          "no": "Oscillasjon er slått av",
+          "pl": "Oscylacja została wyłączona",
+          "ru": "Осцилляция выключена",
+          "sv": "Oscillation har slagits av"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=fan_oscillate"
+          }
+        ]
+      },
+      {
+        "id": "fan_oscillate_true",
+        "title": {
+          "en": "Oscillation turned on",
+          "ar": "تم تشغيل التذبذب",
+          "da": "Oscillation er slået til",
+          "de": "Oszillation wurde eingeschaltet",
+          "es": "La oscilación se ha activado",
+          "fr": "L’oscillation a été activée",
+          "it": "L’oscillazione è stata attivata",
+          "ko": "오실레이션이 켜짐",
+          "nl": "Oscillatie is ingeschakeld",
+          "no": "Oscillasjon er slått på",
+          "pl": "Oscylacja została włączona",
+          "ru": "Осцилляция включена",
+          "sv": "Oscillation har slagits på"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=fan_oscillate"
+          }
+        ]
+      },
+      {
+        "id": "light_effect_changed",
+        "title": {
+          "en": "The light effect changed to",
+          "ar": "تغيّر تأثير الإضاءة إلى",
+          "da": "Lyseffekten er ændret til",
+          "de": "Der Lichteffekt wurde geändert zu",
+          "es": "El efecto de luz ha cambiado a",
+          "fr": "L’effet lumineux a changé pour",
+          "it": "L’effetto luce è cambiato in",
+          "ko": "조명 효과가 다음으로 변경됨",
+          "nl": "Het lichteffect is veranderd naar",
+          "no": "Lyseffekten er endret til",
+          "pl": "Efekt świetlny zmienił się na",
+          "ru": "Световой эффект изменился на",
+          "sv": "Ljuseffekten har ändrats till"
+        },
+        "titleFormatted": {
+          "en": "The light effect changed to [[light_effect]]",
+          "ar": "تغيّر تأثير الإضاءة إلى [[light_effect]]",
+          "da": "Lyseffekten er ændret til [[light_effect]]",
+          "de": "Der Lichteffekt wurde geändert zu [[light_effect]]",
+          "es": "El efecto de luz ha cambiado a [[light_effect]]",
+          "fr": "L’effet lumineux a changé pour [[light_effect]]",
+          "it": "L’effetto luce è cambiato in [[light_effect]]",
+          "ko": "조명 효과가 [[light_effect]](으)로 변경됨",
+          "nl": "Het lichteffect is veranderd naar [[light_effect]]",
+          "no": "Lyseffekten er endret til [[light_effect]]",
+          "pl": "Efekt świetlny zmienił się na [[light_effect]]",
+          "ru": "Световой эффект изменился на [[light_effect]]",
+          "sv": "Ljuseffekten har ändrats till [[light_effect]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=light_effect"
+          },
+          {
+            "name": "light_effect",
+            "title": {
+              "en": "Light effect",
+              "ar": "تأثير الإضاءة",
+              "da": "Lyseffekt",
+              "de": "Lichteffekt",
+              "es": "Efecto de luz",
+              "fr": "Effet lumineux",
+              "it": "Effetto luce",
+              "ko": "조명 효과",
+              "nl": "Lichteffect",
+              "no": "Lyseffekt",
+              "pl": "Efekt świetlny",
+              "ru": "Световой эффект",
+              "sv": "Ljuseffekt"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
+      {
+        "id": "measure_absolute_humidity_changed",
+        "title": {
+          "en": "The absolute humidity changed",
+          "ar": "تغيّرت الرطوبة المطلقة",
+          "da": "Den absolutte luftfugtighed er ændret",
+          "de": "Die absolute Luftfeuchtigkeit hat sich geändert",
+          "es": "La humedad absoluta ha cambiado",
+          "fr": "L’humidité absolue a changé",
+          "it": "L’umidità assoluta è cambiata",
+          "ko": "절대 습도가 변경됨",
+          "nl": "De absolute luchtvochtigheid is veranderd",
+          "no": "Den absolutte luftfuktigheten er endret",
+          "pl": "Wilgotność bezwzględna uległa zmianie",
+          "ru": "Абсолютная влажность изменилась",
+          "sv": "Den absoluta luftfuktigheten har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_absolute_humidity",
+            "title": {
+              "en": "Absolute humidity",
+              "ar": "الرطوبة المطلقة",
+              "da": "Absolut luftfugtighed",
+              "de": "Absolute Luftfeuchtigkeit",
+              "es": "Humedad absoluta",
+              "fr": "Humidité absolue",
+              "it": "Umidità assoluta",
+              "ko": "절대 습도",
+              "nl": "Absolute luchtvochtigheid",
+              "no": "Absolutt luftfuktighet",
+              "pl": "Wilgotność bezwzględna",
+              "ru": "Абсолютная влажность",
+              "sv": "Absolut luftfuktighet"
+            },
+            "type": "number",
+            "example": 10
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_absolute_humidity"
+          }
+        ]
+      },
+      {
+        "id": "measure_apparent_power_changed",
+        "title": {
+          "en": "The apparent power changed",
+          "ar": "تغيّرت القدرة الظاهرية",
+          "da": "Den tilsyneladende effekt er ændret",
+          "de": "Die Scheinleistung hat sich geändert",
+          "es": "La potencia aparente ha cambiado",
+          "fr": "La puissance apparente a changé",
+          "it": "La potenza apparente è cambiata",
+          "ko": "피상 전력이 변경됨",
+          "nl": "Het schijnbaar vermogen is veranderd",
+          "no": "Den tilsynelatende effekten er endret",
+          "pl": "Moc pozorna uległa zmianie",
+          "ru": "Полная мощность изменилась",
+          "sv": "Den skenbara effekten har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_apparent_power",
+            "title": {
+              "en": "Apparent power",
+              "ar": "القدرة الظاهرية",
+              "da": "Tilsyneladende effekt",
+              "de": "Scheinleistung",
+              "es": "Potencia aparente",
+              "fr": "Puissance apparente",
+              "it": "Potenza apparente",
+              "ko": "피상 전력",
+              "nl": "Schijnbaar vermogen",
+              "no": "Tilsynelatende effekt",
+              "pl": "Moc pozorna",
+              "ru": "Полная мощность",
+              "sv": "Skenbar effekt"
+            },
+            "type": "number",
+            "example": 100
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_apparent_power"
+          }
+        ]
+      },
+      {
+        "id": "measure_area_changed",
+        "title": {
+          "en": "The area changed",
+          "ar": "تغيّرت المساحة",
+          "da": "Arealet er ændret",
+          "de": "Die Fläche hat sich geändert",
+          "es": "El área ha cambiado",
+          "fr": "La surface a changé",
+          "it": "L’area è cambiata",
+          "ko": "면적이 변경됨",
+          "nl": "De oppervlakte is veranderd",
+          "no": "Arealet er endret",
+          "pl": "Powierzchnia uległa zmianie",
+          "ru": "Площадь изменилась",
+          "sv": "Arean har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_area",
+            "title": {
+              "en": "Area",
+              "ar": "المساحة",
+              "da": "Areal",
+              "de": "Fläche",
+              "es": "Área",
+              "fr": "Surface",
+              "it": "Area",
+              "ko": "면적",
+              "nl": "Oppervlakte",
+              "no": "Areal",
+              "pl": "Powierzchnia",
+              "ru": "Площадь",
+              "sv": "Area"
+            },
+            "type": "number",
+            "example": 12.5
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_area"
+          }
+        ]
+      },
+      {
+        "id": "measure_battery_voltage_changed",
+        "title": {
+          "en": "The battery voltage changed",
+          "ar": "تغيّر جهد البطارية",
+          "da": "Batterispændingen er ændret",
+          "de": "Die Batteriespannung hat sich geändert",
+          "es": "El voltaje de la batería ha cambiado",
+          "fr": "La tension de la batterie a changé",
+          "it": "La tensione della batteria è cambiata",
+          "ko": "배터리 전압이 변경됨",
+          "nl": "De batterijspanning is veranderd",
+          "no": "Batterispenningen er endret",
+          "pl": "Napięcie baterii uległo zmianie",
+          "ru": "Напряжение батареи изменилось",
+          "sv": "Batterispänningen har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_battery_voltage",
+            "title": {
+              "en": "Battery voltage",
+              "ar": "جهد البطارية",
+              "da": "Batterispænding",
+              "de": "Batteriespannung",
+              "es": "Voltaje de la batería",
+              "fr": "Tension de la batterie",
+              "it": "Tensione batteria",
+              "ko": "배터리 전압",
+              "nl": "Batterijspanning",
+              "no": "Batterispenning",
+              "pl": "Napięcie baterii",
+              "ru": "Напряжение батареи",
+              "sv": "Batterispänning"
+            },
+            "type": "number",
+            "example": 12.6
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_battery_voltage"
+          }
+        ]
+      },
+      {
+        "id": "measure_blood_glucose_changed",
+        "title": {
+          "en": "The blood glucose changed",
+          "ar": "تغيّر سكر الدم",
+          "da": "Blodsukkeret er ændret",
+          "de": "Der Blutzucker hat sich geändert",
+          "es": "La glucosa en sangre ha cambiado",
+          "fr": "La glycémie a changé",
+          "it": "La glicemia è cambiata",
+          "ko": "혈당이 변경됨",
+          "nl": "De bloedglucose is veranderd",
+          "no": "Blodsukkeret er endret",
+          "pl": "Glukoza we krwi uległa zmianie",
+          "ru": "Глюкоза крови изменилась",
+          "sv": "Blodsockret har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_blood_glucose",
+            "title": {
+              "en": "Blood glucose",
+              "ar": "سكر الدم",
+              "da": "Blodsukker",
+              "de": "Blutzucker",
+              "es": "Glucosa en sangre",
+              "fr": "Glycémie",
+              "it": "Glicemia",
+              "ko": "혈당",
+              "nl": "Bloedglucose",
+              "no": "Blodsukker",
+              "pl": "Glukoza we krwi",
+              "ru": "Глюкоза крови",
+              "sv": "Blodsocker"
+            },
+            "type": "number",
+            "example": 5.5
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_blood_glucose"
+          }
+        ]
+      },
+      {
+        "id": "measure_conductivity_changed",
+        "title": {
+          "en": "The conductivity changed",
+          "ar": "تغيّرت التوصيلية",
+          "da": "Ledningsevnen er ændret",
+          "de": "Die Leitfähigkeit hat sich geändert",
+          "es": "La conductividad ha cambiado",
+          "fr": "La conductivité a changé",
+          "it": "La conduttività è cambiata",
+          "ko": "전도도가 변경됨",
+          "nl": "De geleidbaarheid is veranderd",
+          "no": "Konduktiviteten er endret",
+          "pl": "Przewodność uległa zmianie",
+          "ru": "Проводимость изменилась",
+          "sv": "Konduktiviteten har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_conductivity",
+            "title": {
+              "en": "Conductivity",
+              "ar": "التوصيلية",
+              "da": "Ledningsevne",
+              "de": "Leitfähigkeit",
+              "es": "Conductividad",
+              "fr": "Conductivité",
+              "it": "Conduttività",
+              "ko": "전도도",
+              "nl": "Geleidbaarheid",
+              "no": "Konduktivitet",
+              "pl": "Przewodność",
+              "ru": "Проводимость",
+              "sv": "Konduktivitet"
+            },
+            "type": "number",
+            "example": 400
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_conductivity"
+          }
+        ]
+      },
+      {
+        "id": "measure_date_changed",
+        "title": {
+          "en": "The date changed",
+          "ar": "تغيّر التاريخ",
+          "da": "Datoen er ændret",
+          "de": "Das Datum hat sich geändert",
+          "es": "La fecha ha cambiado",
+          "fr": "La date a changé",
+          "it": "La data è cambiata",
+          "ko": "날짜가 변경됨",
+          "nl": "De datum is veranderd",
+          "no": "Datoen er endret",
+          "pl": "Data uległa zmianie",
+          "ru": "Дата изменилась",
+          "sv": "Datumet har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_date",
+            "title": {
+              "en": "Date",
+              "ar": "التاريخ",
+              "da": "Dato",
+              "de": "Datum",
+              "es": "Fecha",
+              "fr": "Date",
+              "it": "Data",
+              "ko": "날짜",
+              "nl": "Datum",
+              "no": "Dato",
+              "pl": "Data",
+              "ru": "Дата",
+              "sv": "Datum"
+            },
+            "type": "string",
+            "example": "2026-08-14"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_date"
+          }
+        ]
+      },
+      {
+        "id": "measure_dew_point_changed",
+        "title": {
+          "en": "The dew point changed",
+          "ar": "تغيّرت نقطة الندى",
+          "da": "Dugpunktet er ændret",
+          "de": "Der Taupunkt hat sich geändert",
+          "es": "El punto de rocío ha cambiado",
+          "fr": "Le point de rosée a changé",
+          "it": "Il punto di rugiada è cambiato",
+          "ko": "이슬점이 변경됨",
+          "nl": "Het dauwpunt is veranderd",
+          "no": "Duggpunktet er endret",
+          "pl": "Punkt rosy uległ zmianie",
+          "ru": "Точка росы изменилась",
+          "sv": "Daggpunkten har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_dew_point",
+            "title": {
+              "en": "Dew point",
+              "ar": "نقطة الندى",
+              "da": "Dugpunkt",
+              "de": "Taupunkt",
+              "es": "Punto de rocío",
+              "fr": "Point de rosée",
+              "it": "Punto di rugiada",
+              "ko": "이슬점",
+              "nl": "Dauwpunt",
+              "no": "Duggpunkt",
+              "pl": "Punkt rosy",
+              "ru": "Точка росы",
+              "sv": "Daggpunkt"
+            },
+            "type": "number",
+            "example": 12.5
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_dew_point"
+          }
+        ]
+      },
+      {
+        "id": "measure_duration_changed",
+        "title": {
+          "en": "The duration changed",
+          "ar": "تغيّرت المدة",
+          "da": "Varigheden er ændret",
+          "de": "Die Dauer hat sich geändert",
+          "es": "La duración ha cambiado",
+          "fr": "La durée a changé",
+          "it": "La durata è cambiata",
+          "ko": "기간이 변경됨",
+          "nl": "De duur is veranderd",
+          "no": "Varigheten er endret",
+          "pl": "Czas trwania uległ zmianie",
+          "ru": "Длительность изменилась",
+          "sv": "Varaktigheten har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_duration",
+            "title": {
+              "en": "Duration",
+              "ar": "المدة",
+              "da": "Varighed",
+              "de": "Dauer",
+              "es": "Duración",
+              "fr": "Durée",
+              "it": "Durata",
+              "ko": "기간",
+              "nl": "Duur",
+              "no": "Varighet",
+              "pl": "Czas trwania",
+              "ru": "Длительность",
+              "sv": "Varaktighet"
+            },
+            "type": "number",
+            "example": 60
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_duration"
+          }
+        ]
+      },
+      {
+        "id": "measure_energy_distance_changed",
+        "title": {
+          "en": "The energy per distance changed",
+          "ar": "تغيّرت الطاقة لكل مسافة",
+          "da": "Energien pr. afstand er ændret",
+          "de": "Die Energie pro Distanz hat sich geändert",
+          "es": "La energía por distancia ha cambiado",
+          "fr": "L’énergie par distance a changé",
+          "it": "L’energia per distanza è cambiata",
+          "ko": "거리당 에너지가 변경됨",
+          "nl": "De energie per afstand is veranderd",
+          "no": "Energien per avstand er endret",
+          "pl": "Energia na dystans uległa zmianie",
+          "ru": "Энергия на расстояние изменилась",
+          "sv": "Energin per avstånd har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_energy_distance",
+            "title": {
+              "en": "Energy per distance",
+              "ar": "الطاقة لكل مسافة",
+              "da": "Energi pr. afstand",
+              "de": "Energie pro Distanz",
+              "es": "Energía por distancia",
+              "fr": "Énergie par distance",
+              "it": "Energia per distanza",
+              "ko": "거리당 에너지",
+              "nl": "Energie per afstand",
+              "no": "Energi per avstand",
+              "pl": "Energia na dystans",
+              "ru": "Энергия на расстояние",
+              "sv": "Energi per avstånd"
+            },
+            "type": "number",
+            "example": 15
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_energy_distance"
+          }
+        ]
+      },
+      {
+        "id": "measure_irradiance_changed",
+        "title": {
+          "en": "The irradiance changed",
+          "ar": "تغيّر الإشعاع",
+          "da": "Irradiansen er ændret",
+          "de": "Die Bestrahlungsstärke hat sich geändert",
+          "es": "La irradiancia ha cambiado",
+          "fr": "L’irradiance a changé",
+          "it": "L’irradianza è cambiata",
+          "ko": "일사량이 변경됨",
+          "nl": "De instraling is veranderd",
+          "no": "Irradiansen er endret",
+          "pl": "Natężenie napromieniowania uległo zmianie",
+          "ru": "Облучённость изменилась",
+          "sv": "Irradiansen har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_irradiance",
+            "title": {
+              "en": "Irradiance",
+              "ar": "الإشعاع",
+              "da": "Irradians",
+              "de": "Bestrahlungsstärke",
+              "es": "Irradiancia",
+              "fr": "Irradiance",
+              "it": "Irradianza",
+              "ko": "일사량",
+              "nl": "Instraling",
+              "no": "Irradians",
+              "pl": "Natężenie napromieniowania",
+              "ru": "Облучённость",
+              "sv": "Irradians"
+            },
+            "type": "number",
+            "example": 800
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_irradiance"
+          }
+        ]
+      },
+      {
+        "id": "measure_nox_index_changed",
+        "title": {
+          "en": "The NOx index changed",
+          "ar": "تغيّر مؤشر NOx",
+          "da": "NOx-indekset er ændret",
+          "de": "Der NOx-Index hat sich geändert",
+          "es": "El índice NOx ha cambiado",
+          "fr": "L’indice NOx a changé",
+          "it": "L’indice NOx è cambiato",
+          "ko": "NOx 지수가 변경됨",
+          "nl": "De NOx-index is veranderd",
+          "no": "NOx-indeksen er endret",
+          "pl": "Indeks NOx uległ zmianie",
+          "ru": "Индекс NOx изменился",
+          "sv": "NOx-indexet har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_nox_index",
+            "title": {
+              "en": "NOx index",
+              "ar": "مؤشر NOx",
+              "da": "NOx-indeks",
+              "de": "NOx-Index",
+              "es": "Índice NOx",
+              "fr": "Indice NOx",
+              "it": "Indice NOx",
+              "ko": "NOx 지수",
+              "nl": "NOx-index",
+              "no": "NOx-indeks",
+              "pl": "Indeks NOx",
+              "ru": "Индекс NOx",
+              "sv": "NOx-index"
+            },
+            "type": "number",
+            "example": 1
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_nox_index"
+          }
+        ]
+      },
+      {
+        "id": "measure_pm4_changed",
+        "title": {
+          "en": "The PM4 value changed",
+          "ar": "تغيّرت قيمة PM4",
+          "da": "PM4-værdien er ændret",
+          "de": "Der PM4-Wert hat sich geändert",
+          "es": "El valor de PM4 ha cambiado",
+          "fr": "La valeur PM4 a changé",
+          "it": "Il valore PM4 è cambiato",
+          "ko": "PM4 값이 변경됨",
+          "nl": "De PM4-waarde is veranderd",
+          "no": "PM4-verdien er endret",
+          "pl": "Wartość PM4 uległa zmianie",
+          "ru": "Значение PM4 изменилось",
+          "sv": "PM4-värdet har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_pm4",
+            "title": {
+              "en": "PM4"
+            },
+            "type": "number",
+            "example": 2
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_pm4"
+          }
+        ]
+      },
+      {
+        "id": "measure_power_factor_changed",
+        "title": {
+          "en": "The power factor changed",
+          "ar": "تغيّر معامل القدرة",
+          "da": "Effektfaktoren er ændret",
+          "de": "Der Leistungsfaktor hat sich geändert",
+          "es": "El factor de potencia ha cambiado",
+          "fr": "Le facteur de puissance a changé",
+          "it": "Il fattore di potenza è cambiato",
+          "ko": "역률이 변경됨",
+          "nl": "De arbeidsfactor is veranderd",
+          "no": "Effektfaktoren er endret",
+          "pl": "Współczynnik mocy uległ zmianie",
+          "ru": "Коэффициент мощности изменился",
+          "sv": "Effektfaktorn har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_power_factor",
+            "title": {
+              "en": "Power factor",
+              "ar": "معامل القدرة",
+              "da": "Effektfaktor",
+              "de": "Leistungsfaktor",
+              "es": "Factor de potencia",
+              "fr": "Facteur de puissance",
+              "it": "Fattore di potenza",
+              "ko": "역률",
+              "nl": "Arbeidsfactor",
+              "no": "Effektfaktor",
+              "pl": "Współczynnik mocy",
+              "ru": "Коэффициент мощности",
+              "sv": "Effektfaktor"
+            },
+            "type": "number",
+            "example": 0.95
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_power_factor"
+          }
+        ]
+      },
+      {
+        "id": "measure_reactive_power_changed",
+        "title": {
+          "en": "The reactive power changed",
+          "ar": "تغيّرت القدرة التفاعلية",
+          "da": "Den reaktive effekt er ændret",
+          "de": "Die Blindleistung hat sich geändert",
+          "es": "La potencia reactiva ha cambiado",
+          "fr": "La puissance réactive a changé",
+          "it": "La potenza reattiva è cambiata",
+          "ko": "무효 전력이 변경됨",
+          "nl": "Het blindvermogen is veranderd",
+          "no": "Den reaktive effekten er endret",
+          "pl": "Moc bierna uległa zmianie",
+          "ru": "Реактивная мощность изменилась",
+          "sv": "Den reaktiva effekten har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_reactive_power",
+            "title": {
+              "en": "Reactive power",
+              "ar": "القدرة التفاعلية",
+              "da": "Reaktiv effekt",
+              "de": "Blindleistung",
+              "es": "Potencia reactiva",
+              "fr": "Puissance réactive",
+              "it": "Potenza reattiva",
+              "ko": "무효 전력",
+              "nl": "Blindvermogen",
+              "no": "Reaktiv effekt",
+              "pl": "Moc bierna",
+              "ru": "Реактивная мощность",
+              "sv": "Reaktiv effekt"
+            },
+            "type": "number",
+            "example": 50
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_reactive_power"
+          }
+        ]
+      },
+      {
+        "id": "measure_timestamp_changed",
+        "title": {
+          "en": "The timestamp changed",
+          "ar": "تغيّر الطابع الزمني",
+          "da": "Tidsstemplet er ændret",
+          "de": "Der Zeitstempel hat sich geändert",
+          "es": "La marca de tiempo ha cambiado",
+          "fr": "L’horodatage a changé",
+          "it": "Il timestamp è cambiato",
+          "ko": "타임스탬프가 변경됨",
+          "nl": "Het tijdstempel is veranderd",
+          "no": "Tidsstempelet er endret",
+          "pl": "Znacznik czasu uległ zmianie",
+          "ru": "Метка времени изменилась",
+          "sv": "Tidsstämpeln har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_timestamp",
+            "title": {
+              "en": "Timestamp",
+              "ar": "طابع زمني",
+              "da": "Tidsstempel",
+              "de": "Zeitstempel",
+              "es": "Marca de tiempo",
+              "fr": "Horodatage",
+              "it": "Timestamp",
+              "ko": "타임스탬프",
+              "nl": "Tijdstempel",
+              "no": "Tidsstempel",
+              "pl": "Znacznik czasu",
+              "ru": "Метка времени",
+              "sv": "Tidsstämpel"
+            },
+            "type": "string",
+            "example": "2026-08-14T21:00:00Z"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_timestamp"
+          }
+        ]
+      },
+      {
+        "id": "measure_uptime_changed",
+        "title": {
+          "en": "The uptime changed",
+          "ar": "تغيّر الـ uptime",
+          "da": "Uptime er ændret",
+          "de": "Die Uptime hat sich geändert",
+          "es": "El uptime ha cambiado",
+          "fr": "L’uptime a changé",
+          "it": "L’uptime è cambiato",
+          "ko": "uptime이 변경됨",
+          "nl": "De uptime is veranderd",
+          "no": "Uptime er endret",
+          "pl": "Uptime uległ zmianie",
+          "ru": "Uptime изменился",
+          "sv": "Uptime har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "measure_uptime",
+            "title": {
+              "en": "Uptime"
+            },
+            "type": "string",
+            "example": "1h 2m"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=measure_uptime"
+          }
+        ]
+      },
+      {
+        "id": "meter_reactive_energy_changed",
+        "title": {
+          "en": "The reactive energy meter changed",
+          "ar": "تغيّر عدّاد الطاقة التفاعلية",
+          "da": "Den reaktive energimåler er ændret",
+          "de": "Der Blindenergiezähler hat sich geändert",
+          "es": "El contador de energía reactiva ha cambiado",
+          "fr": "Le compteur d’énergie réactive a changé",
+          "it": "Il contatore di energia reattiva è cambiato",
+          "ko": "무효 에너지 미터가 변경됨",
+          "nl": "De blindenergiemeter is veranderd",
+          "no": "Den reaktive energimåleren er endret",
+          "pl": "Licznik energii biernej uległ zmianie",
+          "ru": "Счётчик реактивной энергии изменился",
+          "sv": "Den reaktiva energimätaren har ändrats"
+        },
+        "tokens": [
+          {
+            "name": "meter_reactive_energy",
+            "title": {
+              "en": "Reactive energy",
+              "ar": "الطاقة التفاعلية",
+              "da": "Reaktiv energi",
+              "de": "Blindenergie",
+              "es": "Energía reactiva",
+              "fr": "Énergie réactive",
+              "it": "Energia reattiva",
+              "ko": "무효 에너지",
+              "nl": "Blindenergie",
+              "no": "Reaktiv energi",
+              "pl": "Energia bierna",
+              "ru": "Реактивная энергия",
+              "sv": "Reaktiv energi"
+            },
+            "type": "number",
+            "example": 1.5
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=meter_reactive_energy"
+          }
+        ]
+      },
+      {
+        "id": "thermostat_preset_changed",
+        "title": {
+          "en": "The preset changed to",
+          "ar": "تغيّر الإعداد المسبق إلى",
+          "da": "Forudindstillingen er ændret til",
+          "de": "Die Voreinstellung wurde geändert zu",
+          "es": "El preajuste ha cambiado a",
+          "fr": "Le préréglage a changé pour",
+          "it": "La preimpostazione è cambiata in",
+          "ko": "프리셋이 다음으로 변경됨",
+          "nl": "De voorinstelling is veranderd naar",
+          "no": "Forhåndsinnstillingen er endret til",
+          "pl": "Preset zmienił się na",
+          "ru": "Предустановка изменилась на",
+          "sv": "Förinställningen har ändrats till"
+        },
+        "titleFormatted": {
+          "en": "The preset changed to [[thermostat_preset]]",
+          "ar": "تغيّر الإعداد المسبق إلى [[thermostat_preset]]",
+          "da": "Forudindstillingen er ændret til [[thermostat_preset]]",
+          "de": "Die Voreinstellung wurde geändert zu [[thermostat_preset]]",
+          "es": "El preajuste ha cambiado a [[thermostat_preset]]",
+          "fr": "Le préréglage a changé pour [[thermostat_preset]]",
+          "it": "La preimpostazione è cambiata in [[thermostat_preset]]",
+          "ko": "프리셋이 [[thermostat_preset]](으)로 변경됨",
+          "nl": "De voorinstelling is veranderd naar [[thermostat_preset]]",
+          "no": "Forhåndsinnstillingen er endret til [[thermostat_preset]]",
+          "pl": "Preset zmienił się na [[thermostat_preset]]",
+          "ru": "Предустановка изменилась на [[thermostat_preset]]",
+          "sv": "Förinställningen har ändrats till [[thermostat_preset]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=thermostat_preset"
+          },
+          {
+            "name": "thermostat_preset",
+            "title": {
+              "en": "Preset",
+              "ar": "إعداد مسبق",
+              "da": "Forudindstilling",
+              "de": "Voreinstellung",
+              "es": "Preajuste",
+              "fr": "Préréglage",
+              "it": "Preimpostazione",
+              "ko": "프리셋",
+              "nl": "Voorinstelling",
+              "no": "Forhåndsinnstilling",
+              "pl": "Preset",
+              "ru": "Предустановка",
+              "sv": "Förinställning"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
       {
         "id": "room_occupied",
         "title": {
@@ -317,6 +1985,511 @@
     ],
     "conditions": [
       {
+        "id": "aircleaner_mode_is",
+        "title": {
+          "en": "The air cleaner mode !{{is|is not}}",
+          "ar": "وضع منقّي الهواء !{{هو|ليس}}",
+          "da": "Luftrensertilstanden !{{er|er ikke}}",
+          "de": "Der Luftreiniger-Modus !{{ist|ist nicht}}",
+          "es": "El modo del purificador !{{es|no es}}",
+          "fr": "Le mode du purificateur !{{est|n’est pas}}",
+          "it": "La modalità del purificatore !{{è|non è}}",
+          "ko": "공기청정기 모드가 !{{임|아님}}",
+          "nl": "De luchtreinigermodus !{{is|is niet}}",
+          "no": "Luftrensermodus !{{er|er ikke}}",
+          "pl": "Tryb oczyszczacza !{{jest|nie jest}}",
+          "ru": "Режим очистителя !{{является|не является}}",
+          "sv": "Luftrenarläget !{{är|är inte}}"
+        },
+        "titleFormatted": {
+          "en": "The air cleaner mode !{{is|is not}} [[aircleaner_mode]]",
+          "ar": "وضع منقّي الهواء !{{هو|ليس}} [[aircleaner_mode]]",
+          "da": "Luftrensertilstanden !{{er|er ikke}} [[aircleaner_mode]]",
+          "de": "Der Luftreiniger-Modus !{{ist|ist nicht}} [[aircleaner_mode]]",
+          "es": "El modo del purificador !{{es|no es}} [[aircleaner_mode]]",
+          "fr": "Le mode du purificateur !{{est|n’est pas}} [[aircleaner_mode]]",
+          "it": "La modalità del purificatore !{{è|non è}} [[aircleaner_mode]]",
+          "ko": "공기청정기 모드가 [[aircleaner_mode]]!{{임|아님}}",
+          "nl": "De luchtreinigermodus !{{is|is niet}} [[aircleaner_mode]]",
+          "no": "Luftrensermodus !{{er|er ikke}} [[aircleaner_mode]]",
+          "pl": "Tryb oczyszczacza !{{jest|nie jest}} [[aircleaner_mode]]",
+          "ru": "Режим очистителя !{{является|не является}} [[aircleaner_mode]]",
+          "sv": "Luftrenarläget !{{är|är inte}} [[aircleaner_mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=aircleaner_mode"
+          },
+          {
+            "name": "aircleaner_mode",
+            "title": {
+              "en": "Mode",
+              "ar": "الوضع",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "ko": "모드",
+              "nl": "Modus",
+              "no": "Modus",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "sv": "Läge"
+            },
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "fan",
+                "title": {
+                  "en": "Fan",
+                  "ar": "مروحة",
+                  "da": "Ventilator",
+                  "de": "Lüfter",
+                  "es": "Ventilador",
+                  "fr": "Ventilateur",
+                  "it": "Ventilatore",
+                  "ko": "팬",
+                  "nl": "Ventilator",
+                  "no": "Vifte",
+                  "pl": "Wentylator",
+                  "ru": "Вентилятор",
+                  "sv": "Fläkt"
+                }
+              },
+              {
+                "id": "auto",
+                "title": {
+                  "en": "Auto"
+                }
+              },
+              {
+                "id": "silent",
+                "title": {
+                  "en": "Silent",
+                  "ar": "صامت",
+                  "da": "Stille",
+                  "de": "Leise",
+                  "es": "Silencioso",
+                  "fr": "Silencieux",
+                  "it": "Silenzioso",
+                  "ko": "조용히",
+                  "nl": "Stil",
+                  "no": "Stille",
+                  "pl": "Cichy",
+                  "ru": "Тихий",
+                  "sv": "Tyst"
+                }
+              },
+              {
+                "id": "favorite",
+                "title": {
+                  "en": "Favorite"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "alarm_plugged_in_is",
+        "title": {
+          "en": "The plugged in alarm is !{{on|off}}",
+          "ar": "إنذار التوصيل !{{يعمل|متوقف}}",
+          "da": "Tilsluttet-alarmen er !{{tændt|slukket}}",
+          "de": "Der Eingesteckt-Alarm ist !{{an|aus}}",
+          "es": "La alarma de enchufado está !{{activada|desactivada}}",
+          "fr": "L’alarme branché est !{{activée|désactivée}}",
+          "it": "L’allarme collegato è !{{attivo|disattivo}}",
+          "ko": "연결됨 알람이 !{{켜짐|꺼짐}}",
+          "nl": "Het ingeplugd alarm is !{{aan|uit}}",
+          "no": "Tilkoblet-alarmen er !{{på|av}}",
+          "pl": "Alarm podłączenia jest !{{włączony|wyłączony}}",
+          "ru": "Сигнал «подключено» !{{включён|выключен}}",
+          "sv": "Inkopplad-larmet är !{{på|av}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=alarm_plugged_in"
+          }
+        ]
+      },
+      {
+        "id": "alarm_triggered_is",
+        "title": {
+          "en": "The home alarm is !{{triggered|not triggered}}",
+          "ar": "إنذار المنزل !{{مُفعّل|غير مُفعّل}}",
+          "da": "Husalarmen er !{{udløst|ikke udløst}}",
+          "de": "Die Alarmanlage ist !{{ausgelöst|nicht ausgelöst}}",
+          "es": "La alarma del hogar está !{{activada|no activada}}",
+          "fr": "L’alarme maison est !{{déclenchée|non déclenchée}}",
+          "it": "L’allarme casa è !{{attivato|non attivato}}",
+          "ko": "홈 알람이 !{{울림|울리지 않음}}",
+          "nl": "Het huisalarm is !{{geactiveerd|niet geactiveerd}}",
+          "no": "Husalarmen er !{{utløst|ikke utløst}}",
+          "pl": "Alarm domowy jest !{{uruchomiony|nieuruchomiony}}",
+          "ru": "Домашняя сигнализация !{{сработала|не сработала}}",
+          "sv": "Hemlarmet är !{{utlöst|inte utlöst}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=alarm_triggered"
+          }
+        ]
+      },
+      {
+        "id": "esphome_boolean_is",
+        "title": {
+          "en": "A boolean is !{{true|false}}",
+          "ar": "الـ boolean !{{صحيح|خاطئ}}",
+          "da": "En boolean er !{{sand|falsk}}",
+          "de": "Ein Boolean ist !{{wahr|falsch}}",
+          "es": "Un booleano es !{{verdadero|falso}}",
+          "fr": "Un booléen est !{{vrai|faux}}",
+          "it": "Un booleano è !{{vero|falso}}",
+          "ko": "boolean이 !{{true|false}}",
+          "nl": "Een boolean is !{{waar|onwaar}}",
+          "no": "En boolean er !{{sann|usann}}",
+          "pl": "Wartość boolean jest !{{prawdziwa|fałszywa}}",
+          "ru": "Boolean !{{истинен|ложен}}",
+          "sv": "En boolean är !{{sann|falsk}}"
+        },
+        "titleFormatted": {
+          "en": "[[name]] is !{{true|false}}",
+          "ar": "[[name]] !{{صحيح|خاطئ}}",
+          "da": "[[name]] er !{{sand|falsk}}",
+          "de": "[[name]] ist !{{wahr|falsch}}",
+          "es": "[[name]] es !{{verdadero|falso}}",
+          "fr": "[[name]] est !{{vrai|faux}}",
+          "it": "[[name]] è !{{vero|falso}}",
+          "ko": "[[name]]이(가) !{{true|false}}",
+          "nl": "[[name]] is !{{waar|onwaar}}",
+          "no": "[[name]] er !{{sann|usann}}",
+          "pl": "[[name]] jest !{{prawdziwe|fałszywe}}",
+          "ru": "[[name]] !{{истинно|ложно}}",
+          "sv": "[[name]] är !{{sann|falsk}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_boolean"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
+      {
+        "id": "esphome_select_is",
+        "title": {
+          "en": "A select option !{{is|is not}}",
+          "ar": "خيار Select !{{هو|ليس}}",
+          "da": "En Select-indstilling !{{er|er ikke}}",
+          "de": "Eine Select-Option !{{ist|ist nicht}}",
+          "es": "Una opción de Select !{{es|no es}}",
+          "fr": "Une option Select !{{est|n’est pas}}",
+          "it": "Un’opzione Select !{{è|non è}}",
+          "ko": "Select 옵션이 !{{임|아님}}",
+          "nl": "Een Select-optie !{{is|is niet}}",
+          "no": "Et Select-alternativ !{{er|er ikke}}",
+          "pl": "Opcja Select !{{jest|nie jest}}",
+          "ru": "Параметр Select !{{является|не является}}",
+          "sv": "Ett Select-alternativ !{{är|är inte}}"
+        },
+        "titleFormatted": {
+          "en": "[[name]] !{{is|is not}} [[esphome_select]]",
+          "ar": "[[name]] !{{هو|ليس}} [[esphome_select]]",
+          "da": "[[name]] !{{er|er ikke}} [[esphome_select]]",
+          "de": "[[name]] !{{ist|ist nicht}} [[esphome_select]]",
+          "es": "[[name]] !{{es|no es}} [[esphome_select]]",
+          "fr": "[[name]] !{{est|n’est pas}} [[esphome_select]]",
+          "it": "[[name]] !{{è|non è}} [[esphome_select]]",
+          "ko": "[[name]]이(가) [[esphome_select]]!{{임|아님}}",
+          "nl": "[[name]] !{{is|is niet}} [[esphome_select]]",
+          "no": "[[name]] !{{er|er ikke}} [[esphome_select]]",
+          "pl": "[[name]] !{{jest|nie jest}} [[esphome_select]]",
+          "ru": "[[name]] !{{является|не является}} [[esphome_select]]",
+          "sv": "[[name]] !{{är|är inte}} [[esphome_select]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_select"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "autocomplete"
+          },
+          {
+            "name": "esphome_select",
+            "title": {
+              "en": "Select"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
+      {
+        "id": "esphome_string_is",
+        "title": {
+          "en": "A text value !{{is|is not}}",
+          "ar": "قيمة نصية !{{هي|ليست}}",
+          "da": "En tekstværdi !{{er|er ikke}}",
+          "de": "Ein Textwert !{{ist|ist nicht}}",
+          "es": "Un valor de texto !{{es|no es}}",
+          "fr": "Une valeur texte !{{est|n’est pas}}",
+          "it": "Un valore di testo !{{è|non è}}",
+          "ko": "텍스트 값이 !{{임|아님}}",
+          "nl": "Een tekstwaarde !{{is|is niet}}",
+          "no": "En tekstverdi !{{er|er ikke}}",
+          "pl": "Wartość tekstowa !{{jest|nie jest}}",
+          "ru": "Текстовое значение !{{является|не является}}",
+          "sv": "Ett textvärde !{{är|är inte}}"
+        },
+        "titleFormatted": {
+          "en": "[[name]] !{{is|is not}} [[esphome_string]]",
+          "ar": "[[name]] !{{هو|ليس}} [[esphome_string]]",
+          "da": "[[name]] !{{er|er ikke}} [[esphome_string]]",
+          "de": "[[name]] !{{ist|ist nicht}} [[esphome_string]]",
+          "es": "[[name]] !{{es|no es}} [[esphome_string]]",
+          "fr": "[[name]] !{{est|n’est pas}} [[esphome_string]]",
+          "it": "[[name]] !{{è|non è}} [[esphome_string]]",
+          "ko": "[[name]]이(가) [[esphome_string]]!{{임|아님}}",
+          "nl": "[[name]] !{{is|is niet}} [[esphome_string]]",
+          "no": "[[name]] !{{er|er ikke}} [[esphome_string]]",
+          "pl": "[[name]] !{{jest|nie jest}} [[esphome_string]]",
+          "ru": "[[name]] !{{является|не является}} [[esphome_string]]",
+          "sv": "[[name]] !{{är|är inte}} [[esphome_string]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_string"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "autocomplete"
+          },
+          {
+            "name": "esphome_string",
+            "title": {
+              "en": "Text",
+              "ar": "نص",
+              "da": "Tekst",
+              "de": "Text",
+              "es": "Texto",
+              "fr": "Texte",
+              "it": "Testo",
+              "ko": "텍스트",
+              "nl": "Tekst",
+              "no": "Tekst",
+              "pl": "Tekst",
+              "ru": "Текст",
+              "sv": "Text"
+            },
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "fan_oscillate_is",
+        "title": {
+          "en": "Oscillation is !{{on|off}}",
+          "ar": "التذبذب !{{يعمل|متوقف}}",
+          "da": "Oscillation er !{{til|fra}}",
+          "de": "Oszillation ist !{{an|aus}}",
+          "es": "La oscilación está !{{activada|desactivada}}",
+          "fr": "L’oscillation est !{{activée|désactivée}}",
+          "it": "L’oscillazione è !{{attiva|disattiva}}",
+          "ko": "오실레이션이 !{{켜짐|꺼짐}}",
+          "nl": "Oscillatie is !{{aan|uit}}",
+          "no": "Oscillasjon er !{{på|av}}",
+          "pl": "Oscylacja jest !{{włączona|wyłączona}}",
+          "ru": "Осцилляция !{{включена|выключена}}",
+          "sv": "Oscillation är !{{på|av}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=fan_oscillate"
+          }
+        ]
+      },
+      {
+        "id": "light_effect_is",
+        "title": {
+          "en": "The light effect !{{is|is not}}",
+          "ar": "تأثير الإضاءة !{{هو|ليس}}",
+          "da": "Lyseffekten !{{er|er ikke}}",
+          "de": "Der Lichteffekt !{{ist|ist nicht}}",
+          "es": "El efecto de luz !{{es|no es}}",
+          "fr": "L’effet lumineux !{{est|n’est pas}}",
+          "it": "L’effetto luce !{{è|non è}}",
+          "ko": "조명 효과가 !{{임|아님}}",
+          "nl": "Het lichteffect !{{is|is niet}}",
+          "no": "Lyseffekten !{{er|er ikke}}",
+          "pl": "Efekt świetlny !{{jest|nie jest}}",
+          "ru": "Световой эффект !{{является|не является}}",
+          "sv": "Ljuseffekten !{{är|är inte}}"
+        },
+        "titleFormatted": {
+          "en": "The light effect !{{is|is not}} [[light_effect]]",
+          "ar": "تأثير الإضاءة !{{هو|ليس}} [[light_effect]]",
+          "da": "Lyseffekten !{{er|er ikke}} [[light_effect]]",
+          "de": "Der Lichteffekt !{{ist|ist nicht}} [[light_effect]]",
+          "es": "El efecto de luz !{{es|no es}} [[light_effect]]",
+          "fr": "L’effet lumineux !{{est|n’est pas}} [[light_effect]]",
+          "it": "L’effetto luce !{{è|non è}} [[light_effect]]",
+          "ko": "조명 효과가 [[light_effect]]!{{임|아님}}",
+          "nl": "Het lichteffect !{{is|is niet}} [[light_effect]]",
+          "no": "Lyseffekten !{{er|er ikke}} [[light_effect]]",
+          "pl": "Efekt świetlny !{{jest|nie jest}} [[light_effect]]",
+          "ru": "Световой эффект !{{является|не является}} [[light_effect]]",
+          "sv": "Ljuseffekten !{{är|är inte}} [[light_effect]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=light_effect"
+          },
+          {
+            "name": "light_effect",
+            "title": {
+              "en": "Light effect",
+              "ar": "تأثير الإضاءة",
+              "da": "Lyseffekt",
+              "de": "Lichteffekt",
+              "es": "Efecto de luz",
+              "fr": "Effet lumineux",
+              "it": "Effetto luce",
+              "ko": "조명 효과",
+              "nl": "Lichteffect",
+              "no": "Lyseffekt",
+              "pl": "Efekt świetlny",
+              "ru": "Световой эффект",
+              "sv": "Ljuseffekt"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
+      {
+        "id": "thermostat_preset_is",
+        "title": {
+          "en": "The preset !{{is|is not}}",
+          "ar": "الإعداد المسبق !{{هو|ليس}}",
+          "da": "Forudindstillingen !{{er|er ikke}}",
+          "de": "Die Voreinstellung !{{ist|ist nicht}}",
+          "es": "El preajuste !{{es|no es}}",
+          "fr": "Le préréglage !{{est|n’est pas}}",
+          "it": "La preimpostazione !{{è|non è}}",
+          "ko": "프리셋이 !{{임|아님}}",
+          "nl": "De voorinstelling !{{is|is niet}}",
+          "no": "Forhåndsinnstillingen !{{er|er ikke}}",
+          "pl": "Preset !{{jest|nie jest}}",
+          "ru": "Предустановка !{{является|не является}}",
+          "sv": "Förinställningen !{{är|är inte}}"
+        },
+        "titleFormatted": {
+          "en": "The preset !{{is|is not}} [[thermostat_preset]]",
+          "ar": "الإعداد المسبق !{{هو|ليس}} [[thermostat_preset]]",
+          "da": "Forudindstillingen !{{er|er ikke}} [[thermostat_preset]]",
+          "de": "Die Voreinstellung !{{ist|ist nicht}} [[thermostat_preset]]",
+          "es": "El preajuste !{{es|no es}} [[thermostat_preset]]",
+          "fr": "Le préréglage !{{est|n’est pas}} [[thermostat_preset]]",
+          "it": "La preimpostazione !{{è|non è}} [[thermostat_preset]]",
+          "ko": "프리셋이 [[thermostat_preset]]!{{임|아님}}",
+          "nl": "De voorinstelling !{{is|is niet}} [[thermostat_preset]]",
+          "no": "Forhåndsinnstillingen !{{er|er ikke}} [[thermostat_preset]]",
+          "pl": "Preset !{{jest|nie jest}} [[thermostat_preset]]",
+          "ru": "Предустановка !{{является|не является}} [[thermostat_preset]]",
+          "sv": "Förinställningen !{{är|är inte}} [[thermostat_preset]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=thermostat_preset"
+          },
+          {
+            "name": "thermostat_preset",
+            "title": {
+              "en": "Preset",
+              "ar": "إعداد مسبق",
+              "da": "Forudindstilling",
+              "de": "Voreinstellung",
+              "es": "Preajuste",
+              "fr": "Préréglage",
+              "it": "Preimpostazione",
+              "ko": "프리셋",
+              "nl": "Voorinstelling",
+              "no": "Forhåndsinnstilling",
+              "pl": "Preset",
+              "ru": "Предустановка",
+              "sv": "Förinställning"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
+      {
         "id": "is_present",
         "title": {
           "en": "Someone !{{is|isn't}} present",
@@ -448,6 +2621,586 @@
     ],
     "actions": [
       {
+        "id": "aircleaner_mode_set",
+        "title": {
+          "en": "Set the air cleaner mode to",
+          "ar": "اضبط وضع منقّي الهواء على",
+          "da": "Indstil luftrensertilstand til",
+          "de": "Luftreiniger-Modus setzen auf",
+          "es": "Establecer el modo del purificador en",
+          "fr": "Régler le mode du purificateur sur",
+          "it": "Imposta la modalità del purificatore su",
+          "ko": "공기청정기 모드를 다음으로 설정",
+          "nl": "Zet de luchtreinigermodus op",
+          "no": "Sett luftrensermodus til",
+          "pl": "Ustaw tryb oczyszczacza na",
+          "ru": "Установить режим очистителя на",
+          "sv": "Ställ in luftrenarläge till"
+        },
+        "titleFormatted": {
+          "en": "Set the air cleaner mode to [[aircleaner_mode]]",
+          "ar": "اضبط وضع منقّي الهواء على [[aircleaner_mode]]",
+          "da": "Indstil luftrensertilstand til [[aircleaner_mode]]",
+          "de": "Luftreiniger-Modus setzen auf [[aircleaner_mode]]",
+          "es": "Establecer el modo del purificador en [[aircleaner_mode]]",
+          "fr": "Régler le mode du purificateur sur [[aircleaner_mode]]",
+          "it": "Imposta la modalità del purificatore su [[aircleaner_mode]]",
+          "ko": "공기청정기 모드를 [[aircleaner_mode]](으)로 설정",
+          "nl": "Zet de luchtreinigermodus op [[aircleaner_mode]]",
+          "no": "Sett luftrensermodus til [[aircleaner_mode]]",
+          "pl": "Ustaw tryb oczyszczacza na [[aircleaner_mode]]",
+          "ru": "Установить режим очистителя на [[aircleaner_mode]]",
+          "sv": "Ställ in luftrenarläge till [[aircleaner_mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=aircleaner_mode"
+          },
+          {
+            "name": "aircleaner_mode",
+            "title": {
+              "en": "Mode",
+              "ar": "الوضع",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "ko": "모드",
+              "nl": "Modus",
+              "no": "Modus",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "sv": "Läge"
+            },
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "fan",
+                "title": {
+                  "en": "Fan",
+                  "ar": "مروحة",
+                  "da": "Ventilator",
+                  "de": "Lüfter",
+                  "es": "Ventilador",
+                  "fr": "Ventilateur",
+                  "it": "Ventilatore",
+                  "ko": "팬",
+                  "nl": "Ventilator",
+                  "no": "Vifte",
+                  "pl": "Wentylator",
+                  "ru": "Вентилятор",
+                  "sv": "Fläkt"
+                }
+              },
+              {
+                "id": "auto",
+                "title": {
+                  "en": "Auto"
+                }
+              },
+              {
+                "id": "silent",
+                "title": {
+                  "en": "Silent",
+                  "ar": "صامت",
+                  "da": "Stille",
+                  "de": "Leise",
+                  "es": "Silencioso",
+                  "fr": "Silencieux",
+                  "it": "Silenzioso",
+                  "ko": "조용히",
+                  "nl": "Stil",
+                  "no": "Stille",
+                  "pl": "Cichy",
+                  "ru": "Тихий",
+                  "sv": "Tyst"
+                }
+              },
+              {
+                "id": "favorite",
+                "title": {
+                  "en": "Favorite"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "esphome_button_press",
+        "title": {
+          "en": "Press a button",
+          "ar": "اضغط زرًا",
+          "da": "Tryk på en knap",
+          "de": "Eine Taste drücken",
+          "es": "Pulsar un botón",
+          "fr": "Appuyer sur un bouton",
+          "it": "Premi un pulsante",
+          "ko": "버튼 누르기",
+          "nl": "Druk op een knop",
+          "no": "Trykk på en knapp",
+          "pl": "Naciśnij przycisk",
+          "ru": "Нажать кнопку",
+          "sv": "Tryck på en knapp"
+        },
+        "titleFormatted": {
+          "en": "Press the [[name]] button",
+          "ar": "اضغط زر [[name]]",
+          "da": "Tryk på [[name]]-knappen",
+          "de": "Die Taste [[name]] drücken",
+          "es": "Pulsar el botón [[name]]",
+          "fr": "Appuyer sur le bouton [[name]]",
+          "it": "Premi il pulsante [[name]]",
+          "ko": "[[name]] 버튼 누르기",
+          "nl": "Druk op de [[name]]-knop",
+          "no": "Trykk på [[name]]-knappen",
+          "pl": "Naciśnij przycisk [[name]]",
+          "ru": "Нажать кнопку [[name]]",
+          "sv": "Tryck på knappen [[name]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_button"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
+      {
+        "id": "esphome_number_set",
+        "title": {
+          "en": "Set a number value to",
+          "ar": "اضبط قيمة رقمية على",
+          "da": "Indstil en talværdi til",
+          "de": "Zahlenwert setzen auf",
+          "es": "Establecer un valor numérico en",
+          "fr": "Définir une valeur numérique sur",
+          "it": "Imposta un valore numerico su",
+          "ko": "숫자 값을 다음으로 설정",
+          "nl": "Zet een nummerwaarde op",
+          "no": "Sett en tallverdi til",
+          "pl": "Ustaw wartość liczbową na",
+          "ru": "Установить числовое значение на",
+          "sv": "Ställ in ett nummervärde till"
+        },
+        "titleFormatted": {
+          "en": "Set [[name]] to [[esphome_number]]",
+          "ar": "اضبط [[name]] على [[esphome_number]]",
+          "da": "Indstil [[name]] til [[esphome_number]]",
+          "de": "[[name]] setzen auf [[esphome_number]]",
+          "es": "Establecer [[name]] en [[esphome_number]]",
+          "fr": "Définir [[name]] sur [[esphome_number]]",
+          "it": "Imposta [[name]] su [[esphome_number]]",
+          "ko": "[[name]]을(를) [[esphome_number]](으)로 설정",
+          "nl": "Zet [[name]] op [[esphome_number]]",
+          "no": "Sett [[name]] til [[esphome_number]]",
+          "pl": "Ustaw [[name]] na [[esphome_number]]",
+          "ru": "Установить [[name]] на [[esphome_number]]",
+          "sv": "Ställ in [[name]] till [[esphome_number]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_number"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "autocomplete"
+          },
+          {
+            "name": "esphome_number",
+            "title": {
+              "en": "Number",
+              "ar": "رقم",
+              "da": "Tal",
+              "de": "Nummer",
+              "es": "Número",
+              "fr": "Nombre",
+              "it": "Numero",
+              "ko": "숫자",
+              "nl": "Nummer",
+              "no": "Tall",
+              "pl": "Liczba",
+              "ru": "Число",
+              "sv": "Nummer"
+            },
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "id": "esphome_select_set",
+        "title": {
+          "en": "Set a select option to",
+          "ar": "اضبط خيار Select على",
+          "da": "Indstil en Select-indstilling til",
+          "de": "Select-Option setzen auf",
+          "es": "Establecer una opción de Select en",
+          "fr": "Définir une option Select sur",
+          "it": "Imposta un’opzione Select su",
+          "ko": "Select 옵션을 다음으로 설정",
+          "nl": "Zet een Select-optie op",
+          "no": "Sett et Select-alternativ til",
+          "pl": "Ustaw opcję Select na",
+          "ru": "Установить параметр Select на",
+          "sv": "Ställ in ett Select-alternativ till"
+        },
+        "titleFormatted": {
+          "en": "Set [[name]] to [[esphome_select]]",
+          "ar": "اضبط [[name]] على [[esphome_select]]",
+          "da": "Indstil [[name]] til [[esphome_select]]",
+          "de": "[[name]] setzen auf [[esphome_select]]",
+          "es": "Establecer [[name]] en [[esphome_select]]",
+          "fr": "Définir [[name]] sur [[esphome_select]]",
+          "it": "Imposta [[name]] su [[esphome_select]]",
+          "ko": "[[name]]을(를) [[esphome_select]](으)로 설정",
+          "nl": "Zet [[name]] op [[esphome_select]]",
+          "no": "Sett [[name]] til [[esphome_select]]",
+          "pl": "Ustaw [[name]] na [[esphome_select]]",
+          "ru": "Установить [[name]] на [[esphome_select]]",
+          "sv": "Ställ in [[name]] till [[esphome_select]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=esphome_select"
+          },
+          {
+            "name": "name",
+            "title": {
+              "en": "Name",
+              "ar": "الاسم",
+              "da": "Navn",
+              "de": "Name",
+              "es": "Nombre",
+              "fr": "Nom",
+              "it": "Nome",
+              "ko": "이름",
+              "nl": "Naam",
+              "no": "Navn",
+              "pl": "Nazwa",
+              "ru": "Имя",
+              "sv": "Namn"
+            },
+            "type": "autocomplete"
+          },
+          {
+            "name": "esphome_select",
+            "title": {
+              "en": "Select"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
+      {
+        "id": "fan_oscillate_off",
+        "title": {
+          "en": "Turn oscillation off",
+          "ar": "إيقاف التذبذب",
+          "da": "Slå oscillation fra",
+          "de": "Oszillation ausschalten",
+          "es": "Desactivar la oscilación",
+          "fr": "Désactiver l’oscillation",
+          "it": "Disattiva l’oscillazione",
+          "ko": "오실레이션 끄기",
+          "nl": "Schakel oscillatie uit",
+          "no": "Slå oscillasjon av",
+          "pl": "Wyłącz oscylację",
+          "ru": "Выключить осцилляцию",
+          "sv": "Slå av oscillation"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=fan_oscillate"
+          }
+        ]
+      },
+      {
+        "id": "fan_oscillate_on",
+        "title": {
+          "en": "Turn oscillation on",
+          "ar": "تشغيل التذبذب",
+          "da": "Slå oscillation til",
+          "de": "Oszillation einschalten",
+          "es": "Activar la oscilación",
+          "fr": "Activer l’oscillation",
+          "it": "Attiva l’oscillazione",
+          "ko": "오실레이션 켜기",
+          "nl": "Schakel oscillatie in",
+          "no": "Slå oscillasjon på",
+          "pl": "Włącz oscylację",
+          "ru": "Включить осцилляцию",
+          "sv": "Slå på oscillation"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=fan_oscillate"
+          }
+        ]
+      },
+      {
+        "id": "fan_oscillate_toggle",
+        "title": {
+          "en": "Toggle oscillation",
+          "ar": "تبديل التذبذب",
+          "da": "Skift oscillation",
+          "de": "Oszillation umschalten",
+          "es": "Alternar la oscilación",
+          "fr": "Basculer l’oscillation",
+          "it": "Commuta l’oscillazione",
+          "ko": "오실레이션 전환",
+          "nl": "Schakel oscillatie om",
+          "no": "Veksle oscillasjon",
+          "pl": "Przełącz oscylację",
+          "ru": "Переключить осцилляцию",
+          "sv": "Växla oscillation"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=fan_oscillate"
+          }
+        ]
+      },
+      {
+        "id": "identify",
+        "title": {
+          "en": "Identify the device",
+          "ar": "تعرّف على الجهاز",
+          "da": "Identificer enheden",
+          "de": "Gerät identifizieren",
+          "es": "Identificar el dispositivo",
+          "fr": "Identifier l’appareil",
+          "it": "Identifica il dispositivo",
+          "ko": "장치 식별",
+          "nl": "Identificeer het apparaat",
+          "no": "Identifiser enheten",
+          "pl": "Zidentyfikuj urządzenie",
+          "ru": "Идентифицировать устройство",
+          "sv": "Identifiera enheten"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=identify"
+          }
+        ]
+      },
+      {
+        "id": "light_effect_set",
+        "title": {
+          "en": "Set the light effect to",
+          "ar": "اضبط تأثير الإضاءة على",
+          "da": "Indstil lyseffekt til",
+          "de": "Lichteffekt setzen auf",
+          "es": "Establecer el efecto de luz en",
+          "fr": "Régler l’effet lumineux sur",
+          "it": "Imposta l’effetto luce su",
+          "ko": "조명 효과를 다음으로 설정",
+          "nl": "Zet het lichteffect op",
+          "no": "Sett lyseffekt til",
+          "pl": "Ustaw efekt świetlny na",
+          "ru": "Установить световой эффект на",
+          "sv": "Ställ in ljuseffekt till"
+        },
+        "titleFormatted": {
+          "en": "Set the light effect to [[light_effect]]",
+          "ar": "اضبط تأثير الإضاءة على [[light_effect]]",
+          "da": "Indstil lyseffekt til [[light_effect]]",
+          "de": "Lichteffekt setzen auf [[light_effect]]",
+          "es": "Establecer el efecto de luz en [[light_effect]]",
+          "fr": "Régler l’effet lumineux sur [[light_effect]]",
+          "it": "Imposta l’effetto luce su [[light_effect]]",
+          "ko": "조명 효과를 [[light_effect]](으)로 설정",
+          "nl": "Zet het lichteffect op [[light_effect]]",
+          "no": "Sett lyseffekt til [[light_effect]]",
+          "pl": "Ustaw efekt świetlny na [[light_effect]]",
+          "ru": "Установить световой эффект на [[light_effect]]",
+          "sv": "Ställ in ljuseffekt till [[light_effect]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=light_effect"
+          },
+          {
+            "name": "light_effect",
+            "title": {
+              "en": "Light effect",
+              "ar": "تأثير الإضاءة",
+              "da": "Lyseffekt",
+              "de": "Lichteffekt",
+              "es": "Efecto de luz",
+              "fr": "Effet lumineux",
+              "it": "Effetto luce",
+              "ko": "조명 효과",
+              "nl": "Lichteffect",
+              "no": "Lyseffekt",
+              "pl": "Efekt świetlny",
+              "ru": "Световой эффект",
+              "sv": "Ljuseffekt"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
+      {
+        "id": "open",
+        "title": {
+          "en": "Open Door",
+          "ar": "فتح الباب",
+          "da": "Åbn dør",
+          "de": "Tür öffnen",
+          "es": "Abrir puerta",
+          "fr": "Ouvrir la porte",
+          "it": "Apri porta",
+          "ko": "문 열기",
+          "nl": "Deur openen",
+          "no": "Åpne dør",
+          "pl": "Otwórz drzwi",
+          "ru": "Открыть дверь",
+          "sv": "Öppna dörr"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=open"
+          }
+        ]
+      },
+      {
+        "id": "restart",
+        "title": {
+          "en": "Restart the device",
+          "ar": "أعد تشغيل الجهاز",
+          "da": "Genstart enheden",
+          "de": "Gerät neu starten",
+          "es": "Reiniciar el dispositivo",
+          "fr": "Redémarrer l’appareil",
+          "it": "Riavvia il dispositivo",
+          "ko": "장치 재시작",
+          "nl": "Herstart het apparaat",
+          "no": "Start enheten på nytt",
+          "pl": "Uruchom ponownie urządzenie",
+          "ru": "Перезапустить устройство",
+          "sv": "Starta om enheten"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=restart"
+          }
+        ]
+      },
+      {
+        "id": "thermostat_preset_set",
+        "title": {
+          "en": "Set the preset to",
+          "ar": "اضبط الإعداد المسبق على",
+          "da": "Indstil forudindstilling til",
+          "de": "Voreinstellung setzen auf",
+          "es": "Establecer el preajuste en",
+          "fr": "Régler le préréglage sur",
+          "it": "Imposta la preimpostazione su",
+          "ko": "프리셋을 다음으로 설정",
+          "nl": "Zet de voorinstelling op",
+          "no": "Sett forhåndsinnstilling til",
+          "pl": "Ustaw preset na",
+          "ru": "Установить предустановку на",
+          "sv": "Ställ in förinställningen till"
+        },
+        "titleFormatted": {
+          "en": "Set the preset to [[thermostat_preset]]",
+          "ar": "اضبط الإعداد المسبق على [[thermostat_preset]]",
+          "da": "Indstil forudindstilling til [[thermostat_preset]]",
+          "de": "Voreinstellung setzen auf [[thermostat_preset]]",
+          "es": "Establecer el preajuste en [[thermostat_preset]]",
+          "fr": "Régler le préréglage sur [[thermostat_preset]]",
+          "it": "Imposta la preimpostazione su [[thermostat_preset]]",
+          "ko": "프리셋을 [[thermostat_preset]](으)로 설정",
+          "nl": "Zet de voorinstelling op [[thermostat_preset]]",
+          "no": "Sett forhåndsinnstilling til [[thermostat_preset]]",
+          "pl": "Ustaw preset na [[thermostat_preset]]",
+          "ru": "Установить предустановку на [[thermostat_preset]]",
+          "sv": "Ställ in förinställningen till [[thermostat_preset]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro&capabilities=thermostat_preset"
+          },
+          {
+            "name": "thermostat_preset",
+            "title": {
+              "en": "Preset",
+              "ar": "إعداد مسبق",
+              "da": "Forudindstilling",
+              "de": "Voreinstellung",
+              "es": "Preajuste",
+              "fr": "Préréglage",
+              "it": "Preimpostazione",
+              "ko": "프리셋",
+              "nl": "Voorinstelling",
+              "no": "Forhåndsinnstilling",
+              "pl": "Preset",
+              "ru": "Предустановка",
+              "sv": "Förinställning"
+            },
+            "type": "autocomplete"
+          }
+        ]
+      },
+      {
         "id": "set_zone_delay",
         "title": {
           "en": "Set zone presence hold time",
@@ -528,28 +3281,173 @@
   },
   "drivers": [
     {
-      "name": {
-        "en": "S1 Pro Multi Sense",
-        "nl": "S1 Pro Multi Sense"
-      },
       "class": "sensor",
       "capabilities": [
+        "aircleaner_mode",
+        "alarm_co",
+        "alarm_cold",
+        "alarm_connectivity",
+        "alarm_contact",
+        "alarm_door_fault",
+        "alarm_doorbell",
+        "alarm_gas",
+        "alarm_generic",
+        "alarm_heat",
+        "alarm_light",
+        "alarm_moisture",
         "alarm_motion",
-        "sensy_moving",
-        "sensy_people",
-        "measure_temperature",
-        "measure_humidity",
+        "alarm_noise",
+        "alarm_occupancy",
+        "alarm_open",
+        "alarm_plugged_in",
+        "alarm_power",
+        "alarm_presence",
+        "alarm_problem",
+        "alarm_running",
+        "alarm_safety",
+        "alarm_smoke",
+        "alarm_tamper",
+        "alarm_triggered",
+        "alarm_vibration",
+        "button",
+        "button.refresh",
+        "dim",
+        "esphome_boolean",
+        "esphome_button",
+        "esphome_number",
+        "esphome_select",
+        "esphome_string",
+        "event_button",
+        "event_generic",
+        "fan_mode",
+        "fan_oscillate",
+        "fan_speed",
+        "garagedoor_closed",
+        "light_effect",
+        "light_hue",
+        "light_mode",
+        "light_saturation",
+        "light_temperature",
+        "locked",
+        "measure_absolute_humidity",
+        "measure_aqi",
+        "measure_apparent_power",
+        "measure_area",
+        "measure_blood_glucose",
+        "measure_ch2o",
+        "measure_co",
         "measure_co2",
-        "sensy_iaq",
-        "measure_pressure",
+        "measure_conductivity",
+        "measure_content_volume",
+        "measure_current",
+        "measure_data_rate",
+        "measure_data_size",
+        "measure_date",
+        "measure_dew_point",
+        "measure_distance",
+        "measure_duration",
+        "measure_energy_distance",
+        "measure_frequency",
+        "measure_humidity",
+        "measure_irradiance",
         "measure_luminance",
-        "measure_ultraviolet"
+        "measure_moisture",
+        "measure_monetary",
+        "measure_noise",
+        "measure_nox",
+        "measure_nox_index",
+        "measure_o3",
+        "measure_ph",
+        "measure_pm1",
+        "measure_pm10",
+        "measure_pm25",
+        "measure_pm4",
+        "measure_power",
+        "measure_power_factor",
+        "measure_pressure",
+        "measure_radon",
+        "measure_rain",
+        "measure_rain_intensity",
+        "measure_reactive_power",
+        "measure_rotation",
+        "measure_signal_strength",
+        "measure_so2",
+        "measure_speed",
+        "measure_temperature",
+        "measure_timestamp",
+        "measure_tvoc",
+        "measure_tvoc_index",
+        "measure_ultraviolet",
+        "measure_uptime",
+        "measure_voltage",
+        "measure_water",
+        "measure_weight",
+        "measure_wind_angle",
+        "measure_wind_strength",
+        "meter_gas",
+        "meter_power",
+        "meter_reactive_energy",
+        "meter_water",
+        "onoff",
+        "open",
+        "speaker_playing",
+        "speaker_stop",
+        "swing_mode",
+        "target_humidity",
+        "target_temperature",
+        "target_temperature_max",
+        "target_temperature_min",
+        "thermostat_mode",
+        "thermostat_preset",
+        "valve_position",
+        "volume_down",
+        "volume_mute",
+        "volume_set",
+        "volume_up",
+        "windowcoverings_closed",
+        "windowcoverings_set",
+        "windowcoverings_state",
+        "windowcoverings_tilt_down",
+        "windowcoverings_tilt_set",
+        "windowcoverings_tilt_up",
+        "sensy_people",
+        "sensy_iaq",
+        "sensy_zone_presence",
+        "sensy_zone_movement",
+        "sensy_zone_people"
       ],
       "capabilitiesOptions": {
-        "alarm_motion": {
+        "button.refresh": {
+          "maintenanceAction": true,
           "title": {
-            "en": "Presence",
-            "nl": "Aanwezigheid"
+            "en": "Refresh capabilities",
+            "ar": "تحديث القدرات",
+            "da": "Opdater capabilities",
+            "de": "Capabilities aktualisieren",
+            "es": "Actualizar capabilities",
+            "fr": "Actualiser les capabilities",
+            "it": "Aggiorna le capabilities",
+            "ko": "capabilities 새로고침",
+            "nl": "Capabilities actualiseren",
+            "no": "Oppdater capabilities",
+            "pl": "Odśwież capabilities",
+            "ru": "Обновить capabilities",
+            "sv": "Uppdatera capabilities"
+          },
+          "desc": {
+            "en": "Adds new entities and removes ones no longer on the device. Unchanged capabilities stay. Remapped entities can break Flows and Insights. The device must be online.",
+            "ar": "يضيف الكيانات الجديدة ويزيل ما لم يعد على الجهاز. القدرات غير المتغيرة تبقى. إعادة تعيين الكيانات قد يكسر Flows وInsights. يجب أن يكون الجهاز متصلاً.",
+            "da": "Tilføjer nye entiteter og fjerner dem, der ikke længere er på enheden. Uændrede capabilities bliver. Om-mappede entiteter kan ødelægge Flows og Insights. Enheden skal være online.",
+            "de": "Fügt neue Entitäten hinzu und entfernt nicht mehr vorhandene. Unveränderte Capabilities bleiben. Neu zugeordnete Entitäten können Flows und Insights unterbrechen. Das Gerät muss online sein.",
+            "es": "Añade entidades nuevas y elimina las que ya no están en el dispositivo. Las capabilities sin cambios se mantienen. Las entidades reasignadas pueden romper Flows e Insights. El dispositivo debe estar en línea.",
+            "fr": "Ajoute les nouvelles entités et retire celles qui ne sont plus sur l’appareil. Les capabilities inchangées restent. Une nouvelle correspondance peut casser les Flows et Insights. L’appareil doit être en ligne.",
+            "it": "Aggiunge le nuove entità e rimuove quelle non più sul dispositivo. Le capabilities invariate restano. Le entità rimappate possono interrompere Flow e Insights. Il dispositivo deve essere online.",
+            "ko": "새 엔티티를 추가하고 장치에 더 이상 없는 엔티티는 제거합니다. 변경되지 않은 capabilities는 유지됩니다. 다시 매핑된 엔티티는 Flow와 Insights를 깨뜨릴 수 있습니다. 장치가 온라인 상태여야 합니다.",
+            "nl": "Voegt nieuwe entities toe en verwijdert entities die niet meer op het apparaat aanwezig zijn. Ongewijzigde capabilities blijven. Opnieuw gemapte entities kunnen Flows en Insights kapot maken. Het apparaat moet online zijn.",
+            "no": "Legger til nye entiteter og fjerner de som ikke lenger er på enheten. Uendrede capabilities blir. Om-mappede entiteter kan ødelegge Flows og Insights. Enheten må være tilkoblet.",
+            "pl": "Dodaje nowe encje i usuwa te, których już nie ma na urządzeniu. Niezmienione capabilities zostają. Ponownie zmapowane encje mogą zepsuć Flows i Insights. Urządzenie musi być online.",
+            "ru": "Добавляет новые сущности и удаляет те, которых больше нет на устройстве. Неизменённые capabilities остаются. Повторно сопоставленные сущности могут сломать Flows и Insights. Устройство должно быть в сети.",
+            "sv": "Lägger till nya entiteter och tar bort de som inte längre finns på enheten. Oförändrade capabilities är kvar. Om-mappade entiteter kan förstöra Flows och Insights. Enheten måste vara online."
           }
         }
       },
@@ -559,6 +3457,7 @@
       "connectivity": [
         "lan"
       ],
+      "energy": {},
       "discovery": "sensy-s1pro",
       "images": {
         "small": "/drivers/s1pro/assets/images/small.png",
@@ -569,19 +3468,48 @@
         {
           "id": "list_devices",
           "template": "list_devices",
+          "options": {
+            "singular": true
+          },
           "navigation": {
-            "next": "add_devices"
+            "next": "loading"
           }
         },
         {
-          "id": "manual"
+          "id": "list_ble_devices",
+          "template": "list_devices",
+          "options": {
+            "singular": true
+          },
+          "navigation": {
+            "next": "enter_wifi"
+          }
         },
         {
-          "id": "add_devices",
-          "template": "add_devices"
+          "id": "enter_wifi"
+        },
+        {
+          "id": "configure_manual"
+        },
+        {
+          "id": "enter_key"
+        },
+        {
+          "id": "loading",
+          "template": "loading"
+        },
+        {
+          "id": "add_device"
         }
       ],
-      "id": "s1pro",
+      "repair": [
+        {
+          "id": "configure_manual"
+        },
+        {
+          "id": "enter_key"
+        }
+      ],
       "settings": [
         {
           "type": "group",
@@ -804,31 +3732,762 @@
         {
           "type": "group",
           "label": {
-            "en": "Connection",
-            "nl": "Verbinding"
+            "en": "Device",
+            "nl": "Apparaat"
           },
           "children": [
             {
-              "id": "address",
-              "type": "label",
+              "id": "device_class",
+              "type": "dropdown",
               "label": {
-                "en": "IP address",
-                "nl": "IP-adres"
+                "en": "Device class",
+                "nl": "Apparaatklasse"
               },
-              "value": "-"
+              "value": "auto",
+              "hint": {
+                "en": "Auto keeps the class detected from entities.",
+                "nl": "Automatisch gebruikt de apparaatklasse die uit de capabilities is herkend."
+              },
+              "values": [
+                {
+                  "id": "auto",
+                  "label": {
+                    "en": "Auto (from device)",
+                    "nl": "Automatisch (van apparaat)"
+                  }
+                },
+                {
+                  "id": "airconditioning",
+                  "label": {
+                    "en": "Air conditioning",
+                    "nl": "Airconditioning"
+                  }
+                },
+                {
+                  "id": "airfryer",
+                  "label": {
+                    "en": "Air fryer",
+                    "nl": "Airfryer"
+                  }
+                },
+                {
+                  "id": "airpurifier",
+                  "label": {
+                    "en": "Air purifier",
+                    "nl": "Luchtreiniger"
+                  }
+                },
+                {
+                  "id": "airtreatment",
+                  "label": {
+                    "en": "Air treatment",
+                    "nl": "Luchtbehandeling"
+                  }
+                },
+                {
+                  "id": "amplifier",
+                  "label": {
+                    "en": "Amplifier",
+                    "nl": "Versterker"
+                  }
+                },
+                {
+                  "id": "battery",
+                  "label": {
+                    "en": "Battery",
+                    "nl": "Batterij"
+                  }
+                },
+                {
+                  "id": "bicycle",
+                  "label": {
+                    "en": "Bicycle",
+                    "nl": "Fiets"
+                  }
+                },
+                {
+                  "id": "blinds",
+                  "label": {
+                    "en": "Blinds",
+                    "nl": "Jaloezieën"
+                  }
+                },
+                {
+                  "id": "boiler",
+                  "label": {
+                    "en": "Boiler",
+                    "nl": "Ketel"
+                  }
+                },
+                {
+                  "id": "bridge",
+                  "label": {
+                    "en": "Bridge"
+                  }
+                },
+                {
+                  "id": "button",
+                  "label": {
+                    "en": "Button",
+                    "nl": "Knop"
+                  }
+                },
+                {
+                  "id": "camera",
+                  "label": {
+                    "en": "Camera"
+                  }
+                },
+                {
+                  "id": "car",
+                  "label": {
+                    "en": "Car",
+                    "nl": "Auto"
+                  }
+                },
+                {
+                  "id": "coffeemachine",
+                  "label": {
+                    "en": "Coffee machine",
+                    "nl": "Koffiezetapparaat"
+                  }
+                },
+                {
+                  "id": "cooktop",
+                  "label": {
+                    "en": "Cooktop",
+                    "nl": "Kookplaat"
+                  }
+                },
+                {
+                  "id": "curtain",
+                  "label": {
+                    "en": "Curtain",
+                    "nl": "Gordijn"
+                  }
+                },
+                {
+                  "id": "dehumidifier",
+                  "label": {
+                    "en": "Dehumidifier",
+                    "nl": "Ontvochtiger"
+                  }
+                },
+                {
+                  "id": "diffuser",
+                  "label": {
+                    "en": "Diffuser"
+                  }
+                },
+                {
+                  "id": "dishwasher",
+                  "label": {
+                    "en": "Dishwasher",
+                    "nl": "Vaatwasser"
+                  }
+                },
+                {
+                  "id": "doorbell",
+                  "label": {
+                    "en": "Doorbell",
+                    "nl": "Deurbel"
+                  }
+                },
+                {
+                  "id": "dryer",
+                  "label": {
+                    "en": "Dryer",
+                    "nl": "Droger"
+                  }
+                },
+                {
+                  "id": "evcharger",
+                  "label": {
+                    "en": "EV charger",
+                    "nl": "EV-lader"
+                  }
+                },
+                {
+                  "id": "fan",
+                  "label": {
+                    "en": "Fan",
+                    "nl": "Ventilator"
+                  }
+                },
+                {
+                  "id": "faucet",
+                  "label": {
+                    "en": "Faucet",
+                    "nl": "Kraan"
+                  }
+                },
+                {
+                  "id": "fireplace",
+                  "label": {
+                    "en": "Fireplace",
+                    "nl": "Open haard"
+                  }
+                },
+                {
+                  "id": "freezer",
+                  "label": {
+                    "en": "Freezer",
+                    "nl": "Diepvries"
+                  }
+                },
+                {
+                  "id": "fridge_and_freezer",
+                  "label": {
+                    "en": "Fridge and freezer",
+                    "nl": "Koelkast met vriesvak"
+                  }
+                },
+                {
+                  "id": "fridge",
+                  "label": {
+                    "en": "Fridge",
+                    "nl": "Koelkast"
+                  }
+                },
+                {
+                  "id": "fryer",
+                  "label": {
+                    "en": "Fryer",
+                    "nl": "Friteuse"
+                  }
+                },
+                {
+                  "id": "gameconsole",
+                  "label": {
+                    "en": "Game console",
+                    "nl": "Spelcomputer"
+                  }
+                },
+                {
+                  "id": "garagedoor",
+                  "label": {
+                    "en": "Garage door",
+                    "nl": "Garagedeur"
+                  }
+                },
+                {
+                  "id": "grill",
+                  "label": {
+                    "en": "Grill"
+                  }
+                },
+                {
+                  "id": "heater",
+                  "label": {
+                    "en": "Heater",
+                    "nl": "Verwarming"
+                  }
+                },
+                {
+                  "id": "heatpump",
+                  "label": {
+                    "en": "Heat pump",
+                    "nl": "Warmtepomp"
+                  }
+                },
+                {
+                  "id": "homealarm",
+                  "label": {
+                    "en": "Home alarm",
+                    "nl": "Huisalarm"
+                  }
+                },
+                {
+                  "id": "hood",
+                  "label": {
+                    "en": "Hood",
+                    "nl": "Afzuigkap"
+                  }
+                },
+                {
+                  "id": "humidifier",
+                  "label": {
+                    "en": "Humidifier",
+                    "nl": "Luchtbevochtiger"
+                  }
+                },
+                {
+                  "id": "kettle",
+                  "label": {
+                    "en": "Kettle",
+                    "nl": "Waterkoker"
+                  }
+                },
+                {
+                  "id": "lawnmower",
+                  "label": {
+                    "en": "Lawnmower",
+                    "nl": "Grasmaaier"
+                  }
+                },
+                {
+                  "id": "light",
+                  "label": {
+                    "en": "Light",
+                    "nl": "Lamp"
+                  }
+                },
+                {
+                  "id": "lock",
+                  "label": {
+                    "en": "Lock",
+                    "nl": "Slot"
+                  }
+                },
+                {
+                  "id": "mediaplayer",
+                  "label": {
+                    "en": "Media player",
+                    "nl": "Mediaspeler"
+                  }
+                },
+                {
+                  "id": "microwave",
+                  "label": {
+                    "en": "Microwave",
+                    "nl": "Magnetron"
+                  }
+                },
+                {
+                  "id": "mop",
+                  "label": {
+                    "en": "Mop",
+                    "nl": "Dweilrobot"
+                  }
+                },
+                {
+                  "id": "multicooker",
+                  "label": {
+                    "en": "Multi cooker",
+                    "nl": "Multicooker"
+                  }
+                },
+                {
+                  "id": "networkrouter",
+                  "label": {
+                    "en": "Network router",
+                    "nl": "Netwerkrouter"
+                  }
+                },
+                {
+                  "id": "other",
+                  "label": {
+                    "en": "Other",
+                    "nl": "Overig"
+                  }
+                },
+                {
+                  "id": "oven_and_microwave",
+                  "label": {
+                    "en": "Oven and microwave",
+                    "nl": "Oven met magnetronfunctie"
+                  }
+                },
+                {
+                  "id": "oven",
+                  "label": {
+                    "en": "Oven"
+                  }
+                },
+                {
+                  "id": "petfeeder",
+                  "label": {
+                    "en": "Pet feeder",
+                    "nl": "Voerautomaat"
+                  }
+                },
+                {
+                  "id": "pump",
+                  "label": {
+                    "en": "Pump",
+                    "nl": "Pomp"
+                  }
+                },
+                {
+                  "id": "radiator",
+                  "label": {
+                    "en": "Radiator"
+                  }
+                },
+                {
+                  "id": "remote",
+                  "label": {
+                    "en": "Remote",
+                    "nl": "Afstandsbediening"
+                  }
+                },
+                {
+                  "id": "scooter",
+                  "label": {
+                    "en": "Scooter"
+                  }
+                },
+                {
+                  "id": "sensor",
+                  "label": {
+                    "en": "Sensor"
+                  }
+                },
+                {
+                  "id": "service",
+                  "label": {
+                    "en": "Service"
+                  }
+                },
+                {
+                  "id": "settopbox",
+                  "label": {
+                    "en": "Set-top box",
+                    "nl": "Decoder"
+                  }
+                },
+                {
+                  "id": "shutterblinds",
+                  "label": {
+                    "en": "Shutter blinds",
+                    "nl": "Rolluiken"
+                  }
+                },
+                {
+                  "id": "siren",
+                  "label": {
+                    "en": "Siren",
+                    "nl": "Sirene"
+                  }
+                },
+                {
+                  "id": "smokealarm",
+                  "label": {
+                    "en": "Smoke alarm",
+                    "nl": "Rookmelder"
+                  }
+                },
+                {
+                  "id": "socket",
+                  "label": {
+                    "en": "Socket",
+                    "nl": "Plug"
+                  }
+                },
+                {
+                  "id": "solarpanel",
+                  "label": {
+                    "en": "Solar panel",
+                    "nl": "Zonnepaneel"
+                  }
+                },
+                {
+                  "id": "speaker",
+                  "label": {
+                    "en": "Speaker"
+                  }
+                },
+                {
+                  "id": "sprinkler",
+                  "label": {
+                    "en": "Sprinkler",
+                    "nl": "Sproeier"
+                  }
+                },
+                {
+                  "id": "sunshade",
+                  "label": {
+                    "en": "Sunshade",
+                    "nl": "Zonnescherm"
+                  }
+                },
+                {
+                  "id": "thermostat",
+                  "label": {
+                    "en": "Thermostat",
+                    "nl": "Thermostaat"
+                  }
+                },
+                {
+                  "id": "tv",
+                  "label": {
+                    "en": "TV"
+                  }
+                },
+                {
+                  "id": "vacuumcleaner",
+                  "label": {
+                    "en": "Vacuum cleaner",
+                    "nl": "Stofzuiger"
+                  }
+                },
+                {
+                  "id": "vehicle",
+                  "label": {
+                    "en": "Vehicle",
+                    "nl": "Voertuig"
+                  }
+                },
+                {
+                  "id": "washer_and_dryer",
+                  "label": {
+                    "en": "Washer and dryer",
+                    "nl": "Wasmachine met droogfunctie"
+                  }
+                },
+                {
+                  "id": "washer",
+                  "label": {
+                    "en": "Washer",
+                    "nl": "Wasmachine"
+                  }
+                },
+                {
+                  "id": "waterheater",
+                  "label": {
+                    "en": "Water heater",
+                    "nl": "Boiler"
+                  }
+                },
+                {
+                  "id": "waterpurifier",
+                  "label": {
+                    "en": "Water purifier",
+                    "nl": "Waterzuiveraar"
+                  }
+                },
+                {
+                  "id": "watervalve",
+                  "label": {
+                    "en": "Water valve",
+                    "nl": "Waterklep"
+                  }
+                },
+                {
+                  "id": "windowcoverings",
+                  "label": {
+                    "en": "Window coverings",
+                    "nl": "Raambekleding"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Capabilities"
+          },
+          "children": [
+            {
+              "id": "show_diagnostics",
+              "type": "checkbox",
+              "label": {
+                "en": "Show diagnostic capabilities",
+                "nl": "Diagnostische capabilities tonen"
+              },
+              "value": false,
+              "hint": {
+                "en": "Adds diagnostic entities such as signal strength and uptime. Turning off removes them again.",
+                "nl": "Voegt diagnostische capabilities toe, zoals signaalsterkte en uptime. Uitschakelen verwijdert ze weer."
+              }
             },
             {
-              "id": "firmware",
+              "id": "show_configuration",
+              "type": "checkbox",
+              "label": {
+                "en": "Show configuration capabilities",
+                "nl": "Configuratie-capabilities tonen"
+              },
+              "value": false,
+              "hint": {
+                "en": "Adds configuration entities such as calibration numbers and restart buttons. Turning off removes them again.",
+                "nl": "Voegt configuratie-capabilities toe, zoals kalibratienummers en herstartknoppen. Uitschakelen verwijdert ze weer."
+              }
+            }
+          ]
+        },
+        {
+          "id": "device_information",
+          "type": "group",
+          "label": {
+            "en": "Device Information",
+            "nl": "Apparaatinformatie"
+          },
+          "children": [
+            {
+              "id": "host",
               "type": "label",
               "label": {
-                "en": "Firmware",
-                "nl": "Firmware"
+                "en": "Host / IP"
               },
-              "value": "-"
+              "value": "",
+              "hint": {
+                "en": "LAN address used to reach this node. Updated automatically when mDNS discovery sees a new IP.",
+                "nl": "LAN-adres om dit apparaat te bereiken. Wordt automatisch bijgewerkt wanneer mDNS-ontdekking een nieuw IP-adres ziet."
+              }
+            },
+            {
+              "id": "port",
+              "type": "label",
+              "label": {
+                "en": "API port"
+              },
+              "value": "6053",
+              "hint": {
+                "en": "Native API port (default 6053).",
+                "nl": "Native API-poort (standaard 6053)."
+              }
+            },
+            {
+              "id": "encryption",
+              "type": "label",
+              "label": {
+                "en": "Encryption",
+                "nl": "Encryptie"
+              },
+              "value": "Not set",
+              "hint": {
+                "en": "Whether a Noise encryption key is configured for the API connection.",
+                "nl": "Of er een Noise-encryptiesleutel is ingesteld voor de API-verbinding."
+              }
+            },
+            {
+              "id": "manufacturer",
+              "type": "label",
+              "label": {
+                "en": "Manufacturer",
+                "nl": "Fabrikant"
+              },
+              "value": "",
+              "hint": {
+                "en": "Board or vendor reported by the ESPHome firmware.",
+                "nl": "Bord of fabrikant zoals doorgegeven door de ESPHome-firmware."
+              }
+            },
+            {
+              "id": "model",
+              "type": "label",
+              "label": {
+                "en": "Model"
+              },
+              "value": "",
+              "hint": {
+                "en": "Hardware model reported by the ESPHome firmware.",
+                "nl": "Hardwaremodel zoals doorgegeven door de ESPHome-firmware."
+              }
+            },
+            {
+              "id": "mac",
+              "type": "label",
+              "label": {
+                "en": "MAC address"
+              },
+              "value": "",
+              "hint": {
+                "en": "Primary network MAC used as this device's identity in Homey.",
+                "nl": "Primaire netwerk-MAC die Homey gebruikt als identiteit van dit apparaat."
+              }
+            },
+            {
+              "id": "hostname",
+              "type": "label",
+              "label": {
+                "en": "Hostname",
+                "nl": "Hostnaam"
+              },
+              "value": "",
+              "hint": {
+                "en": "ESPHome node name (mDNS hostname).",
+                "nl": "ESPHome-apparaatnaam (mDNS-hostnaam)."
+              }
+            },
+            {
+              "id": "esphome_version",
+              "type": "label",
+              "label": {
+                "en": "ESPHome version",
+                "nl": "ESPHome-versie"
+              },
+              "value": "",
+              "hint": {
+                "en": "ESPHome version that built the firmware running on this node.",
+                "nl": "ESPHome-versie waarmee de firmware op dit apparaat is gebouwd."
+              }
+            },
+            {
+              "id": "compilation_time",
+              "type": "label",
+              "label": {
+                "en": "Compilation time",
+                "nl": "Compilatietijd"
+              },
+              "value": "",
+              "hint": {
+                "en": "When the current firmware binary was compiled.",
+                "nl": "Wanneer de huidige firmwarebinary is gecompileerd."
+              }
+            },
+            {
+              "id": "project",
+              "type": "label",
+              "label": {
+                "en": "Project"
+              },
+              "value": "",
+              "hint": {
+                "en": "Optional project name and version set in the ESPHome config.",
+                "nl": "Optionele projectnaam en -versie uit de ESPHome-configuratie."
+              }
+            },
+            {
+              "id": "bluetooth_mac",
+              "type": "label",
+              "label": {
+                "en": "Bluetooth MAC"
+              },
+              "value": "",
+              "hint": {
+                "en": "Bluetooth adapter MAC when the node exposes BLE.",
+                "nl": "MAC-adres van de Bluetooth-adapter als het apparaat BLE aanbiedt."
+              }
+            },
+            {
+              "id": "webserver",
+              "type": "label",
+              "label": {
+                "en": "Web server",
+                "nl": "Webserver"
+              },
+              "value": "",
+              "hint": {
+                "en": "Local web UI URL when the ESPHome web server component is enabled.",
+                "nl": "Lokale web-UI-URL wanneer de ESPHome-webservercomponent is ingeschakeld."
+              }
+            },
+            {
+              "id": "deep_sleep",
+              "type": "label",
+              "label": {
+                "en": "Deep sleep enabled",
+                "nl": "Deep sleep ingeschakeld"
+              },
+              "value": "No",
+              "hint": {
+                "en": "Whether this node uses deep sleep (may appear offline between wake-ups).",
+                "nl": "Of dit apparaat deep sleep gebruikt (kan offline lijken tussen wake-ups)."
+              }
             }
           ]
         }
-      ]
+      ],
+      "icon": "/drivers/s1pro/assets/icon.svg",
+      "name": {
+        "en": "S1 Pro Multi Sense",
+        "nl": "S1 Pro Multi Sense"
+      },
+      "id": "s1pro"
     }
   ],
   "widgets": {
@@ -849,7 +4508,7 @@
         }
       ],
       "api": {
-        "getState": {
+        "get_state": {
           "method": "GET",
           "path": "/"
         }
@@ -858,6 +4517,960 @@
     }
   },
   "capabilities": {
+    "aircleaner_mode": {
+      "type": "enum",
+      "title": {
+        "en": "Mode",
+        "ar": "الوضع",
+        "da": "Tilstand",
+        "de": "Modus",
+        "es": "Modo",
+        "fr": "Mode",
+        "it": "Modalità",
+        "ko": "모드",
+        "nl": "Modus",
+        "no": "Modus",
+        "pl": "Tryb",
+        "ru": "Режим",
+        "sv": "Läge"
+      },
+      "uiComponent": "picker",
+      "getable": true,
+      "setable": true,
+      "values": [
+        {
+          "id": "fan",
+          "title": {
+            "en": "Fan",
+            "ar": "مروحة",
+            "da": "Ventilator",
+            "de": "Lüfter",
+            "es": "Ventilador",
+            "fr": "Ventilateur",
+            "it": "Ventilatore",
+            "ko": "팬",
+            "nl": "Ventilator",
+            "no": "Vifte",
+            "pl": "Wentylator",
+            "ru": "Вентилятор",
+            "sv": "Fläkt"
+          }
+        },
+        {
+          "id": "auto",
+          "title": {
+            "en": "Auto"
+          }
+        },
+        {
+          "id": "silent",
+          "title": {
+            "en": "Silent",
+            "ar": "صامت",
+            "da": "Stille",
+            "de": "Leise",
+            "es": "Silencioso",
+            "fr": "Silencieux",
+            "it": "Silenzioso",
+            "ko": "조용히",
+            "nl": "Stil",
+            "no": "Stille",
+            "pl": "Cichy",
+            "ru": "Тихий",
+            "sv": "Tyst"
+          }
+        },
+        {
+          "id": "favorite",
+          "title": {
+            "en": "Favorite"
+          }
+        }
+      ]
+    },
+    "alarm_doorbell": {
+      "type": "boolean",
+      "title": {
+        "en": "Doorbell",
+        "ar": "جرس باب",
+        "da": "Dørklokke",
+        "de": "Türklingel",
+        "es": "Timbre",
+        "fr": "Sonnette",
+        "it": "Campanello",
+        "ko": "초인종",
+        "nl": "Deurbel",
+        "no": "Dørklokke",
+        "pl": "Dzwonek do drzwi",
+        "ru": "Дверной звонок",
+        "sv": "Dörrklocka"
+      },
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Ringing",
+        "ar": "يرن",
+        "da": "Ringer",
+        "de": "Klingelt",
+        "es": "Sonando",
+        "fr": "Sonne",
+        "it": "Squilla",
+        "ko": "울림",
+        "nl": "Gaat over",
+        "no": "Ringer",
+        "pl": "Dzwoni",
+        "ru": "Звонит",
+        "sv": "Ringer"
+      },
+      "insightsTitleFalse": {
+        "en": "Idle",
+        "ar": "خامل",
+        "da": "Inaktiv",
+        "de": "Inaktiv",
+        "es": "Inactivo",
+        "fr": "Inactif",
+        "it": "Inattivo",
+        "ko": "대기",
+        "nl": "Inactief",
+        "no": "Inaktiv",
+        "pl": "Bezczynny",
+        "ru": "Простой",
+        "sv": "Inaktiv"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/alarm_doorbell.svg",
+      "uiQuickAction": false
+    },
+    "alarm_plugged_in": {
+      "type": "boolean",
+      "title": {
+        "en": "Plugged in",
+        "ar": "موصول",
+        "da": "Tilsluttet",
+        "de": "Eingesteckt",
+        "es": "Enchufado",
+        "fr": "Branché",
+        "it": "Collegato",
+        "ko": "연결됨",
+        "nl": "Ingeplugd",
+        "no": "Tilkoblet",
+        "pl": "Podłączony",
+        "ru": "Подключено",
+        "sv": "Inkopplad"
+      },
+      "insights": true,
+      "insightsTitleTrue": {
+        "en": "Plugged in",
+        "ar": "موصول",
+        "da": "Tilsluttet",
+        "de": "Eingesteckt",
+        "es": "Enchufado",
+        "fr": "Branché",
+        "it": "Collegato",
+        "ko": "연결됨",
+        "nl": "Ingeplugd",
+        "no": "Tilkoblet",
+        "pl": "Podłączony",
+        "ru": "Подключено",
+        "sv": "Inkopplad"
+      },
+      "insightsTitleFalse": {
+        "en": "Unplugged",
+        "ar": "غير موصول",
+        "da": "Frakoblet",
+        "de": "Ausgesteckt",
+        "es": "Desenchufado",
+        "fr": "Débranché",
+        "it": "Scollegato",
+        "ko": "연결 해제",
+        "nl": "Niet aangesloten",
+        "no": "Frakoblet",
+        "pl": "Odłączony",
+        "ru": "Отключено",
+        "sv": "Urkopplad"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/alarm_plugged_in.svg",
+      "uiQuickAction": false
+    },
+    "alarm_triggered": {
+      "type": "boolean",
+      "title": {
+        "en": "Alarm triggered",
+        "ar": "تم تشغيل الإنذار",
+        "da": "Alarm udløst",
+        "de": "Alarm ausgelöst",
+        "es": "Alarma activada",
+        "fr": "Alarme déclenchée",
+        "it": "Allarme attivato",
+        "ko": "알람 발동됨",
+        "nl": "Alarm geactiveerd",
+        "no": "Alarm utløst",
+        "pl": "Alarm uruchomiony",
+        "ru": "Сработала сигнализация",
+        "sv": "Larm utlöst"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/alarm_triggered.svg",
+      "uiQuickAction": false
+    },
+    "esphome_boolean": {
+      "type": "boolean",
+      "title": {
+        "en": "Boolean"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/esphome_boolean.svg",
+      "zoneActivity": false
+    },
+    "esphome_button": {
+      "type": "boolean",
+      "title": {
+        "en": "Button"
+      },
+      "getable": false,
+      "setable": true,
+      "uiComponent": null,
+      "icon": "/assets/capabilities/event_button.svg"
+    },
+    "esphome_number": {
+      "type": "number",
+      "title": {
+        "en": "Number",
+        "ar": "رقم",
+        "da": "Tal",
+        "de": "Nummer",
+        "es": "Número",
+        "fr": "Nombre",
+        "it": "Numero",
+        "ko": "숫자",
+        "nl": "Nummer",
+        "no": "Tall",
+        "pl": "Liczba",
+        "ru": "Число",
+        "sv": "Nummer"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/esphome_number.svg",
+      "insights": true,
+      "decimals": 2
+    },
+    "esphome_select": {
+      "type": "enum",
+      "title": {
+        "en": "Select"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker",
+      "icon": "/assets/capabilities/esphome_select.svg",
+      "values": [
+        {
+          "id": "unknown",
+          "title": {
+            "en": "Unknown",
+            "ar": "غير معروف",
+            "da": "Ukendt",
+            "de": "Unbekannt",
+            "es": "Desconocido",
+            "fr": "Inconnu",
+            "it": "Sconosciuto",
+            "ko": "알 수 없음",
+            "nl": "Onbekend",
+            "no": "Ukjent",
+            "pl": "Nieznany",
+            "ru": "Неизвестно",
+            "sv": "Okänd"
+          }
+        }
+      ]
+    },
+    "esphome_string": {
+      "type": "string",
+      "title": {
+        "en": "Text",
+        "ar": "نص",
+        "da": "Tekst",
+        "de": "Text",
+        "es": "Texto",
+        "fr": "Texte",
+        "it": "Testo",
+        "ko": "텍스트",
+        "nl": "Tekst",
+        "no": "Tekst",
+        "pl": "Tekst",
+        "ru": "Текст",
+        "sv": "Text"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/esphome_string.svg"
+    },
+    "event_button": {
+      "type": "enum",
+      "title": {
+        "en": "Button event",
+        "ar": "حدث الزر",
+        "da": "Knapbegivenhed",
+        "de": "Tastenereignis",
+        "es": "Evento de botón",
+        "fr": "Événement de bouton",
+        "it": "Evento pulsante",
+        "ko": "버튼 이벤트",
+        "nl": "Knopgebeurtenis",
+        "no": "Knapphendelse",
+        "pl": "Zdarzenie przycisku",
+        "ru": "Событие кнопки",
+        "sv": "Knapp­händelse"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/event_button.svg",
+      "values": [
+        {
+          "id": "idle",
+          "title": {
+            "en": "Idle",
+            "ar": "خامل",
+            "da": "Inaktiv",
+            "de": "Inaktiv",
+            "es": "Inactivo",
+            "fr": "Inactif",
+            "it": "Inattivo",
+            "ko": "대기",
+            "nl": "Inactief",
+            "no": "Inaktiv",
+            "pl": "Bezczynny",
+            "ru": "Простой",
+            "sv": "Inaktiv"
+          }
+        }
+      ]
+    },
+    "event_generic": {
+      "type": "enum",
+      "title": {
+        "en": "Event",
+        "ar": "حدث",
+        "da": "Begivenhed",
+        "de": "Ereignis",
+        "es": "Evento",
+        "fr": "Evénement",
+        "it": "Evento",
+        "ko": "이벤트",
+        "nl": "Evenement",
+        "no": "Hendelse",
+        "pl": "Zdarzenie",
+        "ru": "Событие",
+        "sv": "Händelse"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/event_generic.svg",
+      "values": [
+        {
+          "id": "idle",
+          "title": {
+            "en": "Idle",
+            "ar": "خامل",
+            "da": "Inaktiv",
+            "de": "Inaktiv",
+            "es": "Inactivo",
+            "fr": "Inactif",
+            "it": "Inattivo",
+            "ko": "대기",
+            "nl": "Inactief",
+            "no": "Inaktiv",
+            "pl": "Bezczynny",
+            "ru": "Простой",
+            "sv": "Inaktiv"
+          }
+        }
+      ]
+    },
+    "fan_oscillate": {
+      "type": "boolean",
+      "title": {
+        "en": "Oscillate",
+        "ar": "تذبذب",
+        "da": "Svinge",
+        "de": "Schwingen",
+        "es": "Oscilar",
+        "fr": "Osciller",
+        "it": "Oscillare",
+        "ko": "진동시키다",
+        "nl": "Oscilleren",
+        "no": "Svinge",
+        "pl": "Oscylować",
+        "ru": "Колебаться",
+        "sv": "Svänga"
+      },
+      "icon": "/assets/capabilities/oscillate.svg",
+      "getable": true,
+      "setable": true,
+      "uiComponent": "toggle"
+    },
+    "identify": {
+      "type": "boolean",
+      "title": {
+        "en": "Identify",
+        "ar": "تعرّف",
+        "da": "Identificer",
+        "de": "Identifizieren",
+        "es": "Identificar",
+        "fr": "Identifier",
+        "it": "Identifica",
+        "ko": "식별",
+        "nl": "Identificeren",
+        "no": "Identifiser",
+        "pl": "Identyfikuj",
+        "ru": "Идентифицировать",
+        "sv": "Identifiera"
+      },
+      "getable": false,
+      "setable": true,
+      "uiComponent": "button",
+      "icon": "/assets/capabilities/identify.svg"
+    },
+    "light_effect": {
+      "type": "enum",
+      "title": {
+        "en": "Light effect",
+        "ar": "تأثير الإضاءة",
+        "da": "Lyseffekt",
+        "de": "Lichteffekt",
+        "es": "Efecto de luz",
+        "fr": "Effet lumineux",
+        "it": "Effetto luce",
+        "ko": "조명 효과",
+        "nl": "Lichteffect",
+        "no": "Lyseffekt",
+        "pl": "Efekt świetlny",
+        "ru": "Световой эффект",
+        "sv": "Ljuseffekt"
+      },
+      "uiComponent": "picker",
+      "getable": true,
+      "setable": true,
+      "values": [
+        {
+          "id": "None",
+          "title": {
+            "en": "None",
+            "ar": "لا شيء",
+            "da": "Ingen",
+            "de": "Keine",
+            "es": "Ninguno",
+            "fr": "Aucun",
+            "it": "Nessuno",
+            "ko": "없음",
+            "nl": "Geen",
+            "no": "Ingen",
+            "pl": "Brak",
+            "ru": "Нет",
+            "sv": "Ingen"
+          }
+        }
+      ]
+    },
+    "measure_absolute_humidity": {
+      "type": "number",
+      "title": {
+        "en": "Absolute humidity",
+        "ar": "الرطوبة المطلقة",
+        "da": "Absolut luftfugtighed",
+        "de": "Absolute Luftfeuchtigkeit",
+        "es": "Humedad absoluta",
+        "fr": "Humidité absolue",
+        "it": "Umidità assoluta",
+        "ko": "절대 습도",
+        "nl": "Absolute luchtvochtigheid",
+        "no": "Absolutt luftfuktighet",
+        "pl": "Wilgotność bezwzględna",
+        "ru": "Абсолютная влажность",
+        "sv": "Absolut luftfuktighet"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_absolute_humidity.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "g/m³"
+      }
+    },
+    "measure_apparent_power": {
+      "type": "number",
+      "title": {
+        "en": "Apparent power",
+        "ar": "القدرة الظاهرية",
+        "da": "Tilsyneladende effekt",
+        "de": "Scheinleistung",
+        "es": "Potencia aparente",
+        "fr": "Puissance apparente",
+        "it": "Potenza apparente",
+        "ko": "피상 전력",
+        "nl": "Schijnbaar vermogen",
+        "no": "Tilsynelatende effekt",
+        "pl": "Moc pozorna",
+        "ru": "Полная мощность",
+        "sv": "Skenbar effekt"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_apparent_power.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "VA"
+      }
+    },
+    "measure_area": {
+      "type": "number",
+      "title": {
+        "en": "Area",
+        "ar": "المساحة",
+        "da": "Areal",
+        "de": "Fläche",
+        "es": "Área",
+        "fr": "Surface",
+        "it": "Area",
+        "ko": "면적",
+        "nl": "Oppervlakte",
+        "no": "Areal",
+        "pl": "Powierzchnia",
+        "ru": "Площадь",
+        "sv": "Area"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_area.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "m²"
+      }
+    },
+    "measure_battery_voltage": {
+      "type": "number",
+      "title": {
+        "en": "Battery voltage",
+        "ar": "جهد البطارية",
+        "da": "Batterispænding",
+        "de": "Batteriespannung",
+        "es": "Voltaje de la batería",
+        "fr": "Tension de la batterie",
+        "it": "Tensione batteria",
+        "ko": "배터리 전압",
+        "nl": "Batterijspanning",
+        "no": "Batterispenning",
+        "pl": "Napięcie baterii",
+        "ru": "Напряжение батареи",
+        "sv": "Batterispänning"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_battery_voltage.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "V"
+      }
+    },
+    "measure_blood_glucose": {
+      "type": "number",
+      "title": {
+        "en": "Blood glucose",
+        "ar": "سكر الدم",
+        "da": "Blodsukker",
+        "de": "Blutzucker",
+        "es": "Glucosa en sangre",
+        "fr": "Glycémie",
+        "it": "Glicemia",
+        "ko": "혈당",
+        "nl": "Bloedglucose",
+        "no": "Blodsukker",
+        "pl": "Glukoza we krwi",
+        "ru": "Глюкоза крови",
+        "sv": "Blodsocker"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_blood_glucose.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "mg/dL"
+      }
+    },
+    "measure_conductivity": {
+      "type": "number",
+      "title": {
+        "en": "Conductivity",
+        "ar": "التوصيلية",
+        "da": "Ledningsevne",
+        "de": "Leitfähigkeit",
+        "es": "Conductividad",
+        "fr": "Conductivité",
+        "it": "Conduttività",
+        "ko": "전도도",
+        "nl": "Geleidbaarheid",
+        "no": "Konduktivitet",
+        "pl": "Przewodność",
+        "ru": "Проводимость",
+        "sv": "Konduktivitet"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_conductivity.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "µS/cm"
+      }
+    },
+    "measure_date": {
+      "type": "string",
+      "title": {
+        "en": "Date",
+        "ar": "التاريخ",
+        "da": "Dato",
+        "de": "Datum",
+        "es": "Fecha",
+        "fr": "Date",
+        "it": "Data",
+        "ko": "날짜",
+        "nl": "Datum",
+        "no": "Dato",
+        "pl": "Data",
+        "ru": "Дата",
+        "sv": "Datum"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_date.svg"
+    },
+    "measure_dew_point": {
+      "type": "number",
+      "title": {
+        "en": "Dew point",
+        "ar": "نقطة الندى",
+        "da": "Dugpunkt",
+        "de": "Taupunkt",
+        "es": "Punto de rocío",
+        "fr": "Point de rosée",
+        "it": "Punto di rugiada",
+        "ko": "이슬점",
+        "nl": "Dauwpunt",
+        "no": "Duggpunkt",
+        "pl": "Punkt rosy",
+        "ru": "Точка росы",
+        "sv": "Daggpunkt"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_dew_point.svg",
+      "insights": true,
+      "decimals": 1,
+      "units": {
+        "en": "°C"
+      }
+    },
+    "measure_duration": {
+      "type": "number",
+      "title": {
+        "en": "Duration",
+        "ar": "المدة",
+        "da": "Varighed",
+        "de": "Dauer",
+        "es": "Duración",
+        "fr": "Durée",
+        "it": "Durata",
+        "ko": "기간",
+        "nl": "Duur",
+        "no": "Varighet",
+        "pl": "Czas trwania",
+        "ru": "Длительность",
+        "sv": "Varaktighet"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_duration.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "s"
+      }
+    },
+    "measure_energy_distance": {
+      "type": "number",
+      "title": {
+        "en": "Energy per distance",
+        "ar": "الطاقة لكل مسافة",
+        "da": "Energi pr. afstand",
+        "de": "Energie pro Distanz",
+        "es": "Energía por distancia",
+        "fr": "Énergie par distance",
+        "it": "Energia per distanza",
+        "ko": "거리당 에너지",
+        "nl": "Energie per afstand",
+        "no": "Energi per avstand",
+        "pl": "Energia na dystans",
+        "ru": "Энергия на расстояние",
+        "sv": "Energi per avstånd"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_energy_distance.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "kWh/100km"
+      }
+    },
+    "measure_irradiance": {
+      "type": "number",
+      "title": {
+        "en": "Irradiance",
+        "ar": "الإشعاع",
+        "da": "Irradians",
+        "de": "Bestrahlungsstärke",
+        "es": "Irradiancia",
+        "fr": "Irradiance",
+        "it": "Irradianza",
+        "ko": "일사량",
+        "nl": "Instraling",
+        "no": "Irradians",
+        "pl": "Natężenie napromieniowania",
+        "ru": "Облучённость",
+        "sv": "Irradians"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_irradiance.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "W/m²"
+      }
+    },
+    "measure_nox_index": {
+      "type": "number",
+      "title": {
+        "en": "NOx index",
+        "ar": "مؤشر NOx",
+        "da": "NOx-indeks",
+        "de": "NOx-Index",
+        "es": "Índice NOx",
+        "fr": "Indice NOx",
+        "it": "Indice NOx",
+        "ko": "NOx 지수",
+        "nl": "NOx-index",
+        "no": "NOx-indeks",
+        "pl": "Indeks NOx",
+        "ru": "Индекс NOx",
+        "sv": "NOx-index"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_nox_index.svg",
+      "insights": true,
+      "decimals": 0
+    },
+    "measure_pm4": {
+      "type": "number",
+      "title": {
+        "en": "PM4"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_pm4.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "μg/m³"
+      }
+    },
+    "measure_power_factor": {
+      "type": "number",
+      "title": {
+        "en": "Power factor",
+        "ar": "معامل القدرة",
+        "da": "Effektfaktor",
+        "de": "Leistungsfaktor",
+        "es": "Factor de potencia",
+        "fr": "Facteur de puissance",
+        "it": "Fattore di potenza",
+        "ko": "역률",
+        "nl": "Arbeidsfactor",
+        "no": "Effektfaktor",
+        "pl": "Współczynnik mocy",
+        "ru": "Коэффициент мощности",
+        "sv": "Effektfaktor"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_power_factor.svg",
+      "insights": true,
+      "decimals": 2
+    },
+    "measure_reactive_power": {
+      "type": "number",
+      "title": {
+        "en": "Reactive power",
+        "ar": "القدرة التفاعلية",
+        "da": "Reaktiv effekt",
+        "de": "Blindleistung",
+        "es": "Potencia reactiva",
+        "fr": "Puissance réactive",
+        "it": "Potenza reattiva",
+        "ko": "무효 전력",
+        "nl": "Blindvermogen",
+        "no": "Reaktiv effekt",
+        "pl": "Moc bierna",
+        "ru": "Реактивная мощность",
+        "sv": "Reaktiv effekt"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_reactive_power.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "var"
+      }
+    },
+    "measure_timestamp": {
+      "type": "string",
+      "title": {
+        "en": "Timestamp",
+        "ar": "طابع زمني",
+        "da": "Tidsstempel",
+        "de": "Zeitstempel",
+        "es": "Marca de tiempo",
+        "fr": "Horodatage",
+        "it": "Timestamp",
+        "ko": "타임스탬프",
+        "nl": "Tijdstempel",
+        "no": "Tidsstempel",
+        "pl": "Znacznik czasu",
+        "ru": "Метка времени",
+        "sv": "Tidsstämpel"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_timestamp.svg"
+    },
+    "measure_uptime": {
+      "type": "string",
+      "title": {
+        "en": "Uptime",
+        "nl": "Uptime"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/measure_uptime.svg"
+    },
+    "meter_reactive_energy": {
+      "type": "number",
+      "title": {
+        "en": "Reactive energy",
+        "ar": "الطاقة التفاعلية",
+        "da": "Reaktiv energi",
+        "de": "Blindenergie",
+        "es": "Energía reactiva",
+        "fr": "Énergie réactive",
+        "it": "Energia reattiva",
+        "ko": "무효 에너지",
+        "nl": "Blindenergie",
+        "no": "Reaktiv energi",
+        "pl": "Energia bierna",
+        "ru": "Реактивная энергия",
+        "sv": "Reaktiv energi"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/meter_reactive_energy.svg",
+      "insights": true,
+      "decimals": 2,
+      "units": {
+        "en": "varh"
+      }
+    },
+    "open": {
+      "type": "boolean",
+      "title": {
+        "en": "Open Door",
+        "ar": "فتح الباب",
+        "da": "Åbn dør",
+        "de": "Tür öffnen",
+        "es": "Abrir puerta",
+        "fr": "Ouvrir la porte",
+        "it": "Apri porta",
+        "ko": "문 열기",
+        "nl": "Deur openen",
+        "no": "Åpne dør",
+        "pl": "Otwórz drzwi",
+        "ru": "Открыть дверь",
+        "sv": "Öppna dörr"
+      },
+      "getable": false,
+      "setable": true,
+      "uiComponent": "button",
+      "icon": "/assets/capabilities/open.svg"
+    },
+    "restart": {
+      "type": "boolean",
+      "title": {
+        "en": "Restart",
+        "ar": "إعادة التشغيل",
+        "da": "Genstart",
+        "de": "Neustarten",
+        "es": "Reiniciar",
+        "fr": "Redémarrer",
+        "it": "Riavvia",
+        "ko": "재시작",
+        "nl": "Herstarten",
+        "no": "Omstart",
+        "pl": "Uruchom ponownie",
+        "ru": "Перезапустить",
+        "sv": "Starta om"
+      },
+      "getable": false,
+      "setable": true,
+      "uiComponent": "button",
+      "icon": "/assets/capabilities/restart.svg"
+    },
     "sensy_iaq": {
       "type": "number",
       "title": {
@@ -872,26 +5485,6 @@
       "min": 0,
       "max": 500,
       "insights": true
-    },
-    "sensy_moving": {
-      "type": "boolean",
-      "title": {
-        "en": "Movement",
-        "nl": "Beweging"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor",
-      "icon": "/assets/capabilities/movement.svg",
-      "insights": true,
-      "insightsTitleTrue": {
-        "en": "Movement started",
-        "nl": "Beweging gestart"
-      },
-      "insightsTitleFalse": {
-        "en": "Movement stopped",
-        "nl": "Beweging gestopt"
-      }
     },
     "sensy_people": {
       "type": "number",
@@ -962,6 +5555,48 @@
         "en": "Zone empty",
         "nl": "Zone leeg"
       }
+    },
+    "thermostat_preset": {
+      "type": "enum",
+      "title": {
+        "en": "Preset",
+        "ar": "إعداد مسبق",
+        "da": "Forudindstilling",
+        "de": "Voreinstellung",
+        "es": "Preajuste",
+        "fr": "Préréglage",
+        "it": "Preimpostazione",
+        "ko": "프리셋",
+        "nl": "Voorinstelling",
+        "no": "Forhåndsinnstilling",
+        "pl": "Preset",
+        "ru": "Предустановка",
+        "sv": "Förinställning"
+      },
+      "uiComponent": "picker",
+      "getable": true,
+      "setable": true,
+      "icon": "/assets/capabilities/thermostat_preset.svg",
+      "values": [
+        {
+          "id": "none",
+          "title": {
+            "en": "None",
+            "ar": "لا شيء",
+            "da": "Ingen",
+            "de": "Keine",
+            "es": "Ninguno",
+            "fr": "Aucun",
+            "it": "Nessuno",
+            "ko": "없음",
+            "nl": "Geen",
+            "no": "Ingen",
+            "pl": "Brak",
+            "ru": "Нет",
+            "sv": "Ingen"
+          }
+        }
+      ]
     }
   },
   "discovery": {

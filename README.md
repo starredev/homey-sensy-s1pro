@@ -96,6 +96,9 @@ homey app validate --level publish                                 # the manifes
 homey app run                                                      # run on your Homey (needs Docker)
 ```
 
+The previous Node.js version (on `@2colors/esphome-native-api`, app id `io.github.starredev.sensys1pro`) is kept
+on the [`node`](https://github.com/starredev/homey-sensy-s1pro/tree/node) branch and tag `node-1.0.0`.
+
 The code is organised in layers (entity port → sensor model → Homey adapters), with the sensor
 logic free of Homey so it runs under plain `pytest`. [CONTRIBUTING.md](CONTRIBUTING.md) explains the
 structure and the code style.

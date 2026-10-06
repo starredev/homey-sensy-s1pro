@@ -14,6 +14,8 @@ All notable changes to this app are documented here. The format follows
 - Presence is `alarm_presence` and movement is `alarm_motion` (was `alarm_motion` and `sensy_moving`).
   Existing sensors must be removed and added again.
 - Requires Homey 13.0 or newer.
+- App id is `io.github.starredev.sensy`, so later Sensy-One products can be added as drivers of the same app.
+  The Node.js version (`io.github.starredev.sensys1pro`) is kept on the `node` branch and tag `node-1.0.0`.
 
 ### Added
 

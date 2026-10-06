@@ -1,5 +1,5 @@
 {
-  "name": "io.github.starredev.sensys1pro",
+  "name": "io.github.starredev.sensy",
   "version": "1.0.0",
   "description": "Browser tooling (lint, tests) for the web views of the Sensy S1 Pro Homey app; the app itself is Python.",
   "type": "module",

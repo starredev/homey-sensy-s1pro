@@ -1,0 +1,102 @@
+site_name: Sensy S1 Pro for Homey
+site_description: Documentation of the Homey app for the Sensy-One S1 Pro Multi Sense mmWave presence sensor.
+site_url: https://starredev.github.io/homey-sensy-s1pro/
+repo_url: https://github.com/starredev/homey-sensy-s1pro
+repo_name: starredev/homey-sensy-s1pro
+edit_uri: edit/main/docs/
+copyright: MIT licence · Unofficial community project, not made or endorsed by Sensy-One
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/logo.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+    - toc.follow
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - getting-started/index.md
+      - Requirements: getting-started/requirements.md
+      - Installation: getting-started/installation.md
+      - Adding the sensor: getting-started/pairing.md
+      - Placing the sensor: getting-started/placement.md
+  - User guide:
+      - guide/index.md
+      - The device: guide/device.md
+      - Device settings: guide/settings.md
+      - Zones and the zone editor: guide/zones.md
+      - Radar widget: guide/widget.md
+      - Flows: guide/flows.md
+      - Air quality: guide/air-quality.md
+      - Maintenance and firmware: guide/maintenance.md
+      - Troubleshooting: guide/troubleshooting.md
+      - FAQ: guide/faq.md
+  - Reference:
+      - reference/index.md
+      - Capabilities: reference/capabilities.md
+      - Flow cards: reference/flow-cards.md
+      - Settings: reference/settings.md
+      - Sensor entities: reference/entities.md
+      - Web API: reference/web-api.md
+  - Developers:
+      - developers/index.md
+      - Architecture: developers/architecture.md
+      - homey-esphomedriver: developers/esphomedriver.md
+      - Development setup: developers/development.md
+      - Testing and CI: developers/testing.md
+      - Releasing: developers/releasing.md
+      - Documentation site: developers/docs.md
+  - Changelog: changelog.md

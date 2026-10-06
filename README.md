@@ -4,6 +4,9 @@
 
 [![CI](https://github.com/starredev/homey-sensy-s1pro/actions/workflows/ci.yml/badge.svg)](https://github.com/starredev/homey-sensy-s1pro/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-starredev.github.io-blue.svg)](https://starredev.github.io/homey-sensy-s1pro/)
+
+📖 **Full documentation: [starredev.github.io/homey-sensy-s1pro](https://starredev.github.io/homey-sensy-s1pro/)**
 
 A Homey app for the [Sensy-One S1 Pro Multi Sense](https://github.com/sensy-one/S1-Pro-Multi-Sense):
 mmWave presence (including people who sit still), up to three zones, people counting and a full set of

@@ -19,3 +19,6 @@ __pycache__/
 # Pair and repair views, generated from .homeycompose/drivers/ by the Homey CLI
 /drivers/*/pair/
 /drivers/*/repair/
+
+# Documentation build output
+/site/

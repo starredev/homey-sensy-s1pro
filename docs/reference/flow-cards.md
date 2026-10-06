@@ -1,0 +1,137 @@
+# Flow cards
+
+Every flow card of the app's own, with its id, arguments and tokens. Cards are device cards: they all have a
+*device* argument (the S1 Pro). For when to use them, see the [Flows guide](../guide/flows.md).
+
+Homey also offers its standard cards for the standard capabilities of the device (see [Capabilities](capabilities.md)).
+
+## Triggers (When…)
+
+### Someone became present
+
+- **Id:** `room_occupied`
+- **Card text:** Someone became present
+- **Dutch:** Iemand werd aanwezig
+- **Token:** `people` (number): People, for example `1`
+
+### The room became empty
+
+- **Id:** `room_empty`
+- **Card text:** The room became empty
+- **Dutch:** De ruimte werd leeg
+
+### Number of people changed
+
+- **Id:** `people_changed`
+- **Card text:** Number of people changed
+- **Dutch:** Aantal personen veranderde
+- **Token:** `people` (number): People, for example `2`
+- **Token:** `previous` (number): Previous, for example `1`
+
+### Air quality changed
+
+- **Id:** `air_quality_changed`
+- **Card text:** Air quality changed
+- **Dutch:** Luchtkwaliteit veranderde
+- **Token:** `air_quality` (string): Air quality, for example `Good`
+- **Token:** `previous` (string): Previous, for example `Excellent`
+
+### Someone entered a zone
+
+- **Id:** `zone_entered`
+- **Card text:** Someone entered *zone*
+- **Dutch:** Iemand kwam *zone* binnen
+- **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+- **Token:** `people` (number): People in zone, for example `1`
+
+### A zone became empty
+
+- **Id:** `zone_left`
+- **Card text:** *zone* became empty
+- **Dutch:** *zone* werd leeg
+- **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### Movement started in a zone
+
+- **Id:** `zone_movement_started`
+- **Card text:** Movement started in *zone*
+- **Dutch:** Beweging gestart in *zone*
+- **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### Movement stopped in a zone
+
+- **Id:** `zone_movement_stopped`
+- **Card text:** Movement stopped in *zone*
+- **Dutch:** Beweging gestopt in *zone*
+- **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### New firmware is available
+
+- **Id:** `firmware_available`
+- **Card text:** New firmware is available
+- **Dutch:** Er is nieuwe firmware beschikbaar
+- **Hint:** Homey checks the Sensy-One releases every few hours. Update the sensor from its web page.
+- **Token:** `version` (string): Version, for example `v1.3.0`
+- **Token:** `installed` (string): Installed version, for example `v1.2.21`
+
+## Conditions (And…)
+
+### Someone is / isn't present
+
+- **Id:** `is_present`
+- **Card text:** Someone is / isn't present
+- **Dutch:** Er is / is niet iemand aanwezig
+
+### Zone is / isn't occupied
+
+- **Id:** `zone_occupied`
+- **Card text:** *zone* is / isn't occupied
+- **Dutch:** *zone* is / is niet bezet
+- **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### There is / is no movement in a zone
+
+- **Id:** `zone_moving`
+- **Card text:** There is / is no movement in *zone*
+- **Dutch:** Er is / is geen beweging in *zone*
+- **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+
+### Number of people is / isn't above
+
+- **Id:** `people_above`
+- **Card text:** Number of people is / isn't above *count*
+- **Dutch:** Aantal personen is / is niet hoger dan *count*
+- **Argument:** `count` (number, 0–3)
+
+### Air quality is / isn't at least as bad as
+
+- **Id:** `air_quality_at_least`
+- **Card text:** Air quality is / isn't *level* or worse
+- **Dutch:** Luchtkwaliteit is / is niet *level* of slechter
+- **Argument:** `level` (dropdown, one of: `Excellent` (Excellent), `Good` (Good), `Lightly polluted` (Lightly polluted), `Moderately polluted` (Moderately polluted), `Heavily polluted` (Heavily polluted), `Severely polluted` (Severely polluted), `Extremely polluted` (Extremely polluted))
+
+## Actions (Then…)
+
+### Set zone presence hold time
+
+- **Id:** `set_zone_delay`
+- **Card text:** Set presence hold time of *zone* to *seconds* seconds
+- **Dutch:** Zet vasthoudtijd van *zone* op *seconds* seconden
+- **Argument:** `zone` (dropdown, one of: `1` (Zone 1), `2` (Zone 2), `3` (Zone 3))
+- **Argument:** `seconds` (number, 0–3600)
+
+### Beep
+
+- **Id:** `beep`
+- **Card text:** Beep for *duration* seconds
+- **Dutch:** Piep *duration* seconden
+- **Argument:** `duration` (number, 0.1–5)
+
+## Behaviour
+
+- Room and zone triggers fire on real changes only. Values the sensor re-sends after a reconnect never fire a card.
+- Zone triggers and zone conditions ignore zones without an outline (fewer than three points).
+- *Someone entered a zone* reports at least 1 person, because the zone's people count can lag behind its presence.
+- *Air quality changed* does not fire for the first class reported after a (re)connect, and ignores the firmware's `error` value.
+- *New firmware is available* fires once per release version, and again only for a newer release.
+- *Beep* turns the buzzer on, waits, and always turns it off again, also when the flow is stopped in between.

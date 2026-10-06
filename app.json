@@ -5697,7 +5697,7 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
-      "icon": "/assets/capabilities/iaq.svg",
+      "icon": "/assets/capabilities/air_quality.svg",
       "values": [
         {
           "id": "Excellent",
@@ -5774,7 +5774,7 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
-      "icon": "/assets/capabilities/iaq.svg",
+      "icon": "/assets/capabilities/iaq_accuracy.svg",
       "values": [
         {
           "id": "Stabilizing",

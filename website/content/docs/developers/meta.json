@@ -1,0 +1,7 @@
+{
+  "title": "Developers",
+  "description": "Working on the app",
+  "root": true,
+  "icon": "Code",
+  "pages": ["index", "architecture", "esphomedriver", "development", "testing", "releasing", "website"]
+}

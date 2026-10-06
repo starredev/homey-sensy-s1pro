@@ -1,0 +1,87 @@
+---
+title: Introduction
+description: A Homey app for the Sensy-One S1 Pro Multi Sense mmWave presence sensor.
+---
+
+Sensy S1 Pro turns the [Sensy-One S1 Pro Multi Sense](https://github.com/sensy-one/S1-Pro-Multi-Sense) into a
+native Homey device: presence that also sees people who sit still, up to three zones, the number of people in the
+room, and CO₂, air quality, temperature, humidity, pressure, light and UV.
+
+Homey talks to the sensor directly over the ESPHome native API on your local network. No Home Assistant, no MQTT
+broker and no cloud.
+
+<ThemedImage light="/images/radar-hero-light.svg" dark="/images/radar-hero-dark.svg" alt="The radar map with two zones, an exclusion zone and three people" />
+
+<Callout type="info" title="Unofficial community project">
+  This app is not made, endorsed or supported by Sensy-One. It works with the official Sensy-One firmware.
+</Callout>
+
+## What it does
+
+<Cards>
+  <Card title="Presence and people" href="/docs/device">
+    Presence that stays on while you sit still, movement, and how many people are in the room.
+  </Card>
+  <Card title="Zones" href="/docs/zones">
+    Draw up to three zones on a live radar map, each with its own presence, flows and settings.
+  </Card>
+  <Card title="Climate and air quality" href="/docs/air-quality">
+    CO₂, an air quality index with a plain-language class, VOC, temperature, humidity, light and UV.
+  </Card>
+  <Card title="Radar widget" href="/docs/widget">
+    A live top-down radar of the room on your dashboard.
+  </Card>
+  <Card title="Flows" href="/docs/flows">
+    Triggers, conditions and actions for the room, every zone, air quality and new firmware.
+  </Card>
+  <Card title="Settings" href="/docs/settings">
+    Every setting of the sensor, kept in sync in both directions.
+  </Card>
+</Cards>
+
+## Get started
+
+<Steps>
+<Step>
+
+### Check the requirements
+
+A Homey Pro (2023) or Homey Pro mini on Homey 13 or newer, and the S1 Pro on the official firmware.
+[Requirements](/docs/installation#requirements)
+
+</Step>
+<Step>
+
+### Install the app and add the sensor
+
+Install **Sensy S1 Pro**, then add the sensor under **Devices → + → Sensy S1 Pro**.
+[Installation](/docs/installation)
+
+</Step>
+<Step>
+
+### Draw your zones
+
+Open **Apps → Sensy S1 Pro → Configure** and draw zones while you walk through the room.
+[Zones](/docs/zones)
+
+</Step>
+<Step>
+
+### Automate
+
+Build [flows](/docs/flows) and add the [radar widget](/docs/widget) to a dashboard.
+
+</Step>
+</Steps>
+
+## How it works
+
+The app is a Homey **Python** app built on
+[`homey-esphomedriver`](https://github.com/Doekse/homey-esphomedriver), the shared ESPHome layer that also powers
+the generic ESPHome app for Homey. That library handles discovery, pairing, encryption, reconnects and the
+standard capabilities. This app adds what is specific to the S1 Pro: zones, live targets, flow cards, the
+settings mirror, the zone editor, the radar widget and firmware notices.
+
+Everything runs on your local network. The only outbound request is a check for new firmware on Sensy-One's
+GitHub releases page, every six hours.

@@ -1,0 +1,69 @@
+---
+title: "homey-esphomedriver"
+description: "What the shared ESPHome library does and how this app builds on it."
+---
+
+[`homey-esphomedriver`](https://github.com/Doekse/homey-esphomedriver) by Abe Haverkamp is the shared ESPHome
+layer for Homey Python apps. The generic [ESPHome app](https://homey.app/en-nl/app/io.esphome/ESPHome/) uses it
+for any ESPHome node; brand apps like this one use the same core for their own products.
+
+## What the library does
+
+- **Discovery and pairing**: mDNS discovery, *Add by IP…*, encryption keys, repair.
+- **The Native API session**: connect, reconnect with back-off, follow IP changes, availability.
+- **Entity mapping**: turns ESPHome entities into Homey capabilities (sensors, binary sensors, switches, lights,
+  buttons, numbers, text sensors and many more), writes their values and handles commands.
+- **Defaults**: compose templates (`esphome-defaults`), pair and repair views, generic flow cards, locales and
+  capability icons, synced into the app with `esphome-homey sync`.
+
+## What this app adds
+
+| Need | How |
+|---|---|
+| Only show the S1 Pro's primary entities | `SensyBrandProfile.skip_entity` whitelists entities without a category through `S1ProProfile.CAPABILITIES`. Diagnostic and configuration entities keep the library behaviour (hidden until the user turns them on). |
+| Better capabilities for some entities | `device_entities` remaps `all_targets_count` → `sensy_people`, `bme688_iaq` → `sensy_iaq`, and the air quality texts to enum capabilities. |
+| Zone capabilities only for drawn zones | `S1ProDevice.brand_profile` returns `SensyBrandProfile.with_zones(drawn)`; zone entities of drawn zones are mapped to `sensy_zone_*.zoneN` with localised titles. |
+| Maintenance actions | `after_map` adds `button.calibrate_co2`, `button.restart` and `button.restart_radar` with the button entity's key; the library presses `button.*` capabilities that carry a key. |
+| One device class | `device_class_for` always returns `sensor`, also when LED or switches are shown. |
+| Everything beyond capabilities | `EsphomeEntities` opens a second state subscription on the library's session (`client.api.subscribe_states`) and feeds the domain model. |
+| Disconnects | `aioesphomeapi`'s public `APIClient.add_connection_closed_callback`. |
+
+## Hooks used
+
+Only documented hooks and public API:
+
+- `EspHomeDriver.on_esphome_init` registers the app's flow cards.
+- `EspHomeDevice.on_esphome_init`, `on_esphome_connected` and `on_esphome_uninit` wire the domain model.
+- `EspHomeDevice.brand_profile` (a public property) is overridden per device.
+- `Device.trigger_capability_listener("button.refresh", True)` presses the library's refresh action.
+
+## Refresh rules
+
+The device triggers a refresh itself when:
+
+- the drawn zones differ from the zone capabilities it has;
+- the brand profile's `VERSION` is newer than the one the device was last mapped with (stored as
+  `profile_version`), so app updates that add capabilities reach existing devices;
+- zone capabilities are inconsistent (no entity key, or an odd id). Then it first refreshes **without** zones,
+  so the library removes them all, and then with the drawn zones.
+
+<Callout type="info" title="Why not remove capabilities directly?">
+
+The library's refresh compares against its own record of capability options. Removing a capability through
+the SDK does not update that record, so the library would think it still exists. Letting the library remove
+and add keeps both in sync.
+
+</Callout>
+
+## Upgrading the library
+
+1. Raise `homey-esphomedriver` in `.homeycompose/app.json` (`pythonPackages`) and `requirements-dev.txt`.
+2. Run `esphome-homey sync` to refresh the library-owned files: `.homeycompose/drivers/templates/`, the pair and
+   repair views, `.homeycompose/flow/`, the generic capabilities and icons, and the library's locale keys.
+3. Delete what this app does not use: `.homeycompose/discovery/esphome.json` and `assets/logo.svg`.
+4. Compare `.homeycompose/drivers/templates/esphome-defaults.json` with the app's own copies:
+    - new settings → add them to `drivers/s1pro/driver.settings.compose.json` (the app's settings file replaces
+      the template's settings, so they are copied there);
+    - new capabilities → add them to the `capabilities` list in `drivers/s1pro/driver.compose.json` (which leaves
+      out the battery capabilities, so publish validation does not ask for battery information).
+5. Run all checks and test on a real sensor.

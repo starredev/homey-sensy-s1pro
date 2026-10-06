@@ -1,0 +1,26 @@
+{
+  "title": "Documentation",
+  "description": "Using the app",
+  "root": true,
+  "icon": "BookOpen",
+  "pages": [
+    "---Getting started---",
+    "index",
+    "installation",
+    "placement",
+    "---Using the app---",
+    "device",
+    "zones",
+    "air-quality",
+    "widget",
+    "flows",
+    "---Configuration---",
+    "settings",
+    "maintenance",
+    "---Help---",
+    "troubleshooting",
+    "changelog",
+    "---Reference---",
+    "...reference"
+  ]
+}

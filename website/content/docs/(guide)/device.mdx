@@ -1,0 +1,89 @@
+---
+title: "The device"
+description: "What the device tile shows, and where every value comes from."
+---
+
+The **S1 Pro Multi Sense** device is a Homey *sensor*. Its tile shows the room's presence and climate; zones
+appear as extra values for every zone you draw.
+
+## Presence and people
+
+| Value | Capability | Meaning |
+|---|---|---|
+| **Presence** | `alarm_presence` | Someone is in the room, also when they sit or lie still. Stays on for the [presence hold time](/docs/settings#detection) after the last detection. |
+| **Motion** | `alarm_motion` | Someone in the room is moving. |
+| **People** | `sensy_people` | Number of people the radar tracks, 0 to 3. |
+
+Homey's **zone activity** reacts to both presence and motion sensors, so the room the device is in becomes
+active as soon as the sensor sees someone, and stays active while they sit still.
+
+<Callout type="info" title="Up to three people">
+
+The radar tracks at most three targets at a time. With more people in the room the count stays at 3.
+
+</Callout>
+
+## Climate and air
+
+| Value | Capability | Source on the sensor | Unit |
+|---|---|---|---|
+| **Temperature** | `measure_temperature` | BME688 | °C |
+| **Humidity** | `measure_humidity` | BME688 | % |
+| **Pressure** | `measure_pressure` | BME688 | mbar (= hPa) |
+| **CO₂** | `measure_co2` | SCD40 (a real CO₂ sensor) | ppm |
+| **Air quality (IAQ)** | `sensy_iaq` | BME688 / Bosch BSEC | 0–500 index |
+| **Air quality** | `sensy_air_quality` | BME688 / Bosch BSEC | *Excellent* … *Extremely polluted* |
+| **Air quality calibration** | `sensy_iaq_accuracy` | BME688 / Bosch BSEC | *Stabilizing* … *Calibrated* |
+| **VOC** | `measure_tvoc` | BME688 / Bosch BSEC | ppm |
+| **Luminance** | `measure_luminance` | LTR390 | lx |
+| **Ultraviolet** | `measure_ultraviolet` | LTR390 | UV index |
+
+The air quality values are explained in detail on the [Air quality](/docs/air-quality) page.
+
+How often these values update depends on [*Real-time environment readings*](/docs/settings#detection): on (the
+default) they follow every change, off they update once a minute.
+
+## Zones
+
+For every zone you draw in the [zone editor](/docs/zones), three values appear:
+
+| Value | Capability | Meaning |
+|---|---|---|
+| **Zone N presence** | `sensy_zone_presence.zoneN` | Someone is inside zone N |
+| **Zone N movement** | `sensy_zone_movement.zoneN` | Someone moves inside zone N |
+| **People in zone N** | `sensy_zone_people.zoneN` | Number of people inside zone N |
+
+They appear a few seconds after you save a zone with at least three points, and disappear again when you clear
+the zone. Zones you never drew do not clutter the tile.
+
+## Maintenance actions
+
+Open the device and look under maintenance (the wrench, or *Maintenance* in the device settings) for:
+
+- **Calibrate CO₂ sensor**
+- **Restart sensor**
+- **Restart radar**
+- **Refresh capabilities**
+
+See [Maintenance and firmware](/docs/maintenance) for what they do and when to use them.
+
+## Insights
+
+Presence, motion, people, all climate values and the zone values are logged in Homey **Insights**, so you can
+see when a room was used and how CO₂ or humidity developed over the day. The air quality class and its
+calibration state are text values and are not logged.
+
+## Warnings on the device
+
+The device can show a warning bar with one or more of these messages:
+
+| Warning | What to do |
+|---|---|
+| *The BLE proxy is on…* | Turn off **BLE \| Proxy** on the sensor's web page; see [Requirements](/docs/installation#bluetooth-proxy). |
+| *Firmware vX is available…* | A newer official firmware is out; see [Firmware updates](/docs/maintenance#firmware-updates). |
+
+## When the sensor is offline
+
+If the sensor stops answering, the device becomes **unavailable** with the message *ESPHome connection lost*.
+The app reconnects by itself as soon as the sensor is back, also when it got a new IP address. Flows do not fire
+for values that are merely re-sent after a reconnect.

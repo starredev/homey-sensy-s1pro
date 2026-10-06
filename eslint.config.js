@@ -73,6 +73,7 @@ export default [
       '.venv/',
       'python_packages/',
       '.homeycompose/',
+      'website/',
     ],
   },
   js.configs.recommended,

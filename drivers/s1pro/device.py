@@ -156,13 +156,24 @@ class S1ProDevice(EspHomeDevice):
 
     async def _follow_drawn_zones(self, drawn: frozenset[str]) -> None:
         """Remember the drawn zones and let the library rebuild the capabilities when they differ."""
-        if drawn != self._stored_drawn_zones():
-            await self.set_store_value(self.DRAWN_ZONES_STORE, sorted(drawn))
+        present = ZoneCapabilities.present(self.get_capabilities())
+        bound = self._bound_zone_capabilities()
 
-        if self._bound_zone_capabilities() == ZoneCapabilities.expected(drawn):
+        if bound != present or not present <= ZoneCapabilities.canonical():
+            # Left over from an older version, or duplicated by a refresh. The library
+            # keeps odd ids next to the ones it adds, so let it remove every zone
+            # capability first (a refresh without drawn zones), then add them cleanly.
+            self.log(f"Rebuilding zone capabilities {sorted(present)}")
+            await self._refresh_with_zones(frozenset())
+        elif bound == ZoneCapabilities.expected(drawn) and drawn == self._stored_drawn_zones():
             return
 
         self.log(f"Drawn zones are now {sorted(drawn)}; refreshing capabilities")
+        await self._refresh_with_zones(drawn)
+
+    async def _refresh_with_zones(self, drawn: frozenset[str]) -> None:
+        """Store the drawn zones (read by ``brand_profile``) and press the library's refresh action."""
+        await self.set_store_value(self.DRAWN_ZONES_STORE, sorted(drawn))
         await self.trigger_capability_listener(self.REFRESH_CAPABILITY, True)
 
     def _bound_zone_capabilities(self) -> frozenset[str]:

@@ -209,6 +209,8 @@ class TestZoneCapabilities:
             {"sensy_zone_presence.zone2", "sensy_zone_movement.zone2", "sensy_zone_people.zone2"}
         )
         assert ZoneCapabilities.expected([]) == frozenset()
+        assert len(ZoneCapabilities.canonical()) == 9
+        assert "sensy_zone_people.zone3" in ZoneCapabilities.canonical()
         assert ZoneCapabilities.present(["alarm_presence", "sensy_zone_people.zone1"]) == frozenset(
             {"sensy_zone_people.zone1"}
         )

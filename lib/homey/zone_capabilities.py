@@ -100,6 +100,11 @@ class ZoneCapabilities:
 
         return frozenset(capabilities)
 
+    @staticmethod
+    def canonical() -> frozenset[str]:
+        """Every zone capability id this app uses, for all detection zones."""
+        return ZoneCapabilities.expected(zone.key for zone in Zone.DETECTION)
+
     @classmethod
     def present(cls, capabilities: Iterable[str]) -> frozenset[str]:
         """The zone capability ids among a device's capabilities."""

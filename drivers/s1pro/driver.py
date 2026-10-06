@@ -6,11 +6,11 @@ from typing import TYPE_CHECKING, cast
 
 from homey_esphomedriver import EspHomeDriver
 
-from lib.homey.brand_profile import SENSY_BRAND_PROFILE
-from lib.homey.flow_cards import FlowCards
+from ...lib.homey.brand_profile import SENSY_BRAND_PROFILE
+from ...lib.homey.flow_cards import FlowCards
 
 if TYPE_CHECKING:
-    from drivers.s1pro.device import S1ProDevice
+    from .device import S1ProDevice
 
 
 class S1ProDriver(EspHomeDriver):

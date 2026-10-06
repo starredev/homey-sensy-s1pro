@@ -5,10 +5,10 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from typing import Any
 
-from lib.errors import NotFoundError, ValidationError
-from lib.homey.presenter import SensorPresenter, SensorView
-from lib.sensor.polygon import Polygon
-from lib.sensor.zone import Zone
+from ..errors import NotFoundError, ValidationError
+from ..homey.presenter import SensorPresenter, SensorView
+from ..sensor.polygon import Polygon
+from ..sensor.zone import Zone
 
 
 class SensyApi:

@@ -8,7 +8,7 @@ from aioesphomeapi import EntityCategory, EntityInfo
 from homey_esphomedriver.esphome_types import HomeyEspHomeDeviceOption
 from homey_esphomedriver.profile import BrandProfile
 
-from lib.sensor.profile import S1ProProfile
+from ..sensor.profile import S1ProProfile
 
 
 def _setting_entities() -> frozenset[str]:

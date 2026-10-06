@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, cast
 from homey.homey import Homey
 
 if TYPE_CHECKING:
-    from app import SensyApp
+    from ...app import SensyApp
 
 
 async def get_state(*, homey: Homey, query: dict[str, str], params: dict[str, str], body: Any) -> Any:

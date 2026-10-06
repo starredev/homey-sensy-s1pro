@@ -6,16 +6,16 @@ from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-from lib.sensor.events import (
+from ..sensor.events import (
     PeopleCountChanged,
     PresenceChanged,
     SensorEvent,
     ZoneMovementChanged,
     ZonePresenceChanged,
 )
-from lib.sensor.sensor import S1ProSensor
-from lib.sensor.zone import Zone
-from lib.utils import Logger, to_finite_number
+from ..sensor.sensor import S1ProSensor
+from ..sensor.zone import Zone
+from ..utils import Logger, to_finite_number
 
 
 class FlowDevice(Protocol):

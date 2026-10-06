@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING, Any, cast
 from homey.app import App
 from homey.widget import SettingAutocompleteResult
 
-from lib.homey.presenter import SensorView
-from lib.homey.realtime_hub import RealtimeHub
-from lib.homey.sensy_api import SensyApi
+from .lib.homey.presenter import SensorView
+from .lib.homey.realtime_hub import RealtimeHub
+from .lib.homey.sensy_api import SensyApi
 
 if TYPE_CHECKING:
-    from drivers.s1pro.driver import S1ProDriver
+    from .drivers.s1pro.driver import S1ProDriver
 
 
 class SensyApp(App):

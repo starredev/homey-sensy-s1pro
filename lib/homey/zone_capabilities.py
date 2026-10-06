@@ -6,10 +6,10 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from lib.homey.capability_store import CapabilityStore
-from lib.sensor.polygon import Polygon
-from lib.sensor.sensor import ZoneStatus
-from lib.sensor.zone import Zone
+from ..homey.capability_store import CapabilityStore
+from ..sensor.polygon import Polygon
+from ..sensor.sensor import ZoneStatus
+from ..sensor.zone import Zone
 
 
 @dataclass(frozen=True, slots=True)

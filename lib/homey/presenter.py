@@ -9,8 +9,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from lib.sensor.sensor import S1ProSensor
-from lib.sensor.zone import Zone
+from ..sensor.sensor import S1ProSensor
+from ..sensor.zone import Zone
 
 
 @dataclass(frozen=True, slots=True)

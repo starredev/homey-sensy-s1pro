@@ -17,16 +17,16 @@ import re
 from dataclasses import dataclass
 from types import MappingProxyType
 
-from lib.sensor.bindings import (
+from ..sensor.bindings import (
     NumberSettingBinding,
     SettingBinding,
     SwitchSettingBinding,
     TargetFeed,
     TrackedEntity,
 )
-from lib.sensor.ports import EntityValue
-from lib.sensor.zone import Zone
-from lib.utils import round_half_up, to_finite_number
+from ..sensor.ports import EntityValue
+from ..sensor.zone import Zone
+from ..utils import round_half_up, to_finite_number
 
 
 @dataclass(frozen=True, slots=True)

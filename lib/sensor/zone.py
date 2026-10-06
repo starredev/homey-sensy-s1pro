@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from lib.errors import ValidationError
+from ..errors import ValidationError
 
 
 class Zone:

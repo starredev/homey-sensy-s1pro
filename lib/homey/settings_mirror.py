@@ -5,10 +5,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, Protocol
 
-from lib.errors import NotConnectedError
-from lib.sensor.bindings import SettingValue
-from lib.sensor.profile import S1ProProfile
-from lib.sensor.sensor import S1ProSensor
+from ..errors import NotConnectedError
+from ..sensor.bindings import SettingValue
+from ..sensor.profile import S1ProProfile
+from ..sensor.sensor import S1ProSensor
 
 
 class SettingsHost(Protocol):

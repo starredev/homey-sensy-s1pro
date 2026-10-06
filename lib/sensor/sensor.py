@@ -7,24 +7,24 @@ from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass
 from typing import ClassVar, Literal, Protocol, cast
 
-from lib.sensor.bindings import SettingBinding, SettingValue, TargetFeed, TrackedEntity
-from lib.sensor.events import (
+from ..sensor.bindings import SettingBinding, SettingValue, TargetFeed, TrackedEntity
+from ..sensor.events import (
     PeopleCountChanged,
     PresenceChanged,
     SensorEvent,
     ZoneMovementChanged,
     ZonePresenceChanged,
 )
-from lib.sensor.polygon import Polygon
-from lib.sensor.ports import EntityPort, EntityValue
-from lib.sensor.profile import S1ProProfile
-from lib.sensor.state_router import StateRouter
-from lib.sensor.target_tracker import TargetPosition, TargetTracker
-from lib.sensor.value_tracker import ValueTracker
-from lib.sensor.zone import Zone
-from lib.sensor.zone_repository import ZoneOptions, ZoneRepository
-from lib.timers import Debouncer, Timers
-from lib.utils import clamp, round_half_up, to_finite_number
+from ..sensor.polygon import Polygon
+from ..sensor.ports import EntityPort, EntityValue
+from ..sensor.profile import S1ProProfile
+from ..sensor.state_router import StateRouter
+from ..sensor.target_tracker import TargetPosition, TargetTracker
+from ..sensor.value_tracker import ValueTracker
+from ..sensor.zone import Zone
+from ..sensor.zone_repository import ZoneOptions, ZoneRepository
+from ..timers import Debouncer, Timers
+from ..utils import clamp, round_half_up, to_finite_number
 
 type Sleep = Callable[[float], Awaitable[None]]
 

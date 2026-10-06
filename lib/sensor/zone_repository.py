@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from lib.sensor.polygon import Point, Polygon
-from lib.sensor.ports import EntityPort
-from lib.sensor.profile import Range, S1ProProfile
-from lib.sensor.zone import Zone
-from lib.utils import clamp, round_half_up, to_finite_number
+from ..sensor.polygon import Point, Polygon
+from ..sensor.ports import EntityPort
+from ..sensor.profile import Range, S1ProProfile
+from ..sensor.zone import Zone
+from ..utils import clamp, round_half_up, to_finite_number
 
 
 @dataclass(frozen=True, slots=True)

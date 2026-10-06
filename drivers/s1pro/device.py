@@ -6,20 +6,20 @@ from typing import TYPE_CHECKING, Any, cast
 
 from homey_esphomedriver import EspHomeClient, EspHomeDevice
 
-from lib.errors import NotConnectedError
-from lib.esphome.entities import EsphomeEntities
-from lib.homey.app_port import SensyAppPort
-from lib.homey.capability_store import CapabilityStore
-from lib.homey.presenter import SensorView
-from lib.homey.settings_mirror import SettingsMirror
-from lib.homey.tasks import TaskRunner
-from lib.homey.zone_capabilities import ZoneCapabilities
-from lib.sensor.events import SensorEvent
-from lib.sensor.sensor import S1ProSensor, ZoneStatus
-from lib.sensor.zone import Zone
+from ...lib.errors import NotConnectedError
+from ...lib.esphome.entities import EsphomeEntities
+from ...lib.homey.app_port import SensyAppPort
+from ...lib.homey.capability_store import CapabilityStore
+from ...lib.homey.presenter import SensorView
+from ...lib.homey.settings_mirror import SettingsMirror
+from ...lib.homey.tasks import TaskRunner
+from ...lib.homey.zone_capabilities import ZoneCapabilities
+from ...lib.sensor.events import SensorEvent
+from ...lib.sensor.sensor import S1ProSensor, ZoneStatus
+from ...lib.sensor.zone import Zone
 
 if TYPE_CHECKING:
-    from drivers.s1pro.driver import S1ProDriver
+    from .driver import S1ProDriver
 
 
 class S1ProDevice(EspHomeDevice):
@@ -37,7 +37,7 @@ class S1ProDevice(EspHomeDevice):
     _tasks: TaskRunner
     _entities: EsphomeEntities
     _sensor: S1ProSensor
-    _store: CapabilityStore
+    _capability_store: CapabilityStore
     _zone_capabilities: ZoneCapabilities
     _settings_mirror: SettingsMirror
 
@@ -104,7 +104,7 @@ class S1ProDevice(EspHomeDevice):
             id=str(self.get_data()["id"]),
             name=self.get_name(),
             sensor=self._sensor,
-            capability_value=self._store.get,
+            capability_value=self._capability_store.get,
         )
 
     # --- SensorObserver -------------------------------------------------------
@@ -143,8 +143,8 @@ class S1ProDevice(EspHomeDevice):
         self._tasks = TaskRunner(self)
         self._entities = EsphomeEntities()
         self._sensor = S1ProSensor(port=self._entities, timers=self.homey, observer=self)
-        self._store = CapabilityStore(self, self)
-        self._zone_capabilities = ZoneCapabilities(self._store)
+        self._capability_store = CapabilityStore(self, self)
+        self._zone_capabilities = ZoneCapabilities(self._capability_store)
         self._settings_mirror = SettingsMirror(self, self._sensor)
         self._components_ready = True
 

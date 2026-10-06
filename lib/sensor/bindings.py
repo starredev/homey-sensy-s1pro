@@ -7,9 +7,9 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-from lib.sensor.ports import EntityPort, EntityValue
-from lib.sensor.target_tracker import Axis
-from lib.utils import round_to, to_finite_number
+from ..sensor.ports import EntityPort, EntityValue
+from ..sensor.target_tracker import Axis
+from ..utils import round_to, to_finite_number
 
 type SettingValue = bool | float | str
 

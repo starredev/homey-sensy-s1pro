@@ -19,8 +19,8 @@ from aioesphomeapi import (
 from aioesphomeapi.client import APIClient
 from aioesphomeapi.core import APIConnectionError
 
-from lib.errors import NotConnectedError, ValidationError
-from lib.sensor.ports import EntityListener, EntityValue
+from ..errors import NotConnectedError, ValidationError
+from ..sensor.ports import EntityListener, EntityValue
 
 
 class Session(Protocol):

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from lib.sensor.zone import Zone
+from ..sensor.zone import Zone
 
 
 class SensorEvent:

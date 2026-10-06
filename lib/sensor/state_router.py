@@ -6,7 +6,7 @@ import re
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 
-from lib.sensor.ports import EntityValue
+from ..sensor.ports import EntityValue
 
 type RouteHandler = Callable[[EntityValue, tuple[str, ...]], None]
 """Receives the reported value and the regex groups (empty for exact matches)."""

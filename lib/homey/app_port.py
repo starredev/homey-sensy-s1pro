@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from lib.homey.realtime_hub import RealtimeHub
+from ..homey.realtime_hub import RealtimeHub
 
 
 class SensyAppPort(Protocol):

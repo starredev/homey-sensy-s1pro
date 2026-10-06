@@ -6,7 +6,7 @@ import asyncio
 from collections.abc import Coroutine
 from typing import Any
 
-from lib.utils import Logger
+from ..utils import Logger
 
 
 class TaskRunner:

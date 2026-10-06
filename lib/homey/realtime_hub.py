@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import Any, ClassVar, Protocol
 
-from lib.homey.presenter import SensorPresenter, SensorView
-from lib.homey.tasks import TaskRunner
-from lib.timers import KeyedThrottle, Timers
-from lib.utils import Logger
+from ..homey.presenter import SensorPresenter, SensorView
+from ..homey.tasks import TaskRunner
+from ..timers import KeyedThrottle, Timers
+from ..utils import Logger
 
 
 class RealtimeApi(Protocol):

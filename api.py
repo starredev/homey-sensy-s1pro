@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING, Any, cast
 
 from homey.homey import Homey
 
-from lib.homey.sensy_api import SensyApi
+from .lib.homey.sensy_api import SensyApi
 
 if TYPE_CHECKING:
-    from app import SensyApp
+    from .app import SensyApp
 
 
 def _sensy_api(homey: Homey) -> SensyApi:

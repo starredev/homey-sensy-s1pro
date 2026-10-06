@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import ClassVar, Literal, Protocol
 
-from lib.utils import round_half_up
+from ..utils import round_half_up
 
 type Axis = Literal["x", "y"]
 

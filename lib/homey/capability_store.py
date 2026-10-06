@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol
 
-from lib.utils import Logger
+from ..utils import Logger
 
 
 class CapabilityHost(Protocol):

@@ -6,8 +6,8 @@ import math
 from collections.abc import Sequence
 from typing import ClassVar, cast
 
-from lib.errors import ValidationError
-from lib.utils import clamp, round_half_up
+from ..errors import ValidationError
+from ..utils import clamp, round_half_up
 
 type Point = tuple[int, int]
 """A vertex in centimetres: x = left (-) / right (+), y = distance in front of the sensor."""

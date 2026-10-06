@@ -3,34 +3,57 @@ title: "This website"
 description: "Working on the documentation website."
 ---
 
-This site is built with [MkDocs](https://www.mkdocs.org/) and
-[Material for MkDocs](https://squidfunk.github.io/mkdocs-material/). The sources are in `docs/`, the configuration
-in `mkdocs.yml`.
+This website is built with [Fumadocs](https://fumadocs.dev/) on Next.js, with the shadcn theme, and exported as a
+static site. Everything lives in `website/`:
+
+| Path | Contents |
+|---|---|
+| `content/docs/(guide)/` | The user documentation (MDX); `meta.json` sets the order and the sidebar groups |
+| `content/docs/developers/` | The developer documentation, a separate sidebar tab |
+| `app/(home)/page.tsx` | The landing page |
+| `components/` | Extra MDX components: `ThemedImage`, `Mermaid` |
+| `public/images/` | Images; the radar images are rendered with the app's own `RadarView` |
+| `scripts/sync-changelog.mjs` | Copies `../CHANGELOG.md` into the changelog page before every build |
 
 ## Working locally
 
 ```bash
-uv pip install -r requirements-docs.txt
-mkdocs serve      # live preview on http://127.0.0.1:8000
-mkdocs build --strict
+cd website
+npm install
+npm run dev       # http://localhost:3000
+npm run build     # static export to website/out
 ```
 
-`--strict` turns warnings (such as broken links) into errors; CI builds the site the same way.
+## Writing pages
+
+Pages are MDX with front matter (`title`, `description`). Besides Markdown you can use:
+
+| Component | Use |
+|---|---|
+| `<Callout type="info" title="…">` | Notes and warnings (`info`, `warn`, `error`, `idea`, `success`) |
+| `<Tabs items={[…]}>` with `<Tab value="…">` | Alternatives, such as App Store or CLI |
+| `<Accordions>` with `<Accordion title="…">` | Recipes and FAQ |
+| `<Steps>` with `<Step>` | Step-by-step instructions |
+| `<Cards>` with `<Card title href>` | Link grids |
+| `<ThemedImage light dark alt>` | An image from `public/` with a light and a dark variant |
+| `<Mermaid chart={…} />` | Diagrams |
+
+Link to other pages by their route (`/docs/zones`, `/docs/reference/flow-cards`). In MDX, `{`, `}` and `<` in plain
+text must be escaped (`\{`, `&lt;`); inside code they are fine.
+
+The changelog page is generated: edit `CHANGELOG.md` in the repository root.
 
 ## Publishing
 
-`.github/workflows/docs.yml` runs on pushes to `main` that touch the docs. It builds the site with `--strict` and
-publishes it with `mkdocs gh-deploy` to the `gh-pages` branch, which GitHub Pages serves at
+`.github/workflows/docs.yml` runs on pushes to `main` that touch `website/` or the changelog. It builds the site with
+`NEXT_PUBLIC_BASE_PATH=/homey-sensy-s1pro` (GitHub Pages serves it from that sub path) and publishes `website/out`
+to the `gh-pages` branch, which GitHub Pages serves at
 [starredev.github.io/homey-sensy-s1pro](https://starredev.github.io/homey-sensy-s1pro/).
 
-Pull requests only build the site, so broken links are caught before merging.
+On Windows with Git Bash, set `MSYS_NO_PATHCONV=1` when you build with a base path, or Git Bash turns
+`/homey-sensy-s1pro` into a Windows path.
 
-## Conventions
+## Keeping the reference in sync
 
-- Write for Homey users first in the *Getting started* and *User guide* sections; keep implementation details in
-  *Developers*.
-- Use the names the Homey app shows (*Presence*, *Hold time*), and the ids in `code` in the *Reference*.
-- The changelog page includes `CHANGELOG.md` from the repository root, so there is one changelog.
-- `reference/flow-cards.md`, `reference/settings.md` and `reference/entities.md` mirror
-  `driver.flow.compose.json`, `driver.settings.compose.json` and the sensor's entity list; update them together
-  with those files.
+`reference/flow-cards`, `reference/settings` and `reference/entities` mirror `driver.flow.compose.json`,
+`driver.settings.compose.json` and the sensor's entity list; update them together with those files.

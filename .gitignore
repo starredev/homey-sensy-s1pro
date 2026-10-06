@@ -20,5 +20,3 @@ __pycache__/
 /drivers/*/pair/
 /drivers/*/repair/
 
-# Documentation build output
-/site/

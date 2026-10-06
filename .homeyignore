@@ -9,8 +9,4 @@ package-lock.json
 requirements-dev.txt
 *.md
 assets/logo.png
-docs/
-site/
-mkdocs.yml
-requirements-docs.txt
 website/

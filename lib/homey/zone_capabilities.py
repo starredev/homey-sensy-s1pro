@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from typing import Any
 
-from ..homey.capability_store import CapabilityStore
 from ..sensor.polygon import Polygon
-from ..sensor.sensor import ZoneStatus
 from ..sensor.zone import Zone
 
 
@@ -19,17 +16,14 @@ class ZoneCapabilityKind:
     base: str
     """Capability id without the ``.zoneN`` suffix."""
 
+    entity_suffix: str
+    """The zone entity that feeds it, e.g. ``presence`` for ``zone_2_presence``."""
+
     title: Callable[[int], dict[str, str]]
     """Localised title per zone number."""
 
-    value: Callable[[ZoneStatus], bool | int]
-    """Picks the status field that feeds the capability."""
-
     def id_for(self, zone: Zone) -> str:
         return f"{self.base}.zone{zone.number}"
-
-    def options_for(self, zone: Zone) -> dict[str, Any]:
-        return {"title": self.title(zone.number or 0)}
 
 
 def _presence_title(number: int) -> dict[str, str]:
@@ -44,63 +38,75 @@ def _people_title(number: int) -> dict[str, str]:
     return {"en": f"People in zone {number}", "nl": f"Personen in zone {number}"}
 
 
-def _presence(status: ZoneStatus) -> bool:
-    return status.presence
-
-
-def _movement(status: ZoneStatus) -> bool:
-    return status.movement
-
-
-def _people(status: ZoneStatus) -> int:
-    return status.people
-
-
 KINDS = (
-    ZoneCapabilityKind("sensy_zone_presence", _presence_title, _presence),
-    ZoneCapabilityKind("sensy_zone_movement", _movement_title, _movement),
-    ZoneCapabilityKind("sensy_zone_people", _people_title, _people),
+    ZoneCapabilityKind("sensy_zone_presence", "presence", _presence_title),
+    ZoneCapabilityKind("sensy_zone_movement", "movement", _movement_title),
+    ZoneCapabilityKind("sensy_zone_people", "target_count", _people_title),
 )
 
 
 class ZoneCapabilities:
-    """Keeps the per-zone sub-capabilities in line with the zones that have an outline.
+    """Which zone capabilities a device should have.
 
-    The device tile then only shows zones the user drew.
+    The firmware always reports the presence, movement and people count of all
+    three zones, also of zones without an outline. Whether a zone is drawn is
+    only known from the *value* of its ``points_count``, which the entity
+    mapping of ``homey-esphomedriver`` never sees. So the device remembers the
+    drawn zones and hands them to its brand profile, which then maps the zone
+    entities of exactly those zones onto these capabilities.
     """
 
-    def __init__(self, store: CapabilityStore) -> None:
-        self._store = store
+    PREFIX = "sensy_zone_"
 
-    async def reconcile(
-        self,
-        outline_of: Callable[[Zone], Polygon | None],
-        status_of: Callable[[Zone], ZoneStatus],
-    ) -> None:
-        """Add or remove capabilities per zone.
+    @staticmethod
+    def entity_capabilities() -> dict[str, tuple[str, ZoneCapabilityKind, Zone]]:
+        """ESPHome object id -> (capability id, kind, zone), for every detection zone."""
+        mapping: dict[str, tuple[str, ZoneCapabilityKind, Zone]] = {}
 
-        Zones whose outline is not fully known yet (``None``) are left alone.
-        """
+        for zone in Zone.DETECTION:
+            for kind in KINDS:
+                mapping[zone.entity(kind.entity_suffix)] = (kind.id_for(zone), kind, zone)
+
+        return mapping
+
+    @staticmethod
+    def drawn(outline_of: Callable[[Zone], Polygon | None]) -> frozenset[str] | None:
+        """Keys of the zones with an outline, or ``None`` while an outline is still incomplete."""
+        keys: set[str] = set()
+
         for zone in Zone.DETECTION:
             outline = outline_of(zone)
 
             if outline is None:
+                return None
+
+            if not outline.is_empty:
+                keys.add(zone.key)
+
+        return frozenset(keys)
+
+    @staticmethod
+    def expected(drawn_zones: Iterable[str]) -> frozenset[str]:
+        """The zone capability ids a device with these drawn zones should have."""
+        drawn = set(drawn_zones)
+        capabilities: set[str] = set()
+
+        for zone in Zone.DETECTION:
+            if zone.key not in drawn:
                 continue
 
-            if outline.is_empty:
-                await self._remove_all(zone)
-            else:
-                await self._add_all(zone)
-                await self.update(zone, status_of(zone))
+            for kind in KINDS:
+                capabilities.add(kind.id_for(zone))
 
-    async def update(self, zone: Zone, status: ZoneStatus) -> None:
-        for kind in KINDS:
-            await self._store.set(kind.id_for(zone), kind.value(status))
+        return frozenset(capabilities)
 
-    async def _add_all(self, zone: Zone) -> None:
-        for kind in KINDS:
-            await self._store.add(kind.id_for(zone), kind.options_for(zone))
+    @classmethod
+    def present(cls, capabilities: Iterable[str]) -> frozenset[str]:
+        """The zone capability ids among a device's capabilities."""
+        present: set[str] = set()
 
-    async def _remove_all(self, zone: Zone) -> None:
-        for kind in KINDS:
-            await self._store.remove(kind.id_for(zone))
+        for capability in capabilities:
+            if capability.startswith(cls.PREFIX):
+                present.add(capability)
+
+        return frozenset(present)

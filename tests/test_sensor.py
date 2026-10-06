@@ -138,10 +138,10 @@ class TestZones:
 
         assert rig.observer.events[-1] == ZonePresenceChanged(zone=Zone.TWO, present=True, people=1)
 
-    def test_zone_status_is_reported(self, rig: SensorRig) -> None:
+    def test_zone_status(self, rig: SensorRig) -> None:
         rig.port.report("zone_3_target_count", 1.6)
 
-        assert rig.observer.zone_statuses[-1] == (Zone.THREE, ZoneStatus(presence=False, movement=False, people=2))
+        assert rig.sensor.zone_status(Zone.THREE) == ZoneStatus(presence=False, movement=False, people=2)
         assert not rig.sensor.is_zone_moving(Zone.THREE)
 
     def test_geometry_changes_are_debounced(self, rig: SensorRig) -> None:

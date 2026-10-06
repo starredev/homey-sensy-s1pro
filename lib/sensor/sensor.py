@@ -48,9 +48,6 @@ class SensorObserver(Protocol):
 
     def on_sensor_disconnected(self) -> None: ...
 
-    def on_zone_status(self, zone: Zone, status: ZoneStatus) -> None:
-        """The status of a detection zone was reported."""
-
     def on_sensor_event(self, event: SensorEvent) -> None:
         """Something happened in the room."""
 
@@ -348,7 +345,6 @@ class S1ProSensor:
         value = self._parse_zone_value(kind, raw)
         change = self._values.update(zone.entity(kind), value)
 
-        self._observer.on_zone_status(zone, self.zone_status(zone))
         self._observer.on_live()
 
         # Zones without an outline report stale values; never fire flows for them.

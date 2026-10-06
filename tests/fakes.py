@@ -11,7 +11,7 @@ from lib.homey.presenter import SensorView
 from lib.sensor.events import SensorEvent
 from lib.sensor.polygon import Polygon
 from lib.sensor.ports import EntityListener, EntityValue
-from lib.sensor.sensor import S1ProSensor, ZoneStatus
+from lib.sensor.sensor import S1ProSensor
 from lib.sensor.zone import Zone
 
 
@@ -118,7 +118,6 @@ class RecordingObserver:
 
     calls: list[str] = field(default_factory=list[str])
     events: list[SensorEvent] = field(default_factory=list[SensorEvent])
-    zone_statuses: list[tuple[Zone, ZoneStatus]] = field(default_factory=list[tuple[Zone, ZoneStatus]])
     proxy: list[bool] = field(default_factory=list[bool])
 
     def on_sensor_connected(self) -> None:
@@ -126,9 +125,6 @@ class RecordingObserver:
 
     def on_sensor_disconnected(self) -> None:
         self.calls.append("disconnected")
-
-    def on_zone_status(self, zone: Zone, status: ZoneStatus) -> None:
-        self.zone_statuses.append((zone, status))
 
     def on_sensor_event(self, event: SensorEvent) -> None:
         self.events.append(event)

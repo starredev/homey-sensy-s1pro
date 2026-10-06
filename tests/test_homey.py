@@ -36,7 +36,6 @@ from lib.sensor.events import (
     ZonePresenceChanged,
 )
 from lib.sensor.polygon import Polygon
-from lib.sensor.sensor import ZoneStatus
 from lib.sensor.zone import Zone
 from tests.fakes import (
     FakeCapabilityHost,
@@ -193,34 +192,57 @@ class TestCapabilityStore:
 
 
 class TestZoneCapabilities:
-    async def test_only_drawn_zones_get_capabilities(self) -> None:
-        host = FakeCapabilityHost()
-        zones = ZoneCapabilities(CapabilityStore(host, RecordingLogger()))
+    def test_drawn_zones(self) -> None:
         outlines: dict[Zone, Polygon | None] = {
             Zone.ONE: Polygon.parse([list(point) for point in square()]),
             Zone.TWO: Polygon.EMPTY,
-            Zone.THREE: None,
+            Zone.THREE: Polygon.EMPTY,
         }
 
-        def outline_of(zone: Zone) -> Polygon | None:
-            return outlines[zone]
+        assert ZoneCapabilities.drawn(outlines.__getitem__) == frozenset({"1"})
 
-        def status_of(zone: Zone) -> ZoneStatus:
-            del zone
+        outlines[Zone.THREE] = None
+        assert ZoneCapabilities.drawn(outlines.__getitem__) is None
 
-            return ZoneStatus(presence=True, movement=False, people=2)
+    def test_expected_and_present(self) -> None:
+        assert ZoneCapabilities.expected({"2"}) == frozenset(
+            {"sensy_zone_presence.zone2", "sensy_zone_movement.zone2", "sensy_zone_people.zone2"}
+        )
+        assert ZoneCapabilities.expected([]) == frozenset()
+        assert ZoneCapabilities.present(["alarm_presence", "sensy_zone_people.zone1"]) == frozenset(
+            {"sensy_zone_people.zone1"}
+        )
 
-        host.values["sensy_zone_presence.zone2"] = False
-        await zones.reconcile(outline_of, status_of)
+    def test_the_library_maps_zone_entities_of_drawn_zones_only(self) -> None:
+        entities: list[EntityInfo] = [
+            build(BinarySensorInfo, key=1, object_id="any_presence", device_class="presence"),
+            build(BinarySensorInfo, key=21, object_id="zone_1_presence", device_class="presence"),
+            build(BinarySensorInfo, key=22, object_id="zone_1_movement", device_class="motion"),
+            build(SensorInfo, key=23, object_id="zone_1_target_count"),
+            build(BinarySensorInfo, key=31, object_id="zone_2_presence", device_class="presence"),
+        ]
+        device = DeviceEntityMapper.empty_option()
 
-        assert host.values == {
-            "sensy_zone_presence.zone1": True,
-            "sensy_zone_movement.zone1": False,
-            "sensy_zone_people.zone1": 2,
-        }
-        assert host.options["sensy_zone_people.zone1"] == {
-            "title": {"en": "People in zone 1", "nl": "Personen in zone 1"}
-        }
+        DeviceEntityMapper.map_device(entities, device, profile=SENSY_BRAND_PROFILE.with_zones({"1"}))
+
+        assert device["capabilities"] == [
+            "alarm_presence",
+            "sensy_zone_presence.zone1",
+            "sensy_zone_movement.zone1",
+            "sensy_zone_people.zone1",
+            "button.refresh",
+        ]
+        options = device["capabilitiesOptions"]
+        assert options["sensy_zone_presence.zone1"]["key"] == 21
+        assert options["sensy_zone_people.zone1"]["title"] == {"en": "People in zone 1", "nl": "Personen in zone 1"}
+
+    def test_profile_copies(self) -> None:
+        with_one = SENSY_BRAND_PROFILE.with_zones({"1"})
+
+        assert with_one.with_zones(["1"]) is with_one
+        assert with_one.client_info == SENSY_BRAND_PROFILE.client_info
+        assert SENSY_BRAND_PROFILE.drawn_zones == frozenset()
+        assert SENSY_BRAND_PROFILE.capability_id_for(S1_PRO_ENTITIES[3], "x") == "sensy_people"
 
 
 class TestSettingsMirror:

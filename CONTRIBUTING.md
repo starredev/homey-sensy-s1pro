@@ -68,9 +68,14 @@ or `homey-esphomedriver`, so it runs under plain `pytest`.
 discovery, pairing (including *Add by IP…* and encryption keys), reconnects, following IP changes, and
 mapping entities onto capabilities. `S1ProDriver` and `S1ProDevice` extend its `EspHomeDriver` and
 `EspHomeDevice` and only use the documented hooks (`on_esphome_init`, `on_esphome_connected`,
-`on_esphome_uninit`), with one exception that waits for an upstream hook: the *Refresh capabilities*
-listener. A dropped connection is noticed through `aioesphomeapi`'s public
-`add_connection_closed_callback` in `EsphomeEntities`.
+`on_esphome_uninit`) and the public `brand_profile` property. A dropped connection is noticed through
+`aioesphomeapi`'s public `add_connection_closed_callback` in `EsphomeEntities`.
+
+Zone capabilities are mapped by the library too. The firmware always reports all three zones, so
+`S1ProDevice.brand_profile` returns the driver's profile plus the zones this sensor has drawn
+(`SensyBrandProfile.with_zones`, remembered in the device store). When the drawn zones change, the
+device presses the library's own *Refresh capabilities* action (`trigger_capability_listener`), which
+then adds or removes exactly those zone capabilities.
 
 `SensyBrandProfile` (in `lib/homey/brand_profile.py`) tells the library which entities become
 capabilities. The sensor reports about 150 entities, most without an entity category, so the profile

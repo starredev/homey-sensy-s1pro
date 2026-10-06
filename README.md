@@ -75,8 +75,8 @@ Then add the sensor: **Devices → + → Sensy S1 Pro → S1 Pro Multi Sense**.
   on the device while the proxy is on.
 - **The sensor is not found when adding it.** The app finds sensors through mDNS (`_esphomelib._tcp`), which does not
   cross networks or VLANs. Choose *Add by IP…* in the list and give the sensor a fixed IP address (DHCP reservation).
-- **Zone capabilities disappeared after *Refresh capabilities*.** They come back by themselves; the app re-adds them
-  for every zone that has an outline right after the refresh.
+- **Zone capabilities missing.** They appear a few seconds after you save a zone with at least three points
+  in the zone editor; *Refresh capabilities* keeps them.
 
 ## Development
 

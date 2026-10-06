@@ -2,21 +2,21 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, cast
 
 from homey_esphomedriver import EspHomeClient, EspHomeDevice
 
 from ...lib.errors import NotConnectedError
 from ...lib.esphome.entities import EsphomeEntities
 from ...lib.homey.app_port import SensyAppPort
+from ...lib.homey.brand_profile import SensyBrandProfile
 from ...lib.homey.capability_store import CapabilityStore
 from ...lib.homey.presenter import SensorView
 from ...lib.homey.settings_mirror import SettingsMirror
 from ...lib.homey.tasks import TaskRunner
 from ...lib.homey.zone_capabilities import ZoneCapabilities
 from ...lib.sensor.events import SensorEvent
-from ...lib.sensor.sensor import S1ProSensor, ZoneStatus
-from ...lib.sensor.zone import Zone
+from ...lib.sensor.sensor import S1ProSensor
 
 if TYPE_CHECKING:
     from .driver import S1ProDriver
@@ -25,31 +25,40 @@ if TYPE_CHECKING:
 class S1ProDevice(EspHomeDevice):
     """Wires the sensor model to Homey; holds no domain logic.
 
-    ``homey-esphomedriver`` owns the Native API session and the primary
-    capabilities. This device attaches the sensor model to that session and
-    adds what the generic mapping cannot know: zones, targets, flow triggers,
-    mirrored settings and the realtime channels of the web views.
+    ``homey-esphomedriver`` owns the Native API session and all capabilities.
+    This device attaches the sensor model to that session and adds what the
+    generic mapping cannot know: which zones are drawn, targets, flow
+    triggers, mirrored settings and the realtime channels of the web views.
     """
 
     REFRESH_CAPABILITY = "button.refresh"
+    """The library's maintenance action that rebuilds the capabilities."""
+
+    DRAWN_ZONES_STORE = "drawn_zones"
 
     _components_ready: bool = False
     _tasks: TaskRunner
     _entities: EsphomeEntities
     _sensor: S1ProSensor
     _capability_store: CapabilityStore
-    _zone_capabilities: ZoneCapabilities
     _settings_mirror: SettingsMirror
 
     # --- homey-esphomedriver hooks --------------------------------------------
 
+    @property
+    def brand_profile(self) -> SensyBrandProfile:  # pyright: ignore[reportIncompatibleVariableOverride]
+        """The driver's profile, plus the zones this sensor has drawn.
+
+        The library maps (and refreshes) capabilities with this profile, so the
+        zone capabilities follow the drawn zones without any special casing.
+        """
+        profile = cast(SensyBrandProfile, self.driver.brand_profile)
+
+        return profile.with_zones(self._stored_drawn_zones())
+
     async def on_esphome_init(self, client: EspHomeClient | None) -> None:
         await super().on_esphome_init(client)
         self._ensure_components()
-
-        # Refreshing capabilities rebuilds them from the entity list and drops the
-        # zone capabilities this app adds; put those back afterwards.
-        self.register_capability_listener(self.REFRESH_CAPABILITY, self._on_refresh_capabilities)
 
     async def on_esphome_connected(self, client: EspHomeClient) -> None:
         await super().on_esphome_connected(client)
@@ -108,9 +117,6 @@ class S1ProDevice(EspHomeDevice):
     def on_sensor_disconnected(self) -> None:
         self._app.publish_devices()
 
-    def on_zone_status(self, zone: Zone, status: ZoneStatus) -> None:
-        self._tasks.run(self._zone_capabilities.update(zone, status))
-
     def on_sensor_event(self, event: SensorEvent) -> None:
         self._tasks.run(self._driver.flow_cards.dispatch(self, event))
 
@@ -137,19 +143,50 @@ class S1ProDevice(EspHomeDevice):
         self._entities = EsphomeEntities()
         self._sensor = S1ProSensor(port=self._entities, timers=self.homey, observer=self)
         self._capability_store = CapabilityStore(self, self)
-        self._zone_capabilities = ZoneCapabilities(self._capability_store)
         self._settings_mirror = SettingsMirror(self, self._sensor)
         self._components_ready = True
 
     async def _apply_zones(self) -> None:
-        sensor = self._sensor
+        drawn = ZoneCapabilities.drawn(self._sensor.zone_outline)
 
-        await self._zone_capabilities.reconcile(sensor.zone_outline, sensor.zone_status)
+        if drawn is not None:
+            await self._follow_drawn_zones(drawn)
+
         self._app.realtime.zones(self.view)
 
-    async def _on_refresh_capabilities(self, value: Any = True, **kwargs: Any) -> None:
-        await self._capability_handler.refresh(value, **kwargs)
-        await self._apply_zones()
+    async def _follow_drawn_zones(self, drawn: frozenset[str]) -> None:
+        """Remember the drawn zones and let the library rebuild the capabilities when they differ."""
+        if drawn != self._stored_drawn_zones():
+            await self.set_store_value(self.DRAWN_ZONES_STORE, sorted(drawn))
+
+        if self._bound_zone_capabilities() == ZoneCapabilities.expected(drawn):
+            return
+
+        self.log(f"Drawn zones are now {sorted(drawn)}; refreshing capabilities")
+        await self.trigger_capability_listener(self.REFRESH_CAPABILITY, True)
+
+    def _bound_zone_capabilities(self) -> frozenset[str]:
+        """Zone capabilities that the library feeds (they carry the entity key)."""
+        bound: set[str] = set()
+
+        for capability in ZoneCapabilities.present(self.get_capabilities()):
+            if self._is_bound(capability):
+                bound.add(capability)
+
+        return frozenset(bound)
+
+    def _is_bound(self, capability: str) -> bool:
+        try:
+            options = self.get_capability_options(capability)
+        except Exception:  # noqa: BLE001 - Homey raises for options stored as null
+            return False
+
+        return options.get("key") is not None
+
+    def _stored_drawn_zones(self) -> frozenset[str]:
+        stored = self.get_store().get(self.DRAWN_ZONES_STORE) or []
+
+        return frozenset(str(key) for key in stored)
 
     async def _show_bluetooth_proxy_warning(self, enabled: bool) -> None:
         if enabled:

@@ -1,0 +1,41 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Air quality calibration",
+    "nl": "Kalibratie luchtkwaliteit"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/iaq.svg",
+  "values": [
+    {
+      "id": "Stabilizing",
+      "title": {
+        "en": "Stabilizing",
+        "nl": "Stabiliseren"
+      }
+    },
+    {
+      "id": "Uncertain",
+      "title": {
+        "en": "Uncertain",
+        "nl": "Onzeker"
+      }
+    },
+    {
+      "id": "Calibrating",
+      "title": {
+        "en": "Calibrating",
+        "nl": "Kalibreren"
+      }
+    },
+    {
+      "id": "Calibrated",
+      "title": {
+        "en": "Calibrated",
+        "nl": "Gekalibreerd"
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Air quality",
+    "nl": "Luchtkwaliteit"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/iaq.svg",
+  "values": [
+    {
+      "id": "Excellent",
+      "title": {
+        "en": "Excellent",
+        "nl": "Uitstekend"
+      }
+    },
+    {
+      "id": "Good",
+      "title": {
+        "en": "Good",
+        "nl": "Goed"
+      }
+    },
+    {
+      "id": "Lightly polluted",
+      "title": {
+        "en": "Lightly polluted",
+        "nl": "Licht vervuild"
+      }
+    },
+    {
+      "id": "Moderately polluted",
+      "title": {
+        "en": "Moderately polluted",
+        "nl": "Matig vervuild"
+      }
+    },
+    {
+      "id": "Heavily polluted",
+      "title": {
+        "en": "Heavily polluted",
+        "nl": "Sterk vervuild"
+      }
+    },
+    {
+      "id": "Severely polluted",
+      "title": {
+        "en": "Severely polluted",
+        "nl": "Ernstig vervuild"
+      }
+    },
+    {
+      "id": "Extremely polluted",
+      "title": {
+        "en": "Extremely polluted",
+        "nl": "Extreem vervuild"
+      }
+    }
+  ]
+}

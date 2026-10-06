@@ -7,6 +7,7 @@ import re
 import pytest
 
 from lib.errors import ValidationError
+from lib.sensor.air_quality import AirQuality
 from lib.sensor.bindings import NumberSettingBinding, SwitchSettingBinding, TargetFeed
 from lib.sensor.polygon import Polygon
 from lib.sensor.profile import S1ProProfile
@@ -198,7 +199,8 @@ class TestBindings:
         keys = [binding.key for binding in S1ProProfile.SETTINGS]
 
         assert "zone3_movement_threshold" in keys
-        assert len(keys) == len(set(keys)) == 12
+        assert "gate_radius" in keys
+        assert len(keys) == len(set(keys)) == 18
 
 
 class TestZoneRepository:
@@ -261,3 +263,21 @@ class TestZoneRepository:
         options = repository.read_options(Zone.TWO)
         assert options.presence_delay == 3600
         assert options.movement_threshold == 0
+
+
+class TestAirQuality:
+    def test_parses_firmware_text_in_order(self) -> None:
+        assert AirQuality.parse("Lightly polluted") is AirQuality.LIGHTLY_POLLUTED
+        assert AirQuality.parse("error") is None
+        assert [level.rank for level in AirQuality.LEVELS] == list(range(7))
+        assert str(AirQuality.GOOD) == "Good"
+        assert repr(AirQuality.GOOD) == "AirQuality('Good')"
+
+    def test_comparison(self) -> None:
+        assert AirQuality.HEAVILY_POLLUTED.at_least_as_bad_as(AirQuality.LIGHTLY_POLLUTED)
+        assert AirQuality.GOOD.at_least_as_bad_as(AirQuality.GOOD)
+        assert not AirQuality.EXCELLENT.at_least_as_bad_as(AirQuality.GOOD)
+
+    def test_rejects_unknown_levels(self) -> None:
+        with pytest.raises(ValidationError):
+            AirQuality.of("Smoky")

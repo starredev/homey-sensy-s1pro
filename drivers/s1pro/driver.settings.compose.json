@@ -181,6 +181,87 @@
   {
     "type": "group",
     "label": {
+      "en": "Tracking",
+      "nl": "Volgen"
+    },
+    "children": [
+      {
+        "id": "stationary_speed_threshold",
+        "type": "number",
+        "label": {
+          "en": "Stationary speed",
+          "nl": "Stilstandsnelheid"
+        },
+        "value": 45,
+        "min": 0,
+        "max": 100,
+        "units": {
+          "en": "cm/s"
+        },
+        "hint": {
+          "en": "Below this speed a person counts as standing still.",
+          "nl": "Onder deze snelheid geldt iemand als stilstaand."
+        }
+      },
+      {
+        "id": "stationary_time",
+        "type": "number",
+        "label": {
+          "en": "Hold after standing still",
+          "nl": "Vasthouden na stilstand"
+        },
+        "value": 55,
+        "min": 0,
+        "max": 120,
+        "units": {
+          "en": "s"
+        },
+        "hint": {
+          "en": "A person who stands still this long is held: their position stays even when the radar briefly loses them.",
+          "nl": "Wie zo lang stilstaat, wordt vastgehouden: de positie blijft staan als de radar diegene even kwijtraakt."
+        }
+      },
+      {
+        "id": "dropout_hold_time",
+        "type": "number",
+        "label": {
+          "en": "Hold time",
+          "nl": "Vasthoudtijd"
+        },
+        "value": 15,
+        "min": 0,
+        "max": 60,
+        "units": {
+          "en": "min"
+        },
+        "hint": {
+          "en": "How long a held person stays when the radar no longer sees them (not at the edge of the detection area).",
+          "nl": "Hoe lang een vastgehouden persoon blijft staan als de radar diegene niet meer ziet (niet aan de rand van het bereik)."
+        }
+      },
+      {
+        "id": "gate_radius",
+        "type": "number",
+        "label": {
+          "en": "Jump distance",
+          "nl": "Sprongafstand"
+        },
+        "value": 100,
+        "min": 5,
+        "max": 300,
+        "units": {
+          "en": "cm"
+        },
+        "hint": {
+          "en": "A measurement further than this from the previous position starts a new person. Lower values reduce ghost targets.",
+          "nl": "Een meting verder dan dit van de vorige positie geldt als een nieuwe persoon. Lager helpt tegen spookdoelen."
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
       "en": "Calibration",
       "nl": "Kalibratie"
     },
@@ -214,6 +295,33 @@
         "units": {
           "en": "°C"
         }
+      },
+      {
+        "id": "lux_offset",
+        "type": "number",
+        "label": {
+          "en": "Light offset",
+          "nl": "Lichtcorrectie"
+        },
+        "value": 0,
+        "min": -10000,
+        "max": 10000,
+        "units": {
+          "en": "lx"
+        },
+        "step": 0.1
+      },
+      {
+        "id": "uv_offset",
+        "type": "number",
+        "label": {
+          "en": "UV index offset",
+          "nl": "UV-indexcorrectie"
+        },
+        "value": 0,
+        "min": -50,
+        "max": 50,
+        "step": 0.1
       }
     ]
   },

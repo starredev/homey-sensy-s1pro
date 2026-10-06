@@ -20,13 +20,15 @@ from homey_esphomedriver.esphome_types import HomeyEspHomeDeviceOption
 from lib.errors import NotConnectedError, NotFoundError, ValidationError
 from lib.homey.brand_profile import SENSY_BRAND_PROFILE
 from lib.homey.capability_store import CapabilityStore
-from lib.homey.flow_cards import Cards, FlowCards, TriggerInvocation, zone_argument
+from lib.homey.flow_cards import Cards, FlowCards, TriggerInvocation, dropdown_argument
 from lib.homey.presenter import SensorPresenter
 from lib.homey.realtime_hub import Channels, RealtimeHub
 from lib.homey.sensy_api import SensyApi
 from lib.homey.settings_mirror import SettingsMirror
 from lib.homey.zone_capabilities import ZoneCapabilities
+from lib.sensor.air_quality import AirQuality
 from lib.sensor.events import (
+    AirQualityChanged,
     PeopleCountChanged,
     PresenceChanged,
     SensorEvent,
@@ -58,6 +60,16 @@ S1_PRO_ENTITIES: list[EntityInfo] = [
     build(SensorInfo, key=5, object_id="bme688_temperature", device_class="temperature", unit_of_measurement="°C"),
     build(SensorInfo, key=6, object_id="scd40_temperature", device_class="temperature", unit_of_measurement="°C"),
     build(SensorInfo, key=7, object_id="bme688_iaq", unit_of_measurement="IAQ"),
+    build(
+        SensorInfo,
+        key=15,
+        object_id="bme688_voc_equivalent",
+        device_class="volatile_organic_compounds_parts",
+        unit_of_measurement="ppm",
+    ),
+    build(TextSensorInfo, key=16, object_id="bme688_iaq_classification"),
+    build(TextSensorInfo, key=17, object_id="bme688_iaq_accuracy"),
+    build(NumberInfo, key=18, object_id="radar_gate_radius", max_value=300),
     build(SensorInfo, key=8, object_id="target_1_x", unit_of_measurement="cm"),
     build(NumberInfo, key=9, object_id="zone_1_p1_x", unit_of_measurement="cm", max_value=1800),
     build(NumberInfo, key=10, object_id="detection_range", max_value=1800),
@@ -100,6 +112,9 @@ class TestBrandProfile:
             "sensy_people",
             "measure_temperature",
             "sensy_iaq",
+            "measure_tvoc",
+            "sensy_air_quality",
+            "sensy_iaq_accuracy",
             "button.refresh",
         ]
         assert device["capabilitiesOptions"]["sensy_people"]["key"] == 4
@@ -259,6 +274,10 @@ class TestFlowCards:
                 ZoneMovementChanged(zone=Zone.ONE, moving=False),
                 TriggerInvocation(Cards.ZONE_MOVEMENT_STOPPED, zone="1"),
             ),
+            (
+                AirQualityChanged(quality=AirQuality.GOOD, previous=AirQuality.EXCELLENT),
+                TriggerInvocation(Cards.AIR_QUALITY_CHANGED, {"air_quality": "Good", "previous": "Excellent"}),
+            ),
             (SensorEvent(), None),
         ],
     )
@@ -319,6 +338,23 @@ class TestFlowCards:
         assert await flow.cards[Cards.PEOPLE_ABOVE].run({"device": device, "count": 1})
         assert not await flow.cards[Cards.PEOPLE_ABOVE].run({"device": device, "count": 2})
 
+    async def test_air_quality_condition(self, rig: SensorRig) -> None:
+        flow = FakeFlow()
+        FlowCards(flow, RecordingLogger()).register()
+        device = FlowTestDevice(rig.sensor)
+        card = flow.cards[Cards.AIR_QUALITY_AT_LEAST]
+
+        assert not await card.run({"device": device, "level": "Good"})
+
+        rig.port.report("bme688_iaq_classification", "Moderately polluted")
+
+        assert await card.run({"device": device, "level": "Lightly polluted"})
+        assert await card.run({"device": device, "level": {"id": "Moderately polluted"}})
+        assert not await card.run({"device": device, "level": "Heavily polluted"})
+
+        with pytest.raises(ValidationError):
+            await card.run({"device": device, "level": "Smoky"})
+
     async def test_actions(self, rig: SensorRig) -> None:
         flow = FakeFlow()
         FlowCards(flow, RecordingLogger()).register()
@@ -334,8 +370,8 @@ class TestFlowCards:
             await flow.cards[Cards.SET_ZONE_DELAY].run({"device": device, "zone": "exclusion", "seconds": 1})
 
     def test_zone_argument(self) -> None:
-        assert zone_argument("1") == "1"
-        assert zone_argument({"id": "2"}) == "2"
+        assert dropdown_argument("1") == "1"
+        assert dropdown_argument({"id": "2"}) == "2"
 
 
 class TestPresenter:

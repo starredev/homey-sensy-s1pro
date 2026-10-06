@@ -19,6 +19,10 @@ All notable changes to this app are documented here. The format follows
 
 - Diagnostic and configuration entities can be shown as capabilities from the device settings.
 - *Refresh capabilities* maintenance action.
+- Air quality class (*Excellent* … *Extremely polluted*), its calibration state and VOC as capabilities, with an
+  *Air quality changed* trigger and an *Air quality is X or worse* condition.
+- Tracking settings of the radar: stationary speed, hold after standing still, hold time and jump distance;
+  light and UV offsets.
 
 ## [1.0.0] - unreleased
 

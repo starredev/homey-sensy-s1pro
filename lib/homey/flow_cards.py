@@ -6,7 +6,9 @@ from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
+from ..sensor.air_quality import AirQuality
 from ..sensor.events import (
+    AirQualityChanged,
     PeopleCountChanged,
     PresenceChanged,
     SensorEvent,
@@ -55,11 +57,13 @@ class Cards:
     ZONE_LEFT = "zone_left"
     ZONE_MOVEMENT_STARTED = "zone_movement_started"
     ZONE_MOVEMENT_STOPPED = "zone_movement_stopped"
+    AIR_QUALITY_CHANGED = "air_quality_changed"
 
     IS_PRESENT = "is_present"
     ZONE_OCCUPIED = "zone_occupied"
     ZONE_MOVING = "zone_moving"
     PEOPLE_ABOVE = "people_above"
+    AIR_QUALITY_AT_LEAST = "air_quality_at_least"
 
     SET_ZONE_DELAY = "set_zone_delay"
     BEEP = "beep"
@@ -67,7 +71,7 @@ class Cards:
     ZONE_TRIGGERS = (ZONE_ENTERED, ZONE_LEFT, ZONE_MOVEMENT_STARTED, ZONE_MOVEMENT_STOPPED)
     """Trigger cards with a zone dropdown; they only fire for the selected zone."""
 
-    TRIGGERS = (ROOM_OCCUPIED, ROOM_EMPTY, PEOPLE_CHANGED, *ZONE_TRIGGERS)
+    TRIGGERS = (ROOM_OCCUPIED, ROOM_EMPTY, PEOPLE_CHANGED, AIR_QUALITY_CHANGED, *ZONE_TRIGGERS)
 
 
 @dataclass(frozen=True, slots=True)
@@ -78,8 +82,8 @@ class TriggerInvocation:
     """Passed to the run listener of zone triggers."""
 
 
-def zone_argument(value: object) -> object:
-    """A dropdown argument, either its id or the selected ``{"id": ...}`` item."""
+def dropdown_argument(value: object) -> object:
+    """A dropdown argument (zone, air quality level): either its id or the selected ``{"id": ...}`` item."""
     if isinstance(value, Mapping):
         return value.get("id")  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
 
@@ -139,6 +143,11 @@ class FlowCards:
                 return TriggerInvocation(Cards.ZONE_MOVEMENT_STARTED, zone=zone.key)
             case ZoneMovementChanged(zone=zone, moving=False):
                 return TriggerInvocation(Cards.ZONE_MOVEMENT_STOPPED, zone=zone.key)
+            case AirQualityChanged(quality=quality, previous=previous):
+                return TriggerInvocation(
+                    Cards.AIR_QUALITY_CHANGED,
+                    {"air_quality": quality.key, "previous": previous.key},
+                )
             case _:
                 return None
 
@@ -156,6 +165,7 @@ class FlowCards:
         self._flow.get_condition_card(Cards.ZONE_OCCUPIED).register_run_listener(self._zone_occupied)
         self._flow.get_condition_card(Cards.ZONE_MOVING).register_run_listener(self._zone_moving)
         self._flow.get_condition_card(Cards.PEOPLE_ABOVE).register_run_listener(self._people_above)
+        self._flow.get_condition_card(Cards.AIR_QUALITY_AT_LEAST).register_run_listener(self._air_quality_at_least)
 
     def _register_actions(self) -> None:
         self._flow.get_action_card(Cards.SET_ZONE_DELAY).register_run_listener(self._set_zone_delay)
@@ -165,7 +175,7 @@ class FlowCards:
 
     @staticmethod
     async def _matches_zone(card_arguments: Mapping[str, Any], **trigger_kwargs: Any) -> bool:
-        selected = zone_argument(card_arguments.get("zone"))
+        selected = dropdown_argument(card_arguments.get("zone"))
 
         return str(selected) == trigger_kwargs.get("zone")
 
@@ -180,7 +190,7 @@ class FlowCards:
     async def _zone_occupied(card_arguments: Mapping[str, Any], **trigger_kwargs: Any) -> bool:
         del trigger_kwargs
         device: FlowDevice = card_arguments["device"]
-        zone = Zone.of(zone_argument(card_arguments.get("zone")))
+        zone = Zone.of(dropdown_argument(card_arguments.get("zone")))
 
         return device.sensor.is_zone_occupied(zone)
 
@@ -188,7 +198,7 @@ class FlowCards:
     async def _zone_moving(card_arguments: Mapping[str, Any], **trigger_kwargs: Any) -> bool:
         del trigger_kwargs
         device: FlowDevice = card_arguments["device"]
-        zone = Zone.of(zone_argument(card_arguments.get("zone")))
+        zone = Zone.of(dropdown_argument(card_arguments.get("zone")))
 
         return device.sensor.is_zone_moving(zone)
 
@@ -201,10 +211,23 @@ class FlowCards:
         return device.sensor.people > count
 
     @staticmethod
+    async def _air_quality_at_least(card_arguments: Mapping[str, Any], **trigger_kwargs: Any) -> bool:
+        """Whether the air is at least as polluted as the selected class."""
+        del trigger_kwargs
+        device: FlowDevice = card_arguments["device"]
+        threshold = AirQuality.of(dropdown_argument(card_arguments.get("level")))
+        quality = device.sensor.air_quality
+
+        if quality is None:
+            return False
+
+        return quality.at_least_as_bad_as(threshold)
+
+    @staticmethod
     async def _set_zone_delay(card_arguments: Mapping[str, Any], **trigger_kwargs: Any) -> None:
         del trigger_kwargs
         device: FlowDevice = card_arguments["device"]
-        zone = Zone.detection(zone_argument(card_arguments.get("zone")))
+        zone = Zone.detection(dropdown_argument(card_arguments.get("zone")))
 
         device.sensor.set_zone_options(zone, presence_delay=card_arguments.get("seconds"))
 

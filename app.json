@@ -1792,6 +1792,40 @@
         ]
       },
       {
+        "id": "air_quality_changed",
+        "title": {
+          "en": "Air quality changed",
+          "nl": "Luchtkwaliteit veranderde"
+        },
+        "tokens": [
+          {
+            "name": "air_quality",
+            "type": "string",
+            "title": {
+              "en": "Air quality",
+              "nl": "Luchtkwaliteit"
+            },
+            "example": "Good"
+          },
+          {
+            "name": "previous",
+            "type": "string",
+            "title": {
+              "en": "Previous",
+              "nl": "Vorige"
+            },
+            "example": "Excellent"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          }
+        ]
+      },
+      {
         "id": "zone_entered",
         "title": {
           "en": "Someone entered a zone",
@@ -2617,6 +2651,79 @@
             "step": 1
           }
         ]
+      },
+      {
+        "id": "air_quality_at_least",
+        "title": {
+          "en": "Air quality !{{is|isn't}} at least as bad as …",
+          "nl": "Luchtkwaliteit !{{is|is niet}} minstens zo slecht als …"
+        },
+        "titleFormatted": {
+          "en": "Air quality !{{is|isn't}} [[level]] or worse",
+          "nl": "Luchtkwaliteit !{{is|is niet}} [[level]] of slechter"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=s1pro"
+          },
+          {
+            "name": "level",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "Excellent",
+                "label": {
+                  "en": "Excellent",
+                  "nl": "Uitstekend"
+                }
+              },
+              {
+                "id": "Good",
+                "label": {
+                  "en": "Good",
+                  "nl": "Goed"
+                }
+              },
+              {
+                "id": "Lightly polluted",
+                "label": {
+                  "en": "Lightly polluted",
+                  "nl": "Licht vervuild"
+                }
+              },
+              {
+                "id": "Moderately polluted",
+                "label": {
+                  "en": "Moderately polluted",
+                  "nl": "Matig vervuild"
+                }
+              },
+              {
+                "id": "Heavily polluted",
+                "label": {
+                  "en": "Heavily polluted",
+                  "nl": "Sterk vervuild"
+                }
+              },
+              {
+                "id": "Severely polluted",
+                "label": {
+                  "en": "Severely polluted",
+                  "nl": "Ernstig vervuild"
+                }
+              },
+              {
+                "id": "Extremely polluted",
+                "label": {
+                  "en": "Extremely polluted",
+                  "nl": "Extreem vervuild"
+                }
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -3414,7 +3521,9 @@
         "sensy_iaq",
         "sensy_zone_presence",
         "sensy_zone_movement",
-        "sensy_zone_people"
+        "sensy_zone_people",
+        "sensy_air_quality",
+        "sensy_iaq_accuracy"
       ],
       "capabilitiesOptions": {
         "button.refresh": {
@@ -3693,6 +3802,87 @@
         {
           "type": "group",
           "label": {
+            "en": "Tracking",
+            "nl": "Volgen"
+          },
+          "children": [
+            {
+              "id": "stationary_speed_threshold",
+              "type": "number",
+              "label": {
+                "en": "Stationary speed",
+                "nl": "Stilstandsnelheid"
+              },
+              "value": 45,
+              "min": 0,
+              "max": 100,
+              "units": {
+                "en": "cm/s"
+              },
+              "hint": {
+                "en": "Below this speed a person counts as standing still.",
+                "nl": "Onder deze snelheid geldt iemand als stilstaand."
+              }
+            },
+            {
+              "id": "stationary_time",
+              "type": "number",
+              "label": {
+                "en": "Hold after standing still",
+                "nl": "Vasthouden na stilstand"
+              },
+              "value": 55,
+              "min": 0,
+              "max": 120,
+              "units": {
+                "en": "s"
+              },
+              "hint": {
+                "en": "A person who stands still this long is held: their position stays even when the radar briefly loses them.",
+                "nl": "Wie zo lang stilstaat, wordt vastgehouden: de positie blijft staan als de radar diegene even kwijtraakt."
+              }
+            },
+            {
+              "id": "dropout_hold_time",
+              "type": "number",
+              "label": {
+                "en": "Hold time",
+                "nl": "Vasthoudtijd"
+              },
+              "value": 15,
+              "min": 0,
+              "max": 60,
+              "units": {
+                "en": "min"
+              },
+              "hint": {
+                "en": "How long a held person stays when the radar no longer sees them (not at the edge of the detection area).",
+                "nl": "Hoe lang een vastgehouden persoon blijft staan als de radar diegene niet meer ziet (niet aan de rand van het bereik)."
+              }
+            },
+            {
+              "id": "gate_radius",
+              "type": "number",
+              "label": {
+                "en": "Jump distance",
+                "nl": "Sprongafstand"
+              },
+              "value": 100,
+              "min": 5,
+              "max": 300,
+              "units": {
+                "en": "cm"
+              },
+              "hint": {
+                "en": "A measurement further than this from the previous position starts a new person. Lower values reduce ghost targets.",
+                "nl": "Een meting verder dan dit van de vorige positie geldt als een nieuwe persoon. Lager helpt tegen spookdoelen."
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
             "en": "Calibration",
             "nl": "Kalibratie"
           },
@@ -3726,6 +3916,33 @@
               "units": {
                 "en": "°C"
               }
+            },
+            {
+              "id": "lux_offset",
+              "type": "number",
+              "label": {
+                "en": "Light offset",
+                "nl": "Lichtcorrectie"
+              },
+              "value": 0,
+              "min": -10000,
+              "max": 10000,
+              "units": {
+                "en": "lx"
+              },
+              "step": 0.1
+            },
+            {
+              "id": "uv_offset",
+              "type": "number",
+              "label": {
+                "en": "UV index offset",
+                "nl": "UV-indexcorrectie"
+              },
+              "value": 0,
+              "min": -50,
+              "max": 50,
+              "step": 0.1
             }
           ]
         },
@@ -5471,6 +5688,68 @@
       "uiComponent": "button",
       "icon": "/assets/capabilities/restart.svg"
     },
+    "sensy_air_quality": {
+      "type": "enum",
+      "title": {
+        "en": "Air quality",
+        "nl": "Luchtkwaliteit"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/iaq.svg",
+      "values": [
+        {
+          "id": "Excellent",
+          "title": {
+            "en": "Excellent",
+            "nl": "Uitstekend"
+          }
+        },
+        {
+          "id": "Good",
+          "title": {
+            "en": "Good",
+            "nl": "Goed"
+          }
+        },
+        {
+          "id": "Lightly polluted",
+          "title": {
+            "en": "Lightly polluted",
+            "nl": "Licht vervuild"
+          }
+        },
+        {
+          "id": "Moderately polluted",
+          "title": {
+            "en": "Moderately polluted",
+            "nl": "Matig vervuild"
+          }
+        },
+        {
+          "id": "Heavily polluted",
+          "title": {
+            "en": "Heavily polluted",
+            "nl": "Sterk vervuild"
+          }
+        },
+        {
+          "id": "Severely polluted",
+          "title": {
+            "en": "Severely polluted",
+            "nl": "Ernstig vervuild"
+          }
+        },
+        {
+          "id": "Extremely polluted",
+          "title": {
+            "en": "Extremely polluted",
+            "nl": "Extreem vervuild"
+          }
+        }
+      ]
+    },
     "sensy_iaq": {
       "type": "number",
       "title": {
@@ -5485,6 +5764,47 @@
       "min": 0,
       "max": 500,
       "insights": true
+    },
+    "sensy_iaq_accuracy": {
+      "type": "enum",
+      "title": {
+        "en": "Air quality calibration",
+        "nl": "Kalibratie luchtkwaliteit"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/iaq.svg",
+      "values": [
+        {
+          "id": "Stabilizing",
+          "title": {
+            "en": "Stabilizing",
+            "nl": "Stabiliseren"
+          }
+        },
+        {
+          "id": "Uncertain",
+          "title": {
+            "en": "Uncertain",
+            "nl": "Onzeker"
+          }
+        },
+        {
+          "id": "Calibrating",
+          "title": {
+            "en": "Calibrating",
+            "nl": "Kalibreren"
+          }
+        },
+        {
+          "id": "Calibrated",
+          "title": {
+            "en": "Calibrated",
+            "nl": "Gekalibreerd"
+          }
+        }
+      ]
     },
     "sensy_people": {
       "type": "number",

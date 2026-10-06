@@ -79,6 +79,12 @@ class S1ProProfile:
     DETECTION_RANGE = "detection_range"
     BUZZER = "mlt8530___buzzer"
 
+    AIR_QUALITY = "bme688_iaq_classification"
+    """Text: Excellent, Good, Lightly polluted, ... (see ``AirQuality``)."""
+
+    IAQ_ACCURACY = "bme688_iaq_accuracy"
+    """Text: Stabilizing, Uncertain, Calibrating or Calibrated."""
+
     BLUETOOTH_PROXY = "ble___proxy"
     """Official firmware only: Bluetooth proxy for Home Assistant, off by default."""
 
@@ -120,6 +126,9 @@ class S1ProProfile:
             "bme688_humidity": None,
             "bme688_pressure": None,
             "bme688_iaq": "sensy_iaq",
+            AIR_QUALITY: "sensy_air_quality",
+            IAQ_ACCURACY: "sensy_iaq_accuracy",
+            "bme688_voc_equivalent": None,
             "scd40_co__concentration": None,
             "ltr390_ambient_light__lux_": None,
             "ltr390_uv_index": None,
@@ -148,7 +157,14 @@ class S1ProProfile:
         *_zone_settings(),
         NumberSettingBinding("bme688_temp_offset", "bme688_temp_offset"),
         NumberSettingBinding("scd40_temp_offset", "scd40_temp_offset"),
+        NumberSettingBinding("lux_offset", "ltr390_lux_offset"),
+        NumberSettingBinding("uv_offset", "ltr390_uv_offset"),
         SwitchSettingBinding("single_target", "radar___single_target"),
+        # Tracking ("holding engine") of the official firmware.
+        NumberSettingBinding("stationary_speed_threshold", "radar_stationary_speed_threshold"),
+        NumberSettingBinding("stationary_time", "radar_stationary_time"),
+        NumberSettingBinding("dropout_hold_time", "radar_dropout_hold_time"),
+        NumberSettingBinding("gate_radius", "radar_gate_radius"),
     )
 
     PRESENCE_DELAY = Range(0, 3600)

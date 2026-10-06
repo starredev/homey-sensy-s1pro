@@ -7,8 +7,10 @@ from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass
 from typing import ClassVar, Literal, Protocol, cast
 
+from ..sensor.air_quality import AirQuality
 from ..sensor.bindings import SettingBinding, SettingValue, TargetFeed, TrackedEntity
 from ..sensor.events import (
+    AirQualityChanged,
     PeopleCountChanged,
     PresenceChanged,
     SensorEvent,
@@ -144,6 +146,11 @@ class S1ProSensor:
         reported = self._port.get(S1ProProfile.DETECTION_RANGE)
 
         return to_finite_number(reported, S1ProProfile.DEFAULT_DETECTION_RANGE)
+
+    @property
+    def air_quality(self) -> AirQuality | None:
+        """The air quality class, or ``None`` until the sensor reported one."""
+        return self._values.get(S1ProProfile.AIR_QUALITY, None)
 
     def zone_status(self, zone: Zone) -> ZoneStatus:
         """Return the status of a detection zone."""
@@ -281,6 +288,7 @@ class S1ProSensor:
         router.on(S1ProProfile.ZONE_GEOMETRY, self._on_zone_geometry)
         router.on(self._setting_entities(), self._on_setting)
         router.on(S1ProProfile.BLUETOOTH_PROXY, self._on_bluetooth_proxy)
+        router.on(S1ProProfile.AIR_QUALITY, self._on_air_quality)
 
         return router
 
@@ -368,6 +376,19 @@ class S1ProSensor:
 
         if change.initial or change.changed:
             self._observer.on_bluetooth_proxy(enabled)
+
+    def _on_air_quality(self, value: EntityValue, groups: tuple[str, ...]) -> None:
+        del groups
+        quality = AirQuality.parse(value)
+
+        # The firmware reports "error" while the IAQ is out of range; keep the last class.
+        if quality is None:
+            return
+
+        change = self._values.update(S1ProProfile.AIR_QUALITY, quality)
+
+        if change.changed and change.previous is not None:
+            self._observer.on_sensor_event(AirQualityChanged(quality=quality, previous=change.previous))
 
     def _emit_zone_presence(self, zone: Zone, present: bool) -> None:
         # The people count can lag behind presence; someone entering is at least one person.

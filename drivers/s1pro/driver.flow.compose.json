@@ -2,133 +2,498 @@
   "triggers": [
     {
       "id": "room_occupied",
-      "title": { "en": "Someone became present", "nl": "Iemand werd aanwezig" },
+      "title": {
+        "en": "Someone became present",
+        "nl": "Iemand werd aanwezig"
+      },
       "tokens": [
-        { "name": "people", "type": "number", "title": { "en": "People", "nl": "Personen" }, "example": 1 }
+        {
+          "name": "people",
+          "type": "number",
+          "title": {
+            "en": "People",
+            "nl": "Personen"
+          },
+          "example": 1
+        }
       ]
     },
     {
       "id": "room_empty",
-      "title": { "en": "The room became empty", "nl": "De ruimte werd leeg" }
+      "title": {
+        "en": "The room became empty",
+        "nl": "De ruimte werd leeg"
+      }
     },
     {
       "id": "people_changed",
-      "title": { "en": "Number of people changed", "nl": "Aantal personen veranderde" },
+      "title": {
+        "en": "Number of people changed",
+        "nl": "Aantal personen veranderde"
+      },
       "tokens": [
-        { "name": "people", "type": "number", "title": { "en": "People", "nl": "Personen" }, "example": 2 },
-        { "name": "previous", "type": "number", "title": { "en": "Previous", "nl": "Vorige" }, "example": 1 }
+        {
+          "name": "people",
+          "type": "number",
+          "title": {
+            "en": "People",
+            "nl": "Personen"
+          },
+          "example": 2
+        },
+        {
+          "name": "previous",
+          "type": "number",
+          "title": {
+            "en": "Previous",
+            "nl": "Vorige"
+          },
+          "example": 1
+        }
+      ]
+    },
+    {
+      "id": "air_quality_changed",
+      "title": {
+        "en": "Air quality changed",
+        "nl": "Luchtkwaliteit veranderde"
+      },
+      "tokens": [
+        {
+          "name": "air_quality",
+          "type": "string",
+          "title": {
+            "en": "Air quality",
+            "nl": "Luchtkwaliteit"
+          },
+          "example": "Good"
+        },
+        {
+          "name": "previous",
+          "type": "string",
+          "title": {
+            "en": "Previous",
+            "nl": "Vorige"
+          },
+          "example": "Excellent"
+        }
       ]
     },
     {
       "id": "zone_entered",
-      "title": { "en": "Someone entered a zone", "nl": "Iemand kwam een zone binnen" },
-      "titleFormatted": { "en": "Someone entered [[zone]]", "nl": "Iemand kwam [[zone]] binnen" },
+      "title": {
+        "en": "Someone entered a zone",
+        "nl": "Iemand kwam een zone binnen"
+      },
+      "titleFormatted": {
+        "en": "Someone entered [[zone]]",
+        "nl": "Iemand kwam [[zone]] binnen"
+      },
       "args": [
-        { "name": "zone", "type": "dropdown", "values": [
-          { "id": "1", "label": { "en": "Zone 1", "nl": "Zone 1" } },
-          { "id": "2", "label": { "en": "Zone 2", "nl": "Zone 2" } },
-          { "id": "3", "label": { "en": "Zone 3", "nl": "Zone 3" } }
-        ] }
+        {
+          "name": "zone",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "1",
+              "label": {
+                "en": "Zone 1",
+                "nl": "Zone 1"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Zone 2",
+                "nl": "Zone 2"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "Zone 3",
+                "nl": "Zone 3"
+              }
+            }
+          ]
+        }
       ],
       "tokens": [
-        { "name": "people", "type": "number", "title": { "en": "People in zone", "nl": "Personen in zone" }, "example": 1 }
+        {
+          "name": "people",
+          "type": "number",
+          "title": {
+            "en": "People in zone",
+            "nl": "Personen in zone"
+          },
+          "example": 1
+        }
       ]
     },
     {
       "id": "zone_left",
-      "title": { "en": "A zone became empty", "nl": "Een zone werd leeg" },
-      "titleFormatted": { "en": "[[zone]] became empty", "nl": "[[zone]] werd leeg" },
+      "title": {
+        "en": "A zone became empty",
+        "nl": "Een zone werd leeg"
+      },
+      "titleFormatted": {
+        "en": "[[zone]] became empty",
+        "nl": "[[zone]] werd leeg"
+      },
       "args": [
-        { "name": "zone", "type": "dropdown", "values": [
-          { "id": "1", "label": { "en": "Zone 1", "nl": "Zone 1" } },
-          { "id": "2", "label": { "en": "Zone 2", "nl": "Zone 2" } },
-          { "id": "3", "label": { "en": "Zone 3", "nl": "Zone 3" } }
-        ] }
+        {
+          "name": "zone",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "1",
+              "label": {
+                "en": "Zone 1",
+                "nl": "Zone 1"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Zone 2",
+                "nl": "Zone 2"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "Zone 3",
+                "nl": "Zone 3"
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "id": "zone_movement_started",
-      "title": { "en": "Movement started in a zone", "nl": "Beweging gestart in een zone" },
-      "titleFormatted": { "en": "Movement started in [[zone]]", "nl": "Beweging gestart in [[zone]]" },
+      "title": {
+        "en": "Movement started in a zone",
+        "nl": "Beweging gestart in een zone"
+      },
+      "titleFormatted": {
+        "en": "Movement started in [[zone]]",
+        "nl": "Beweging gestart in [[zone]]"
+      },
       "args": [
-        { "name": "zone", "type": "dropdown", "values": [
-          { "id": "1", "label": { "en": "Zone 1", "nl": "Zone 1" } },
-          { "id": "2", "label": { "en": "Zone 2", "nl": "Zone 2" } },
-          { "id": "3", "label": { "en": "Zone 3", "nl": "Zone 3" } }
-        ] }
+        {
+          "name": "zone",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "1",
+              "label": {
+                "en": "Zone 1",
+                "nl": "Zone 1"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Zone 2",
+                "nl": "Zone 2"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "Zone 3",
+                "nl": "Zone 3"
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "id": "zone_movement_stopped",
-      "title": { "en": "Movement stopped in a zone", "nl": "Beweging gestopt in een zone" },
-      "titleFormatted": { "en": "Movement stopped in [[zone]]", "nl": "Beweging gestopt in [[zone]]" },
+      "title": {
+        "en": "Movement stopped in a zone",
+        "nl": "Beweging gestopt in een zone"
+      },
+      "titleFormatted": {
+        "en": "Movement stopped in [[zone]]",
+        "nl": "Beweging gestopt in [[zone]]"
+      },
       "args": [
-        { "name": "zone", "type": "dropdown", "values": [
-          { "id": "1", "label": { "en": "Zone 1", "nl": "Zone 1" } },
-          { "id": "2", "label": { "en": "Zone 2", "nl": "Zone 2" } },
-          { "id": "3", "label": { "en": "Zone 3", "nl": "Zone 3" } }
-        ] }
+        {
+          "name": "zone",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "1",
+              "label": {
+                "en": "Zone 1",
+                "nl": "Zone 1"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Zone 2",
+                "nl": "Zone 2"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "Zone 3",
+                "nl": "Zone 3"
+              }
+            }
+          ]
+        }
       ]
     }
   ],
   "conditions": [
     {
       "id": "is_present",
-      "title": { "en": "Someone !{{is|isn't}} present", "nl": "Er !{{is|is niet}} iemand aanwezig" }
+      "title": {
+        "en": "Someone !{{is|isn't}} present",
+        "nl": "Er !{{is|is niet}} iemand aanwezig"
+      }
     },
     {
       "id": "zone_occupied",
-      "title": { "en": "Zone !{{is|isn't}} occupied", "nl": "Zone !{{is|is niet}} bezet" },
-      "titleFormatted": { "en": "[[zone]] !{{is|isn't}} occupied", "nl": "[[zone]] !{{is|is niet}} bezet" },
+      "title": {
+        "en": "Zone !{{is|isn't}} occupied",
+        "nl": "Zone !{{is|is niet}} bezet"
+      },
+      "titleFormatted": {
+        "en": "[[zone]] !{{is|isn't}} occupied",
+        "nl": "[[zone]] !{{is|is niet}} bezet"
+      },
       "args": [
-        { "name": "zone", "type": "dropdown", "values": [
-          { "id": "1", "label": { "en": "Zone 1", "nl": "Zone 1" } },
-          { "id": "2", "label": { "en": "Zone 2", "nl": "Zone 2" } },
-          { "id": "3", "label": { "en": "Zone 3", "nl": "Zone 3" } }
-        ] }
+        {
+          "name": "zone",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "1",
+              "label": {
+                "en": "Zone 1",
+                "nl": "Zone 1"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Zone 2",
+                "nl": "Zone 2"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "Zone 3",
+                "nl": "Zone 3"
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "id": "zone_moving",
-      "title": { "en": "There !{{is|is no}} movement in a zone", "nl": "Er !{{is|is geen}} beweging in een zone" },
-      "titleFormatted": { "en": "There !{{is|is no}} movement in [[zone]]", "nl": "Er !{{is|is geen}} beweging in [[zone]]" },
+      "title": {
+        "en": "There !{{is|is no}} movement in a zone",
+        "nl": "Er !{{is|is geen}} beweging in een zone"
+      },
+      "titleFormatted": {
+        "en": "There !{{is|is no}} movement in [[zone]]",
+        "nl": "Er !{{is|is geen}} beweging in [[zone]]"
+      },
       "args": [
-        { "name": "zone", "type": "dropdown", "values": [
-          { "id": "1", "label": { "en": "Zone 1", "nl": "Zone 1" } },
-          { "id": "2", "label": { "en": "Zone 2", "nl": "Zone 2" } },
-          { "id": "3", "label": { "en": "Zone 3", "nl": "Zone 3" } }
-        ] }
+        {
+          "name": "zone",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "1",
+              "label": {
+                "en": "Zone 1",
+                "nl": "Zone 1"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Zone 2",
+                "nl": "Zone 2"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "Zone 3",
+                "nl": "Zone 3"
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "id": "people_above",
-      "title": { "en": "Number of people !{{is|isn't}} above…", "nl": "Aantal personen !{{is|is niet}} hoger dan…" },
-      "titleFormatted": { "en": "Number of people !{{is|isn't}} above [[count]]", "nl": "Aantal personen !{{is|is niet}} hoger dan [[count]]" },
+      "title": {
+        "en": "Number of people !{{is|isn't}} above…",
+        "nl": "Aantal personen !{{is|is niet}} hoger dan…"
+      },
+      "titleFormatted": {
+        "en": "Number of people !{{is|isn't}} above [[count]]",
+        "nl": "Aantal personen !{{is|is niet}} hoger dan [[count]]"
+      },
       "args": [
-        { "name": "count", "type": "number", "min": 0, "max": 3, "step": 1 }
+        {
+          "name": "count",
+          "type": "number",
+          "min": 0,
+          "max": 3,
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "air_quality_at_least",
+      "title": {
+        "en": "Air quality !{{is|isn't}} at least as bad as …",
+        "nl": "Luchtkwaliteit !{{is|is niet}} minstens zo slecht als …"
+      },
+      "titleFormatted": {
+        "en": "Air quality !{{is|isn't}} [[level]] or worse",
+        "nl": "Luchtkwaliteit !{{is|is niet}} [[level]] of slechter"
+      },
+      "args": [
+        {
+          "name": "level",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "Excellent",
+              "label": {
+                "en": "Excellent",
+                "nl": "Uitstekend"
+              }
+            },
+            {
+              "id": "Good",
+              "label": {
+                "en": "Good",
+                "nl": "Goed"
+              }
+            },
+            {
+              "id": "Lightly polluted",
+              "label": {
+                "en": "Lightly polluted",
+                "nl": "Licht vervuild"
+              }
+            },
+            {
+              "id": "Moderately polluted",
+              "label": {
+                "en": "Moderately polluted",
+                "nl": "Matig vervuild"
+              }
+            },
+            {
+              "id": "Heavily polluted",
+              "label": {
+                "en": "Heavily polluted",
+                "nl": "Sterk vervuild"
+              }
+            },
+            {
+              "id": "Severely polluted",
+              "label": {
+                "en": "Severely polluted",
+                "nl": "Ernstig vervuild"
+              }
+            },
+            {
+              "id": "Extremely polluted",
+              "label": {
+                "en": "Extremely polluted",
+                "nl": "Extreem vervuild"
+              }
+            }
+          ]
+        }
       ]
     }
   ],
   "actions": [
     {
       "id": "set_zone_delay",
-      "title": { "en": "Set zone presence hold time", "nl": "Zet vasthoudtijd van zone" },
-      "titleFormatted": { "en": "Set presence hold time of [[zone]] to [[seconds]] seconds", "nl": "Zet vasthoudtijd van [[zone]] op [[seconds]] seconden" },
+      "title": {
+        "en": "Set zone presence hold time",
+        "nl": "Zet vasthoudtijd van zone"
+      },
+      "titleFormatted": {
+        "en": "Set presence hold time of [[zone]] to [[seconds]] seconds",
+        "nl": "Zet vasthoudtijd van [[zone]] op [[seconds]] seconden"
+      },
       "args": [
-        { "name": "zone", "type": "dropdown", "values": [
-          { "id": "1", "label": { "en": "Zone 1", "nl": "Zone 1" } },
-          { "id": "2", "label": { "en": "Zone 2", "nl": "Zone 2" } },
-          { "id": "3", "label": { "en": "Zone 3", "nl": "Zone 3" } }
-        ] },
-        { "name": "seconds", "type": "number", "min": 0, "max": 3600, "step": 1 }
+        {
+          "name": "zone",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "1",
+              "label": {
+                "en": "Zone 1",
+                "nl": "Zone 1"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Zone 2",
+                "nl": "Zone 2"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "Zone 3",
+                "nl": "Zone 3"
+              }
+            }
+          ]
+        },
+        {
+          "name": "seconds",
+          "type": "number",
+          "min": 0,
+          "max": 3600,
+          "step": 1
+        }
       ]
     },
     {
       "id": "beep",
-      "title": { "en": "Beep", "nl": "Piep" },
-      "titleFormatted": { "en": "Beep for [[duration]] seconds", "nl": "Piep [[duration]] seconden" },
+      "title": {
+        "en": "Beep",
+        "nl": "Piep"
+      },
+      "titleFormatted": {
+        "en": "Beep for [[duration]] seconds",
+        "nl": "Piep [[duration]] seconden"
+      },
       "args": [
-        { "name": "duration", "type": "number", "min": 0.1, "max": 5, "step": 0.1 }
+        {
+          "name": "duration",
+          "type": "number",
+          "min": 0.1,
+          "max": 5,
+          "step": 0.1
+        }
       ]
     }
   ]

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..sensor.air_quality import AirQuality
 from ..sensor.zone import Zone
 
 
@@ -48,3 +49,11 @@ class ZoneMovementChanged(SensorEvent):
 
     zone: Zone
     moving: bool
+
+
+@dataclass(frozen=True, slots=True)
+class AirQualityChanged(SensorEvent):
+    """The air quality class changed."""
+
+    quality: AirQuality
+    previous: AirQuality

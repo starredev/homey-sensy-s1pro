@@ -26,16 +26,17 @@ are supported too.
 | Capability | Source |
 |---|---|
 | Presence (`alarm_presence`), movement (`alarm_motion`), number of people | mmWave radar |
-| Temperature, humidity, pressure, air quality (IAQ) | BME688 |
+| Temperature, humidity, pressure, air quality (IAQ index, class and calibration state), VOC | BME688 |
 | CO₂ | SCD40 |
 | Light (lux), UV index | LTR390 |
 | Per zone: presence, movement, people | Radar zones (only shown for zones you have drawn) |
 
 **Flow cards**
 
-- *When:* someone became present · the room became empty · the number of people changed ·
+- *When:* someone became present · the room became empty · the number of people changed · the air quality changed ·
   someone entered zone X · zone X became empty · movement started / stopped in zone X
-- *And:* someone is present · zone X is occupied · there is movement in zone X · the number of people is above N
+- *And:* someone is present · zone X is occupied · there is movement in zone X · the number of people is above N ·
+  the air quality is X or worse
 - *Then:* set the presence hold time of zone X · beep
 
 **Zone editor** (*Apps → Sensy S1 Pro → Configure*) — watch people move live, tap to place 3–8 corner
@@ -43,8 +44,9 @@ points, drag them, save. Three zones plus an exclusion zone, each with its own h
 
 **Dashboard widget** — a top-down radar with people as moving dots and zones that light up on presence.
 
-**Device settings** — detection range, hold times, movement thresholds, single-target mode and
-temperature offsets, kept in sync with the sensor in both directions. Diagnostic and configuration entities
+**Device settings** — detection range, hold times, movement thresholds, single-target mode, the radar's
+tracking (when a person counts as standing still, how long a still person is held, the jump distance that
+separates two people) and temperature, light and UV offsets, kept in sync with the sensor in both directions. Diagnostic and configuration entities
 (WiFi details, LED, restart buttons, radar switches) can be shown as extra capabilities from the device settings.
 
 ## Requirements

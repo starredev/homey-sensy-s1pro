@@ -139,7 +139,9 @@
     "sensy_iaq",
     "sensy_zone_presence",
     "sensy_zone_movement",
-    "sensy_zone_people"
+    "sensy_zone_people",
+    "sensy_air_quality",
+    "sensy_iaq_accuracy"
   ],
   "platforms": [
     "local"

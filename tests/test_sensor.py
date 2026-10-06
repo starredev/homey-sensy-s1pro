@@ -5,7 +5,9 @@ from __future__ import annotations
 import pytest
 
 from lib.errors import NotConnectedError
+from lib.sensor.air_quality import AirQuality
 from lib.sensor.events import (
+    AirQualityChanged,
     PeopleCountChanged,
     PresenceChanged,
     ZoneMovementChanged,
@@ -192,6 +194,32 @@ class TestBluetoothProxy:
         rig.port.report("ble___proxy", True)
 
         assert rig.observer.proxy == [False, True]
+
+
+class TestAirQuality:
+    def test_changes_raise_events_but_not_the_first_report(self, rig: SensorRig) -> None:
+        assert rig.sensor.air_quality is None
+
+        rig.port.report("bme688_iaq_classification", "Excellent")
+        rig.port.report("bme688_iaq_classification", "Excellent")
+        rig.port.report("bme688_iaq_classification", "error")
+        rig.port.report("bme688_iaq_classification", "Good")
+
+        assert rig.observer.events == [AirQualityChanged(quality=AirQuality.GOOD, previous=AirQuality.EXCELLENT)]
+        assert rig.sensor.air_quality is AirQuality.GOOD
+
+    def test_reconnect_does_not_fire(self, rig: SensorRig) -> None:
+        rig.port.report("bme688_iaq_classification", "Good")
+        rig.port.connect()
+        rig.port.report("bme688_iaq_classification", "Lightly polluted")
+
+        assert rig.observer.events == []
+
+    def test_tracking_settings(self, rig: SensorRig) -> None:
+        rig.port.report("radar_gate_radius", 100)
+        rig.port.report("ltr390_lux_offset", -2.5)
+
+        assert rig.sensor.read_settings() == {"gate_radius": 100.0, "lux_offset": -2.5}
 
 
 class TestBeep:
